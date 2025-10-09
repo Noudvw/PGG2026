@@ -26,25 +26,25 @@ class Subsession(BaseSubsession):
 
 
 class Group(BaseGroup):
-    PG_earnings = models.CurrencyField()
-    collective_contribution = models.CurrencyField()
+    PG_earnings = models.FloatField()
+    collective_contribution = models.IntegerField()
 
     def compute_group_earnings(self):
-        self.collective_contribution = sum(player.contribution for player in self.get_players())
+        self.collective_contribution = sum(p.contribution for p in self.get_players())
         self.PG_earnings = self.collective_contribution * C.MPCR
 
 
     def compute_earnings(self):
-        for player in self.get_players():
-            player.remaining_endowment = player.endowment - player.contribution
-            player.earnings = player.remaining_endowment + self.PG_earnings
+        for p in self.get_players():
+            p.remaining_endowment = p.endowment - p.contribution
+            p.earnings = p.remaining_endowment + self.PG_earnings
 
 
 class Player(BasePlayer):
-    endowment = models.CurrencyField()
-    remaining_endowment = models.CurrencyField()
+    endowment = models.IntegerField()
+    remaining_endowment = models.IntegerField()
     contribution = models.IntegerField()
-    earnings = models.CurrencyField()
+    earnings = models.FloatField()
 
     def setup_round(self):
         self.endowment = C.ENDOWMENT

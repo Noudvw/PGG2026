@@ -2,8 +2,45 @@
     Page title
 {{ endblock }}
 
+{% block styles %}
+    <link rel="stylesheet" href="{{ static 'global/theme.css' }}">
+{% endblock %}
+
 {{ block content }}
 
+This table gives an overview of the contribution of each group member
+<br>
+
+<table>
+    <tr>
+        <th> Player </th>
+        <th> Contribution </th>
+    </tr>
+    <tr>
+        <td> You </td>
+        <td> {{player.contribution}} </td>
+    </tr>
+</table>
+
+<br><br>
+This table gives an overview of your earnings
+
+
+<table>
+    <tr>
+        <th> Remaining endowment </th>
+        <th> Earnings from public good </th>
+        <th> Total earnings </th>
+    </tr>
+    <tr>
+        <td> {{player.remaining_endowment}} </td>
+        <td> {{group.PG_earnings}} </td>
+        <td> {{player.earnings}} </td>
+    </tr>
+</table>
+
+
+<br><br>
 You contributed {{ player.contribution }} to the public good. <br>
 Your remaining endowment is {{player.remaining_endowment}} <br>
 You earn {{ C.MPCR}} per contributed token. <br>
