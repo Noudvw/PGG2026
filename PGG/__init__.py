@@ -60,6 +60,14 @@ class Contribution(Page):
     form_model = 'player'
     form_fields = ['contribution']
 
+    @staticmethod
+    def error_message(player, values):
+        if values['contribution'] < 0:
+            return "Contribution cannot be negative"
+        if values['contribution'] > 20:
+            return "Contribution cannot be greater than 20"
+        return None
+
 class ComputeResults(WaitPage):
     wait_for_participants = True
     @staticmethod
