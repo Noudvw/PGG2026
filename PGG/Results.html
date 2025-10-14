@@ -57,12 +57,11 @@ This table gives an overview of your earnings
 
 
 <br><br>
-You contributed {{ player.contribution }} to the public good. <br>
-Your remaining endowment is {{player.remaining_endowment}} <br>
-You earn {{ C.MPCR}} per contributed token. <br>
-Total group contribution = {{group.collective_contribution}} <br>
-You earn {{ group.PG_earnings}} from the public good <br>
-Your earnings are {{ player.earnings }} <br>
+You contributed {{player.contribution}} to the public good. <br>
+Your remaining endowment is {{player.remaining_endowment}}. <br>
+Total group contribution = {{group.collective_contribution}}. <br>
+You earn {{C.MPCR}} x {{group.collective_contribution}} = {{group.PG_earnings}} from the public good. <br>
+Your earnings are {{player.remaining_endowment}} + {{group.PG_earnings}} = {{player.earnings}}. <br>
 
     {{ next_button }}
 
