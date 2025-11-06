@@ -39,6 +39,13 @@ class Group(BaseGroup):
             p.remaining_endowment = p.endowment - p.contribution
             p.earnings = p.remaining_endowment + self.PG_earnings
 
+    def compute_earnings_post_punishment(self):
+        for p in self.get_players():
+            p.remaining_endowment = p.endowment - p.contribution
+            p.punishment_costs = p.punishment_co0 + p.punishment_co1 + p.punishment_co2
+            p.pun_received_costs = 0
+            p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs
+
     def set_other_contributions(self):
         for p in self.get_players():
                 others = p.get_others_in_group()
@@ -53,7 +60,12 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
+    punishment_costs = models.IntegerField()
+    pun_received_costs = models.IntegerField()
     contribution = models.IntegerField()
+    punishment_co0 = models.IntegerField()
+    punishment_co1 = models.IntegerField()
+    punishment_co2 = models.IntegerField()
     earnings = models.FloatField()
     p2_contribution = models.IntegerField()
     p3_contribution = models.IntegerField()
@@ -67,6 +79,11 @@ class Player(BasePlayer):
 
     def coplayer1(self):
         return self.get_others_in_group()[1]
+
+    def coplayer2(self):
+        if C.PLAYERS_PER_GROUP > 3:
+            return self.get_others_in_group()[2]
+        return None
 
 class SetUpRound(WaitPage):
     wait_for_all_groups = True
@@ -87,13 +104,31 @@ class Contribution(Page):
             return "Contribution cannot be greater than 20"
         return None
 
+class ComputePunishment(WaitPage):
+    wait_for_participants = True
+    @staticmethod
+    def after_all_players_arrive(group):
+        group.compute_group_earnings()
+        group.set_other_contributions()
+
+class Punishment(Page):
+    form_model = 'player'
+    form_fields = ['punishment_co0', 'punishment_co1', 'punishment_co2']
+    @staticmethod
+    def error_message(player, values):
+        if values['punishment_co0'] < 0 | values['punishment_co1'] < 0 | values['punishment_co2'] < 0 :
+            return "Punishment cannot be negative"
+        if values['punishment_co0'] > 20 | values['punishment_co1'] > 20 | values['punishment_co2'] > 20 :
+            return "Punishment cannot be greater than 20"
+        return None
+
 class ComputeResults(WaitPage):
     wait_for_participants = True
     @staticmethod
     def after_all_players_arrive(group):
         group.compute_group_earnings()
         group.compute_earnings()
-        group.set_other_contributions()
+        group.compute_earnings_post_punishment()
 
 class Results(Page):
     pass
@@ -105,6 +140,8 @@ class Results(Page):
 page_sequence = [
     SetUpRound,
     Contribution,
+    ComputePunishment,
+    Punishment,
     ComputeResults,
     Results,
 ]
