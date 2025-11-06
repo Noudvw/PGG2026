@@ -20,7 +20,7 @@ dict(
         app_sequence=[
             "PGG"
         ],
-        num_demo_participants=4,
+        num_demo_participants=3,
     ),
 ]
 

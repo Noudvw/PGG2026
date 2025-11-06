@@ -15,7 +15,7 @@ Public Goods Game, starting with the most basic implementation possible
 
 class C(BaseConstants):
     NAME_IN_URL = 'PGG'
-    PLAYERS_PER_GROUP = 4
+    PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 1
     ENDOWMENT = 20
     MPCR = 0.4
@@ -145,9 +145,13 @@ class Punishment(Page):
     form_fields = ['punishment_co0', 'punishment_co1', 'punishment_co2']
     @staticmethod
     def error_message(player, values):
-        if values['punishment_co0'] < 0 | values['punishment_co1'] < 0 | values['punishment_co2'] < 0 :
+        if (values['punishment_co0'] < 0
+            or values['punishment_co1'] < 0
+            or values['punishment_co2'] < 0) :
             return "Punishment cannot be negative"
-        if values['punishment_co0'] > 20 | values['punishment_co1'] > 20 | values['punishment_co2'] > 20 :
+        if (values['punishment_co0'] > 20 or
+            values['punishment_co1'] > 20 or
+            values['punishment_co2'] > 20) :
             return "Punishment cannot be greater than 20"
         return None
 
