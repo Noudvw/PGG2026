@@ -2,7 +2,39 @@
     Page title
 {{ endblock }}
 
+
+
 {{ block content }}
+
+<table>
+    <tr>
+        <th> Player </th>
+        <th> Contribution </th>
+    </tr>
+
+    <tr>
+        <td> You </td>
+        <td> {{player.contribution}} </td>
+    </tr>
+    <tr>
+        <td> P2 </td>
+        <td> {{player.p2_contribution}} </td>
+    </tr>
+    <tr>
+        <td> P3 </td>
+        <td> {{player.p3_contribution}} </td>
+    </tr>
+{% if C.PLAYERS_PER_GROUP > 3 %}
+    <tr>
+        <td> P4 </td>
+        <td> {{player.p4_contribution}} </td>
+    </tr>
+{% endif %}
+    <tr>
+        <td> Total </td>
+        <td> {{group.collective_contribution}}        </td>
+    </tr>
+</table>
 
     {{ formfields }}
     {{ next_button }}

@@ -15,7 +15,7 @@ Public Goods Game, starting with the most basic implementation possible
 
 class C(BaseConstants):
     NAME_IN_URL = 'PGG'
-    PLAYERS_PER_GROUP = 3
+    PLAYERS_PER_GROUP = 4
     NUM_ROUNDS = 1
     ENDOWMENT = 20
     MPCR = 0.4
@@ -56,8 +56,25 @@ class Group(BaseGroup):
                 if len(others) > 2:
                     p.p4_contribution = others[2].contribution
 
+    def set_other_punishments(self):
+        for p in self.get_players():
+            others = p.get_others_in_group()
+            if len(others) > 0:
+                p.p2_punishment_co0 = others[0].punishment_co0
+                p.p2_punishment_co1 = others[0].punishment_co1
+                p.p2_punishment_co2 = others[0].punishment_co2
+            if len(others) > 1:
+                p.p3_punishment_co0 = others[1].punishment_co0
+                p.p3_punishment_co1 = others[1].punishment_co1
+                p.p3_punishment_co2 = others[1].punishment_co2
+            if len(others) > 2:
+                p.p4_punishment_co0 = others[2].punishment_co0
+                p.p4_punishment_co1 = others[2].punishment_co1
+                p.p4_punishment_co2 = others[2].punishment_co2
+
 
 class Player(BasePlayer):
+    #Fields about the current player
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
     punishment_costs = models.IntegerField()
@@ -67,9 +84,21 @@ class Player(BasePlayer):
     punishment_co1 = models.IntegerField()
     punishment_co2 = models.IntegerField()
     earnings = models.FloatField()
+
+    #Fields filled in by other players
     p2_contribution = models.IntegerField()
+    p2_punishment_co0 = models.IntegerField()
+    p2_punishment_co1 = models.IntegerField()
+    p2_punishment_co2 = models.IntegerField()
     p3_contribution = models.IntegerField()
+    p3_punishment_co0 = models.IntegerField()
+    p3_punishment_co1 = models.IntegerField()
+    p3_punishment_co2 = models.IntegerField()
     p4_contribution = models.IntegerField()
+    p4_punishment_co0 = models.IntegerField()
+    p4_punishment_co1 = models.IntegerField()
+    p4_punishment_co2 = models.IntegerField()
+
 
     def setup_round(self):
         self.endowment = C.ENDOWMENT
@@ -126,9 +155,10 @@ class ComputeResults(WaitPage):
     wait_for_participants = True
     @staticmethod
     def after_all_players_arrive(group):
+        group.set_other_punishments()
         group.compute_group_earnings()
-        group.compute_earnings()
         group.compute_earnings_post_punishment()
+
 
 class Results(Page):
     pass
