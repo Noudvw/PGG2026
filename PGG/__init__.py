@@ -15,7 +15,7 @@ Public Goods Game, starting with the most basic implementation possible
 
 class C(BaseConstants):
     NAME_IN_URL = 'PGG'
-    PLAYERS_PER_GROUP = 3
+    PLAYERS_PER_GROUP = 4
     NUM_ROUNDS = 1
     ENDOWMENT = 20
     MPCR = 0.4

@@ -39,9 +39,13 @@ This table gives an overview of the contribution of each group member
 {% endif %}
 </table>
 
+<br>
 This table gives an overview of punishment behavior
 
+<br> <br>
+
 <table>
+    {% if player.id_in_group == 1 %}
     <tr>
         <th> Player </th>
         <th> You (punish) </th>
@@ -82,10 +86,145 @@ This table gives an overview of punishment behavior
         <td> X </td>
     </tr>
 {% endif %}
+{% endif %}
 </table>
 
-This table gives an overview of your earnings
+<table>
+    {% if player.id_in_group == 2 %}
+    <tr>
+        <th> Player </th>
+        <th> You (punish) </th>
+        <th> P1 (punishes) </th>
+        <th> P3 (punishes) </th>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  P4 (punishes) </th> {% endif %}
+    </tr>
 
+    <tr>
+        <td> You (are punished) </td>
+        <td> X  </td>
+        <td> {{player.p2_punishment_co0 }} </td>
+        <td> {{player.p3_punishment_co1 }} </td>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co1 }} </td> {% endif %}
+    </tr>
+
+    <tr>
+        <td> P1 (is punished)</td>
+        <td> {{player.punishment_co0}}  </td>
+        <td>  X  </td>
+        <td> {{player.p3_punishment_co0 }} </td>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co0 }} </td> {% endif %}
+    </tr>
+
+    <tr>
+        <td> P3 (is punished) </td>
+        <td> {{player.punishment_co1}}  </td>
+        <td> {{player.p2_punishment_co1 }} </td>
+        <td> X </td>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co2 }} </td> {% endif %}
+    </tr>
+{% if C.PLAYERS_PER_GROUP > 3 %}
+    <tr>
+         <td> P4 (is punished) </td>
+        <td> {{player.punishment_co2}}  </td>
+        <td> {{player.p2_punishment_co2 }} </td>
+        <td> {{player.p3_punishment_co2 }}</td>
+        <td> X </td>
+    </tr>
+{% endif %}
+{% endif %}
+</table>
+
+<table>
+    {% if player.id_in_group == 3 %}
+    <tr>
+        <th> Player </th>
+        <th> You (punish) </th>
+        <th> P1 (punishes) </th>
+        <th> P2 (punishes) </th>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  P4 (punishes) </th> {% endif %}
+    </tr>
+
+    <tr>
+        <td> You (are punished) </td>
+        <td> X  </td>
+        <td> {{player.p2_punishment_co1 }} </td>
+        <td> {{player.p3_punishment_co1 }} </td>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co2 }} </td> {% endif %}
+    </tr>
+
+    <tr>
+        <td> P1 (is punished)</td>
+        <td> {{player.punishment_co0}}  </td>
+        <td>  X  </td>
+        <td> {{player.p3_punishment_co0 }} </td>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co0 }} </td> {% endif %}
+    </tr>
+
+    <tr>
+        <td> P2 (is punished) </td>
+        <td> {{player.punishment_co1}}  </td>
+        <td> {{player.p2_punishment_co0 }} </td>
+        <td> X </td>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co1 }} </td> {% endif %}
+    </tr>
+{% if C.PLAYERS_PER_GROUP > 3 %}
+    <tr>
+         <td> P4 (is punished) </td>
+        <td> {{player.punishment_co2}}  </td>
+        <td> {{player.p2_punishment_co2 }} </td>
+        <td> {{player.p3_punishment_co2 }}</td>
+        <td> X </td>
+    </tr>
+{% endif %}
+{% endif %}
+</table>
+
+<table>
+    {% if player.id_in_group == 4 %}
+    <tr>
+        <th> Player </th>
+        <th> You (punish) </th>
+        <th> P1 (punishes) </th>
+        <th> P2 (punishes) </th>
+        <th> P3 (punishes) </th>
+    </tr>
+
+    <tr>
+        <td> You (are punished) </td>
+        <td> X  </td>
+        <td> {{player.p2_punishment_co2 }} </td>
+        <td> {{player.p3_punishment_co2 }} </td>
+        <td>  {{player.p4_punishment_co2 }} </td>
+    </tr>
+
+    <tr>
+        <td> P1 (is punished)</td>
+        <td> {{player.punishment_co0}}  </td>
+        <td>  X  </td>
+        <td> {{player.p3_punishment_co0 }} </td>
+        <td>  {{player.p4_punishment_co0 }} </td>
+    </tr>
+
+    <tr>
+        <td> P2 (is punished) </td>
+        <td> {{player.punishment_co1}}  </td>
+        <td> {{player.p2_punishment_co0 }} </td>
+        <td> X </td>
+        <td>  {{player.p4_punishment_co1 }} </td>
+    </tr>
+    <tr>
+         <td> P3 (is punished) </td>
+        <td> {{player.punishment_co2}}  </td>
+        <td> {{player.p2_punishment_co1}} </td>
+        <td> {{player.p3_punishment_co1 }}</td>
+        <td> X </td>
+    </tr>
+{% endif %}
+</table>
+
+<br>
+This table gives an overview of your earnings
+<br> <br>
 
 <table>
     <tr>
