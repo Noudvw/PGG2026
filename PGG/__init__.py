@@ -19,6 +19,7 @@ class C(BaseConstants):
     NUM_ROUNDS = 1
     ENDOWMENT = 20
     MPCR = 0.4
+    PUN_MULTIPLIER = 3
 
 
 class Subsession(BaseSubsession):
@@ -37,13 +38,21 @@ class Group(BaseGroup):
     def compute_earnings(self):
         for p in self.get_players():
             p.remaining_endowment = p.endowment - p.contribution
-            p.earnings = p.remaining_endowment + self.PG_earnings
+            p.intermediate_earnings = p.remaining_endowment + self.PG_earnings
 
     def compute_earnings_post_punishment(self):
         for p in self.get_players():
             p.remaining_endowment = p.endowment - p.contribution
             p.punishment_costs = p.punishment_co0 + p.punishment_co1 + p.punishment_co2
-            p.pun_received_costs = 0
+            if p.id_in_group == 1:
+                p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0 + p.p4_punishment_co0
+            if p.id_in_group == 2:
+                p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1 + p.p4_punishment_co1
+            if p.id_in_group == 3:
+                p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1 + p.p4_punishment_co2
+            if p.id_in_group == 4:
+                p.pun_received = p.p2_punishment_co2 + p.p3_punishment_co2 + p.p4_punishment_co2
+            p.pun_received_costs = C.PUN_MULTIPLIER * p.pun_received
             p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs
 
     def set_other_contributions(self):
@@ -84,6 +93,8 @@ class Player(BasePlayer):
     punishment_co1 = models.IntegerField()
     punishment_co2 = models.IntegerField()
     earnings = models.FloatField()
+    intermediate_earnings = models.FloatField()
+    pun_received = models.FloatField()
 
     #Fields filled in by other players
     p2_contribution = models.IntegerField()
@@ -139,6 +150,10 @@ class ComputePunishment(WaitPage):
     def after_all_players_arrive(group):
         group.compute_group_earnings()
         group.set_other_contributions()
+        group.compute_earnings()
+
+class IntermediateResults(Page):
+    pass
 
 class Punishment(Page):
     form_model = 'player'
@@ -175,6 +190,7 @@ page_sequence = [
     SetUpRound,
     Contribution,
     ComputePunishment,
+    IntermediateResults,
     Punishment,
     ComputeResults,
     Results,

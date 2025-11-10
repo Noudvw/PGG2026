@@ -2,6 +2,10 @@
     Page title
 {{ endblock }}
 
+{% block styles %}
+    <link rel="stylesheet" href="{{ static 'global/theme.css' }}">
+{% endblock %}
+
 {{ block content }}
 
     {{ formfields }}
