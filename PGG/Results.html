@@ -24,16 +24,16 @@ This table gives an overview of the contribution of each group member
         <td> {{player.contribution}} </td>
     </tr>
     <tr>
-        <td> P2 </td>
+        <td> {{player.p2_nickname}} </td>
         <td> {{player.p2_contribution}} </td>
     </tr>
     <tr>
-        <td> P3 </td>
+        <td> {{player.p3_nickname}} </td>
         <td> {{player.p3_contribution}} </td>
     </tr>
 {% if C.PLAYERS_PER_GROUP > 3 %}
     <tr>
-        <td> P4 </td>
+        <td> {{player.p4_nickname}} </td>
         <td> {{player.p4_contribution}} </td>
     </tr>
 {% endif %}
@@ -49,9 +49,9 @@ This table gives an overview of punishment behavior
     <tr>
         <th> Player </th>
         <th> You (punish) </th>
-        <th> P2 (punishes) </th>
-        <th> P3 (punishes) </th>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  P4 (punishes) </th> {% endif %}
+        <th> {{player.p2_nickname}} (punishes) </th>
+        <th> {{player.p3_nickname}} (punishes) </th>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (punishes) </th> {% endif %}
     </tr>
 
     <tr>
@@ -63,7 +63,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> P2 (is punished)</td>
+        <td> {{player.p2_nickname}} (is punished)</td>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co1 }} </td>
@@ -71,7 +71,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> P3 (is punished) </td>
+        <td> {{player.p3_nickname}} (is punished) </td>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co1 }} </td>
         <td> X </td>
@@ -79,7 +79,7 @@ This table gives an overview of punishment behavior
     </tr>
 {% if C.PLAYERS_PER_GROUP > 3 %}
     <tr>
-         <td> P4 (is punished) </td>
+         <td> {{player.p4_nickname}} (is punished) </td>
         <td> {{player.punishment_co2}}  </td>
         <td> {{player.p2_punishment_co2 }} </td>
         <td> {{player.p3_punishment_co2 }}</td>
@@ -94,9 +94,9 @@ This table gives an overview of punishment behavior
     <tr>
         <th> Player </th>
         <th> You (punish) </th>
-        <th> P1 (punishes) </th>
-        <th> P3 (punishes) </th>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  P4 (punishes) </th> {% endif %}
+        <th> {{player.p2_nickname}} (punishes) </th>
+        <th> {{player.p3_nickname}} (punishes) </th>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (punishes) </th> {% endif %}
     </tr>
 
     <tr>
@@ -108,7 +108,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> P1 (is punished)</td>
+        <td> {{player.p2_nickname}} (is punished)</td>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co0 }} </td>
@@ -116,7 +116,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> P3 (is punished) </td>
+        <td> {{player.p3_nickname}} (is punished) </td>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co1 }} </td>
         <td> X </td>
@@ -124,7 +124,7 @@ This table gives an overview of punishment behavior
     </tr>
 {% if C.PLAYERS_PER_GROUP > 3 %}
     <tr>
-         <td> P4 (is punished) </td>
+         <td> {{player.p4_nickname}} (is punished) </td>
         <td> {{player.punishment_co2}}  </td>
         <td> {{player.p2_punishment_co2 }} </td>
         <td> {{player.p3_punishment_co2 }}</td>
@@ -139,9 +139,9 @@ This table gives an overview of punishment behavior
     <tr>
         <th> Player </th>
         <th> You (punish) </th>
-        <th> P1 (punishes) </th>
-        <th> P2 (punishes) </th>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  P4 (punishes) </th> {% endif %}
+        <th> {{player.p2_nickname}} (punishes) </th>
+        <th> {{player.p3_nickname}} (punishes) </th>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (punishes) </th> {% endif %}
     </tr>
 
     <tr>
@@ -153,7 +153,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> P1 (is punished)</td>
+        <td> {{player.p2_nickname}} (is punished)</td>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co0 }} </td>
@@ -161,7 +161,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> P2 (is punished) </td>
+        <td> {{player.p3_nickname}} (is punished) </td>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co0 }} </td>
         <td> X </td>
@@ -169,7 +169,7 @@ This table gives an overview of punishment behavior
     </tr>
 {% if C.PLAYERS_PER_GROUP > 3 %}
     <tr>
-         <td> P4 (is punished) </td>
+         <td> {{player.p4_nickname}} (is punished) </td>
         <td> {{player.punishment_co2}}  </td>
         <td> {{player.p2_punishment_co2 }} </td>
         <td> {{player.p3_punishment_co2 }}</td>
@@ -184,9 +184,9 @@ This table gives an overview of punishment behavior
     <tr>
         <th> Player </th>
         <th> You (punish) </th>
-        <th> P1 (punishes) </th>
-        <th> P2 (punishes) </th>
-        <th> P3 (punishes) </th>
+        <th> {{player.p2_nickname}} (punishes) </th>
+        <th> {{player.p3_nickname}} (punishes) </th>
+        <th> {{player.p4_nickname}} (punishes) </th>
     </tr>
 
     <tr>
@@ -194,11 +194,11 @@ This table gives an overview of punishment behavior
         <td> X  </td>
         <td> {{player.p2_punishment_co2 }} </td>
         <td> {{player.p3_punishment_co2 }} </td>
-        <td>  {{player.p4_punishment_co2 }} </td>
+        <td> {{player.p4_punishment_co2 }} </td>
     </tr>
 
     <tr>
-        <td> P1 (is punished)</td>
+        <td> {{player.p2_nickname}} (is punished)</td>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co0 }} </td>
@@ -206,14 +206,14 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> P2 (is punished) </td>
+        <td> {{player.p3_nickname}} (is punished) </td>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co0 }} </td>
         <td> X </td>
         <td>  {{player.p4_punishment_co1 }} </td>
     </tr>
     <tr>
-         <td> P3 (is punished) </td>
+        <td> {{player.p4_nickname}} (is punished) </td>
         <td> {{player.punishment_co2}}  </td>
         <td> {{player.p2_punishment_co1}} </td>
         <td> {{player.p3_punishment_co1 }}</td>

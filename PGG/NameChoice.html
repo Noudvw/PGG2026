@@ -1,0 +1,16 @@
+{{ block title }}
+    Page title
+{{ endblock }}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ static 'global/theme.css' }}">
+{% endblock %}
+
+{{ block content }}
+
+You can use one of the nicknames below for the experiment. The other participants will see this nickname. Please select one from the dropdown menu.
+
+    {{ formfields }}
+    {{ next_button }}
+
+{{ endblock }}

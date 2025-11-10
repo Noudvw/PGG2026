@@ -6,12 +6,15 @@ from otree.api import (
     Page,
     WaitPage,
     models,
+    widgets,
 )
 
 doc = """
 Public Goods Game, starting with the most basic implementation possible
 """
 
+MALE_NAMES = ["Kris1", "Noud1", "Kris2","Noud2", "Kris3", "Noud3", "Kris4", "Noud4"]
+FEMALE_NAMES = ["Joyce1", "Sarah1", "Joyce2", "Sarah2", "Joyce3", "Sarah3", "Joyce4", "Sarah4"]
 
 class C(BaseConstants):
     NAME_IN_URL = 'PGG'
@@ -81,9 +84,28 @@ class Group(BaseGroup):
                 p.p4_punishment_co1 = others[2].punishment_co1
                 p.p4_punishment_co2 = others[2].punishment_co2
 
+    def set_other_names(self):
+        for p in self.get_players():
+            others = p.get_others_in_group()
+            p.p2_nickname = others[0].nickname
+            p.p3_nickname = others[1].nickname
+            if len(others) > 2:
+                p.p4_nickname = others[2].nickname
+
 
 class Player(BasePlayer):
     #Fields about the current player
+    nickname = models.StringField(
+        label = "Choose your nickname")
+    gender = models.IntegerField(
+        label = "What is your gender? ",
+        choices = [
+            [1, "Female"],
+            [2, "Male"],
+            [3, "Other"],
+            [4, "I prefer not to say"]
+        ]
+    )
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
     punishment_costs = models.IntegerField()
@@ -97,14 +119,17 @@ class Player(BasePlayer):
     pun_received = models.FloatField()
 
     #Fields filled in by other players
+    p2_nickname = models.StringField()
     p2_contribution = models.IntegerField()
     p2_punishment_co0 = models.IntegerField()
     p2_punishment_co1 = models.IntegerField()
     p2_punishment_co2 = models.IntegerField()
+    p3_nickname = models.StringField()
     p3_contribution = models.IntegerField()
     p3_punishment_co0 = models.IntegerField()
     p3_punishment_co1 = models.IntegerField()
     p3_punishment_co2 = models.IntegerField()
+    p4_nickname = models.StringField()
     p4_contribution = models.IntegerField()
     p4_punishment_co0 = models.IntegerField()
     p4_punishment_co1 = models.IntegerField()
@@ -131,6 +156,24 @@ class SetUpRound(WaitPage):
     def after_all_players_arrive(subsession):
         for p in subsession.get_players():
             p.setup_round()
+
+class Demographics(Page):
+    form_model = 'player'
+    form_fields = ['gender']
+
+
+
+class NameChoice(Page):
+    form_model = 'player'
+    form_fields = ['nickname']
+
+class NameWait(WaitPage):
+    @staticmethod
+    def after_all_players_arrive(group):
+        group.set_other_names()
+
+class GroupDisplay(Page):
+    pass
 
 class Contribution(Page):
     form_model = 'player'
@@ -188,6 +231,10 @@ class Results(Page):
 
 page_sequence = [
     SetUpRound,
+    Demographics,
+    NameChoice,
+    NameWait,
+    GroupDisplay,
     Contribution,
     ComputePunishment,
     IntermediateResults,
