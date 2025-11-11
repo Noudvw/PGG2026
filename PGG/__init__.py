@@ -18,7 +18,7 @@ FEMALE_NAMES = ["Joyce1", "Sarah1", "Joyce2", "Sarah2", "Joyce3", "Sarah3", "Joy
 
 class C(BaseConstants):
     NAME_IN_URL = 'PGG'
-    PLAYERS_PER_GROUP = 4
+    PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 1
     ENDOWMENT = 20
     MPCR = 0.4
@@ -47,12 +47,18 @@ class Group(BaseGroup):
         for p in self.get_players():
             p.remaining_endowment = p.endowment - p.contribution
             p.punishment_costs = p.punishment_co0 + p.punishment_co1 + p.punishment_co2
-            if p.id_in_group == 1:
+            if p.id_in_group == 1 and C.PLAYERS_PER_GROUP > 3:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0 + p.p4_punishment_co0
-            if p.id_in_group == 2:
+            if p.id_in_group == 1 and C.PLAYERS_PER_GROUP < 4:
+                p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0
+            if p.id_in_group == 2 and C.PLAYERS_PER_GROUP > 3:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1 + p.p4_punishment_co1
-            if p.id_in_group == 3:
+            if p.id_in_group == 2 and C.PLAYERS_PER_GROUP < 4:
+                p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1
+            if p.id_in_group == 3 and C.PLAYERS_PER_GROUP > 3:
                 p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1 + p.p4_punishment_co2
+            if p.id_in_group == 3 and C.PLAYERS_PER_GROUP < 4:
+                p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1
             if p.id_in_group == 4:
                 p.pun_received = p.p2_punishment_co2 + p.p3_punishment_co2 + p.p4_punishment_co2
             p.pun_received_costs = C.PUN_MULTIPLIER * p.pun_received
@@ -96,7 +102,8 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     #Fields about the current player
     nickname = models.StringField(
-        label = "Choose your nickname")
+        label = "Choose your nickname",
+        choices = [])
     gender = models.IntegerField(
         label = "What is your gender? ",
         choices = [
@@ -149,6 +156,16 @@ class Player(BasePlayer):
         if C.PLAYERS_PER_GROUP > 3:
             return self.get_others_in_group()[2]
         return None
+    def get_available_names(self):
+        start_index = (self.id_in_group - 1)*2
+        end_index = start_index + 2
+        if self.gender == 1:
+            return FEMALE_NAMES[start_index:end_index]
+        elif self.gender == 2:
+            return MALE_NAMES[start_index:end_index]
+        else:
+            return FEMALE_NAMES[start_index:end_index] + MALE_NAMES[start_index:end_index]
+
 
 class SetUpRound(WaitPage):
     wait_for_all_groups = True
@@ -161,11 +178,15 @@ class Demographics(Page):
     form_model = 'player'
     form_fields = ['gender']
 
-
-
 class NameChoice(Page):
     form_model = 'player'
     form_fields = ['nickname']
+
+    class NameChoice(Page):
+        form_model = 'player'
+        form_fields = ['nickname']
+
+
 
 class NameWait(WaitPage):
     @staticmethod

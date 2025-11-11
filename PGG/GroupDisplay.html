@@ -16,7 +16,9 @@ You ({{player.nickname}})
 <br>
 {{player.p3_nickname}}
 <br>
+{% if C.PLAYERS_PER_GROUP > 3 %}
 {{player.p4_nickname}}
+{% endif %}
 
 {{next_button}}
 {{ endblock }}
