@@ -13,8 +13,8 @@ doc = """
 Public Goods Game, starting with the most basic implementation possible
 """
 
-MALE_NAMES = ['Kris1', 'Noud1', 'Kris2','Noud2', 'Kris3', 'Noud3', 'Kris4', 'Noud4']
-FEMALE_NAMES = ['Joyce1', 'Sarah1', 'Joyce2', 'Sarah2', 'Joyce3', 'Sarah3', 'Joyce4', 'Sarah4']
+MALE_NAMES = ['Male1', 'Male2', 'Male3', 'Male4', 'Male5', 'Male6', 'Male7', 'Male8' ]
+FEMALE_NAMES = ['Female1', 'Female2', 'Female3', 'Female4', 'Female5', 'Female6', 'Female7', 'Female8']
 
 class C(BaseConstants):
     NAME_IN_URL = 'PGG'
@@ -32,6 +32,15 @@ class Subsession(BaseSubsession):
 class Group(BaseGroup):
     PG_earnings = models.FloatField()
     collective_contribution = models.IntegerField()
+    def compute_group_gender(self):
+        for p in self.get_players():
+            if p.gender == 1:
+                p.fem_in_group += 1
+            if p.gender == 2:
+                p.male_in_group += 1
+            else:
+                p.fem_in_group += 1
+                p.male_in_group += 1
 
     def compute_group_earnings(self):
         self.collective_contribution = sum(p.contribution for p in self.get_players())
@@ -122,6 +131,8 @@ class Player(BasePlayer):
     earnings = models.FloatField()
     intermediate_earnings = models.FloatField()
     pun_received = models.FloatField()
+    fem_in_group = models.IntegerField(default = 0)
+    male_in_group = models.IntegerField( default = 0)
 
     #Fields filled in by other players
     p2_nickname = models.StringField()
@@ -157,10 +168,15 @@ class Player(BasePlayer):
 def nickname_choices(player):
     start_index = (player.id_in_group - 1) *2
     end_index = start_index + 2
-    if player.gender == 1:
+    end_index_if_low = end_index + 2
+    if player.gender == 1 and player.fem_in_group > 2:
         return FEMALE_NAMES[start_index: end_index]
-    elif player.gender == 2:
+    if player.gender == 1 and player.fem_in_group < 3:
+        return FEMALE_NAMES[start_index: end_index_if_low]
+    if player.gender == 2 and player.male_in_group > 2:
         return MALE_NAMES[start_index: end_index]
+    if player.gender == 2 and player.male_in_group < 3:
+        return MALE_NAMES[start_index: end_index_if_low]
     else:
         return FEMALE_NAMES[start_index: end_index] + MALE_NAMES[start_index: end_index]
 
@@ -174,6 +190,10 @@ class SetUpRound(WaitPage):
 class Demographics(Page):
     form_model = 'player'
     form_fields = ['gender']
+
+class DemographicsWait(WaitPage):
+    def after_all_players_arrive(group):
+        group.compute_group_gender()
 
 class NameChoice(Page):
     form_model = 'player'
@@ -239,12 +259,10 @@ class Results(Page):
     pass
 
 # PAGES
-
-
-
 page_sequence = [
     SetUpRound,
     Demographics,
+    DemographicsWait,
     NameChoice,
     NameWait,
     GroupDisplay,
