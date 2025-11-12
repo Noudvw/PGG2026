@@ -13,8 +13,8 @@ doc = """
 Public Goods Game, starting with the most basic implementation possible
 """
 
-MALE_NAMES = ["Kris1", "Noud1", "Kris2","Noud2", "Kris3", "Noud3", "Kris4", "Noud4"]
-FEMALE_NAMES = ["Joyce1", "Sarah1", "Joyce2", "Sarah2", "Joyce3", "Sarah3", "Joyce4", "Sarah4"]
+MALE_NAMES = ['Kris1', 'Noud1', 'Kris2','Noud2', 'Kris3', 'Noud3', 'Kris4', 'Noud4']
+FEMALE_NAMES = ['Joyce1', 'Sarah1', 'Joyce2', 'Sarah2', 'Joyce3', 'Sarah3', 'Joyce4', 'Sarah4']
 
 class C(BaseConstants):
     NAME_IN_URL = 'PGG'
@@ -101,9 +101,7 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     #Fields about the current player
-    nickname = models.StringField(
-        label = "Choose your nickname",
-        choices = [])
+    nickname = models.StringField()
     gender = models.IntegerField(
         label = "What is your gender? ",
         choices = [
@@ -142,7 +140,6 @@ class Player(BasePlayer):
     p4_punishment_co1 = models.IntegerField()
     p4_punishment_co2 = models.IntegerField()
 
-
     def setup_round(self):
         self.endowment = C.ENDOWMENT
 
@@ -156,16 +153,16 @@ class Player(BasePlayer):
         if C.PLAYERS_PER_GROUP > 3:
             return self.get_others_in_group()[2]
         return None
-    def get_available_names(self):
-        start_index = (self.id_in_group - 1)*2
-        end_index = start_index + 2
-        if self.gender == 1:
-            return FEMALE_NAMES[start_index:end_index]
-        elif self.gender == 2:
-            return MALE_NAMES[start_index:end_index]
-        else:
-            return FEMALE_NAMES[start_index:end_index] + MALE_NAMES[start_index:end_index]
 
+def nickname_choices(player):
+    start_index = (player.id_in_group - 1) *2
+    end_index = start_index + 2
+    if player.gender == 1:
+        return FEMALE_NAMES[start_index: end_index]
+    elif player.gender == 2:
+        return MALE_NAMES[start_index: end_index]
+    else:
+        return FEMALE_NAMES[start_index: end_index] + MALE_NAMES[start_index: end_index]
 
 class SetUpRound(WaitPage):
     wait_for_all_groups = True
@@ -181,11 +178,6 @@ class Demographics(Page):
 class NameChoice(Page):
     form_model = 'player'
     form_fields = ['nickname']
-
-    class NameChoice(Page):
-        form_model = 'player'
-        form_fields = ['nickname']
-
 
 
 class NameWait(WaitPage):
