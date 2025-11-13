@@ -23,6 +23,7 @@ class C(BaseConstants):
     ENDOWMENT = 20
     MPCR = 0.4
     PUN_MULTIPLIER = 3
+    BONUS_MULTIPLIER = 4
 
 
 class Subsession(BaseSubsession):
@@ -58,20 +59,57 @@ class Group(BaseGroup):
             p.punishment_costs = p.punishment_co0 + p.punishment_co1 + p.punishment_co2
             if p.id_in_group == 1 and C.PLAYERS_PER_GROUP > 3:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0 + p.p4_punishment_co0
+                if p.p2_punishment_co0 == p.pun_belief_co0:
+                    p.bonus_counter += 1
+                if p.p3_punishment_co0 == p.pun_belief_co1:
+                    p.bonus_counter += 1
+                if p.p4_punishment_co0 == p.pun_belief_co2:
+                    p.bonus_counter += 1
             if p.id_in_group == 1 and C.PLAYERS_PER_GROUP < 4:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0
+                if p.p2_punishment_co0 == p.pun_belief_co0:
+                    p.bonus_counter += 1
+                if p.p3_punishment_co0 == p.pun_belief_co1:
+                    p.bonus_counter += 1
             if p.id_in_group == 2 and C.PLAYERS_PER_GROUP > 3:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1 + p.p4_punishment_co1
+                if p.p2_punishment_co0 == p.pun_belief_co0:
+                    p.bonus_counter += 1
+                if p.p3_punishment_co1 == p.pun_belief_co1:
+                    p.bonus_counter += 1
+                if p.p4_punishment_co1 == p.pun_belief_co2:
+                    p.bonus_counter += 1
             if p.id_in_group == 2 and C.PLAYERS_PER_GROUP < 4:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1
+                if p.p2_punishment_co0 == p.pun_belief_co0:
+                    p.bonus_counter += 1
+                if p.p3_punishment_co1 == p.pun_belief_co1:
+                    p.bonus_counter += 1
             if p.id_in_group == 3 and C.PLAYERS_PER_GROUP > 3:
                 p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1 + p.p4_punishment_co2
+                if p.p2_punishment_co1 == p.pun_belief_co0:
+                    p.bonus_counter += 1
+                if p.p3_punishment_co1 == p.pun_belief_co1:
+                    p.bonus_counter += 1
+                if p.p4_punishment_co2 == p.pun_belief_co2:
+                    p.bonus_counter += 1
             if p.id_in_group == 3 and C.PLAYERS_PER_GROUP < 4:
                 p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1
+                if p.p2_punishment_co0 == p.pun_belief_co1:
+                    p.bonus_counter += 1
+                if p.p3_punishment_co0 == p.pun_belief_co1:
+                    p.bonus_counter += 1
             if p.id_in_group == 4:
                 p.pun_received = p.p2_punishment_co2 + p.p3_punishment_co2 + p.p4_punishment_co2
+                if p.p2_punishment_co2 == p.pun_belief_co0:
+                    p.bonus_counter += 1
+                if p.p3_punishment_co2 == p.pun_belief_co1:
+                    p.bonus_counter += 1
+                if p.p4_punishment_co2 == p.pun_belief_co2:
+                    p.bonus_counter += 1
             p.pun_received_costs = C.PUN_MULTIPLIER * p.pun_received
-            p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs
+            p.bonus_earnings = p.bonus_counter * C.BONUS_MULTIPLIER
+            p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
 
     def set_other_contributions(self):
         for p in self.get_players():
@@ -82,6 +120,29 @@ class Group(BaseGroup):
                     p.p3_contribution = others[1].contribution
                 if len(others) > 2:
                     p.p4_contribution = others[2].contribution
+
+    def bonus_pre_beliefs(self):
+        for p in self.get_players():
+            others = p.get_others_in_group()
+            if p.pre_belief_co0 == p.p2_contribution :
+                p.bonus_counter += 1
+            if p.pre_belief_co1 == p.p3_contribution :
+                p.bonus_counter += 1
+            if C.PLAYERS_PER_GROUP > 3:
+                if p.pre_belief_co2 == p.p4_contribution:
+                    p.bonus_counter += 1
+
+    def bonus_post_beliefs(self):
+        for p in self.get_players():
+            others = p.get_others_in_group()
+            if p.post_belief_co0 == p.p2_contribution:
+                p.bonus_counter += 1
+            if p.post_belief_co1 == p.p3_contribution:
+                p.bonus_counter += 1
+            if C.PLAYERS_PER_GROUP > 3:
+                if p.post_belief_co2 == p.p4_contribution:
+                    p.bonus_counter += 1
+
 
     def set_other_punishments(self):
         for p in self.get_players():
@@ -108,6 +169,7 @@ class Group(BaseGroup):
                 p.p4_nickname = others[2].nickname
 
 
+
 class Player(BasePlayer):
     #Fields about the current player
     nickname = models.StringField()
@@ -120,19 +182,44 @@ class Player(BasePlayer):
             [4, "I prefer not to say"]
         ]
     )
+    #Misc
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
+    contribution = models.IntegerField()
+    fem_in_group = models.IntegerField(default=0)
+    male_in_group = models.IntegerField(default=0)
+    bonus_counter = models.IntegerField(default = 0)
+    #Beliefs
+    pre_belief_co0 = models.IntegerField()
+    pre_belief_co1 = models.IntegerField()
+    pre_belief_co2 = models.IntegerField()
+    post_belief_co0 = models.IntegerField()
+    post_belief_co1 = models.IntegerField()
+    post_belief_co2 = models.IntegerField()
+    #Beliefs about punishment
+    pun_belief_co0 = models.IntegerField()
+    pun_belief_co1 = models.IntegerField()
+    pun_belief_co2 = models.IntegerField()
+    pun_cond_0_co0 = models.IntegerField()
+    pun_cond_0_co1 = models.IntegerField()
+    pun_cond_0_co2 = models.IntegerField()
+    pun_cond_10_co0 = models.IntegerField()
+    pun_cond_10_co1 = models.IntegerField()
+    pun_cond_10_co2 = models.IntegerField()
+    pun_cond_20_co0 = models.IntegerField()
+    pun_cond_20_co1 = models.IntegerField()
+    pun_cond_20_co2 = models.IntegerField()
+    #Punishment
     punishment_costs = models.IntegerField()
     pun_received_costs = models.IntegerField()
-    contribution = models.IntegerField()
     punishment_co0 = models.IntegerField()
     punishment_co1 = models.IntegerField()
     punishment_co2 = models.IntegerField()
-    earnings = models.FloatField()
-    intermediate_earnings = models.FloatField()
     pun_received = models.FloatField()
-    fem_in_group = models.IntegerField(default = 0)
-    male_in_group = models.IntegerField( default = 0)
+    #Earnings
+    earnings = models.CurrencyField()
+    intermediate_earnings = models.FloatField()
+    bonus_earnings = models.IntegerField()
 
     #Fields filled in by other players
     p2_nickname = models.StringField()
@@ -208,6 +295,10 @@ class NameWait(WaitPage):
 class GroupDisplay(Page):
     pass
 
+class PreBeliefs(Page):
+    form_model = 'player'
+    form_fields = ['pre_belief_co0', 'pre_belief_co1', 'pre_belief_co2']
+
 class Contribution(Page):
     form_model = 'player'
     form_fields = ['contribution']
@@ -227,9 +318,31 @@ class ComputePunishment(WaitPage):
         group.compute_group_earnings()
         group.set_other_contributions()
         group.compute_earnings()
+        group.bonus_pre_beliefs()
+
+
+class PostBeliefs(Page):
+    form_model = 'player'
+    form_fields = ['post_belief_co0', 'post_belief_co1', 'post_belief_co2']
 
 class IntermediateResults(Page):
     pass
+
+class PunBeliefsUncond(Page):
+    form_model = 'player'
+    form_fields = ['pun_belief_co0', 'pun_belief_co1', 'pun_belief_co2']
+
+class PunBeliefsCond0(Page):
+    form_model = 'player'
+    form_fields = ['pun_cond_0_co0', 'pun_cond_0_co1', 'pun_cond_0_co2']
+
+class PunBeliefsCond10(Page):
+    form_model = 'player'
+    form_fields = ['pun_cond_10_co0', 'pun_cond_10_co1', 'pun_cond_10_co2']
+
+class PunBeliefsCond20(Page):
+    form_model = 'player'
+    form_fields = ['pun_cond_20_co0', 'pun_cond_20_co1', 'pun_cond_20_co2']
 
 class Punishment(Page):
     form_model = 'player'
@@ -252,7 +365,9 @@ class ComputeResults(WaitPage):
     def after_all_players_arrive(group):
         group.set_other_punishments()
         group.compute_group_earnings()
+        group.bonus_post_beliefs()
         group.compute_earnings_post_punishment()
+
 
 
 class Results(Page):
@@ -266,9 +381,12 @@ page_sequence = [
     NameChoice,
     NameWait,
     GroupDisplay,
+    PreBeliefs,
     Contribution,
     ComputePunishment,
+    PostBeliefs,
     IntermediateResults,
+    PunBeliefsUncond,
     Punishment,
     ComputeResults,
     Results,

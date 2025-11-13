@@ -1,5 +1,5 @@
 {{ block title }}
-    Page title
+    PunBeliefPage0
 {{ endblock }}
 
 {% block styles %}
@@ -7,6 +7,7 @@
 {% endblock %}
 
 {{ block content }}
+
 
 
 <table>
@@ -20,7 +21,7 @@
         <td> {{player.contribution}} </td>
     </tr>
     <tr>
-        <td> {{player.p2_nickname}} </td>
+        <td> {{player.p2_nickname}}</td>
         <td> {{player.p2_contribution}} </td>
     </tr>
     <tr>
@@ -35,11 +36,13 @@
 {% endif %}
     <tr>
         <td> Total </td>
-        <td> {{group.collective_contribution}}        </td>
+        <td> {{group.collective_contribution}}   </td>
     </tr>
 </table>
 
     {{ formfields }}
-    {{ next_button }}
 
+
+{{next_button}}
 {{ endblock }}
+

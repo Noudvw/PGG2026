@@ -247,7 +247,8 @@ Total group contribution = {{group.collective_contribution}}. <br>
 You earn {{C.MPCR}} x {{group.collective_contribution}} = {{group.PG_earnings}} from the public good. <br>
 You have spent {{player.punishment_costs}} on punishing other players. <br>
 You lose {{player.pun_received_costs}} due to punishment of other players. <br>
-Your earnings are {{player.remaining_endowment}} + {{group.PG_earnings}} - {{player.punishment_costs}} - {{player.pun_received}} X {{C.PUN_MULTIPLIER}} = {{player.earnings}}. <br>
+You have guessed correctly {{player.bonus_counter}} times. Your bonus earnings are {{player.bonus_earnings}}. <br>
+Your earnings are {{player.remaining_endowment}} + {{group.PG_earnings}} - {{player.punishment_costs}} - {{player.pun_received}} X {{C.PUN_MULTIPLIER}} + {{player.bonus_earnings}}= {{player.earnings}}. <br>
 
     {{ next_button }}
 

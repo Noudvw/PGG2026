@@ -1,0 +1,28 @@
+{{ block title }}
+    PreBeliefPage
+{{ endblock }}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ static 'global/theme.css' }}">
+{% endblock %}
+
+{{ block content }}
+
+These are the players in the group:
+<br>
+You ({{player.nickname}})
+<br>
+{{player.p2_nickname}}
+<br>
+{{player.p3_nickname}}
+<br>
+{% if C.PLAYERS_PER_GROUP > 3 %}
+{{player.p4_nickname}}
+{% endif %}
+
+    {{ formfields }}
+
+
+{{next_button}}
+{{ endblock }}
+
