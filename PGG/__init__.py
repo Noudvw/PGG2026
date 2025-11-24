@@ -34,14 +34,19 @@ class Group(BaseGroup):
     PG_earnings = models.FloatField()
     collective_contribution = models.IntegerField()
     def compute_group_gender(self):
+        fem_count = 0
+        male_count = 0
         for p in self.get_players():
             if p.gender == 1:
-                p.fem_in_group += 1
-            if p.gender == 2:
-                p.male_in_group += 1
+                fem_count += 1
+            elif p.gender == 2:
+                male_count += 1
             else:
-                p.fem_in_group += 1
-                p.male_in_group += 1
+                fem_count += 1
+                male_count += 1
+        for p in self.get_players():
+            p.fem_in_group = fem_count
+            p.male_in_group = male_count
 
     def compute_group_earnings(self):
         self.collective_contribution = sum(p.contribution for p in self.get_players())
@@ -167,7 +172,14 @@ class Group(BaseGroup):
             p.p3_nickname = others[1].nickname
             if len(others) > 2:
                 p.p4_nickname = others[2].nickname
-
+    fem_low_index = models.IntegerField(initial=0)
+    fem_high_index = models.IntegerField(initial=2)
+    rare_fem_low_index = models.IntegerField(initial=0)
+    rare_fem_high_index = models.IntegerField(initial=4)
+    male_low_index = models.IntegerField(initial=0)
+    male_high_index = models.IntegerField(initial=2)
+    rare_male_low_index = models.IntegerField(initial=0)
+    rare_male_high_index = models.IntegerField(initial=4)
 
 
 class Player(BasePlayer):
@@ -253,19 +265,81 @@ class Player(BasePlayer):
         return None
 
 def nickname_choices(player):
-    start_index = (player.id_in_group - 1) *2
-    end_index = start_index + 2
-    end_index_if_low = end_index + 2
+    g = player.group
     if player.gender == 1 and player.fem_in_group > 2:
-        return FEMALE_NAMES[start_index: end_index]
-    if player.gender == 1 and player.fem_in_group < 3:
-        return FEMALE_NAMES[start_index: end_index_if_low]
-    if player.gender == 2 and player.male_in_group > 2:
-        return MALE_NAMES[start_index: end_index]
-    if player.gender == 2 and player.male_in_group < 3:
-        return MALE_NAMES[start_index: end_index_if_low]
+        low = g.fem_low_index
+        high = g.fem_high_index
+        result = FEMALE_NAMES[low: high]
+        g.fem_low_index += 2
+        g.fem_high_index += 2
+        return result
+    elif player.gender == 1 and player.fem_in_group < 3:
+        low = g.rare_fem_low_index
+        high = g.rare_fem_high_index
+        result = FEMALE_NAMES[low: high]
+        g.rare_fem_low_index += 4
+        g.rare_fem_high_index += 4
+        return result
+    elif player.gender == 2 and player.male_in_group > 2:
+        low = g.male_low_index
+        high = g.male_high_index
+        result = MALE_NAMES[low: high]
+        g.male_low_index += 2
+        g.male_high_index += 2
+        return result
+    elif player.gender == 2 and player.male_in_group < 3:
+        low = g.rare_male_low_index
+        high = g.rare_male_high_index
+        result = MALE_NAMES[low: high]
+        g.rare_male_low_index += 4
+        g.rare_male_high_index += 4
+        return result
+    elif player.gender > 2 and player.fem_in_group < 3 and player.male_in_group > 2:
+        low_f = g.rare_fem_low_index
+        high_f = g.rare_fem_high_index - 2
+        low_m = g.male_low_index
+        high_m = g.male_high_index
+        result = FEMALE_NAMES[low_f: high_f] + MALE_NAMES[low_m: high_m]
+        g.rare_fem_low_index += 4
+        g.rare_fem_high_index += 4
+        g.male_low_index += 2
+        g.male_high_index += 2
+        return result
+    elif player.gender > 2 and player.fem_in_group > 2 and player.male_in_group < 3:
+        low_f = g.fem_low_index
+        high_f = g.fem_high_index
+        low_m = g.rare_male_low_index
+        high_m = g.rare_male_high_index - 2
+        result = FEMALE_NAMES[low_f: high_f] + MALE_NAMES[low_m: high_m]
+        g.fem_low_index += 2
+        g.fem_high_index += 2
+        g.rare_male_low_index += 4
+        g.rare_male_high_index += 4
+        return result
+    elif player.gender > 2 and player.fem_in_group > 2 and player.male_in_group > 2:
+        low_f = g.fem_low_index
+        high_f = g.fem_high_index
+        low_m = g.male_low_index
+        high_m = g.male_high_index
+        result = FEMALE_NAMES[low_f : high_f] + MALE_NAMES[low_m : high_m]
+        g.fem_low_index += 2
+        g.fem_high_index += 2
+        g.male_low_index += 2
+        g.male_high_index += 2
+        return result
+    elif player.gender > 2 and player.fem_in_group < 3 and player.male_in_group < 3:
+        low_f = g.rare_fem_low_index
+        high_f = g.rare_fem_high_index - 2
+        low_m = g.rare_male_low_index
+        high_m = g.rare_male_high_index - 2
+        result = FEMALE_NAMES[low_f: high_f] + MALE_NAMES[low_m: high_m]
+        g.rare_fem_low_index += 4
+        g.rare_fem_high_index += 4
+        g.rare_male_low_index += 4
+        g.rare_male_high_index += 4
+        return result
     else:
-        return FEMALE_NAMES[start_index: end_index] + MALE_NAMES[start_index: end_index]
+        pass
 
 class SetUpRound(WaitPage):
     wait_for_all_groups = True
