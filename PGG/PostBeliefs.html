@@ -1,5 +1,5 @@
 {{ block title }}
-    PreBeliefPage
+    Estimate 2
 {{ endblock }}
 
 {% block styles %}
@@ -7,6 +7,7 @@
 {% endblock %}
 
 {{ block content }}
+
 {% if player.info_treatment == True %}
 
 
@@ -43,7 +44,7 @@
 {% endif %}
 
 {% if player.info_treatment == False %}
-These are the players in the group:
+These are the players in your group:
 <br>
 You ({{player.nickname}})
 <br>

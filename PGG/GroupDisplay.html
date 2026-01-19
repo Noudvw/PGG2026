@@ -1,5 +1,5 @@
 {{ block title }}
-    Page title
+    Overview page
 {{ endblock }}
 
 {% block styles %}
@@ -8,7 +8,7 @@
 
 {{ block content }}
 
-These are the players in the group:
+This is your group:
 <br>
 You ({{player.nickname}})
 <br>
@@ -19,6 +19,7 @@ You ({{player.nickname}})
 {% if C.PLAYERS_PER_GROUP > 3 %}
 {{player.p4_nickname}}
 {% endif %}
+<br>
 
 {{next_button}}
 {{ endblock }}

@@ -187,13 +187,15 @@ class Group(BaseGroup):
     def bonus_post_beliefs(self):
         for p in self.get_players():
             others = p.get_others_in_group()
-            if p.post_belief_co0 == p.p2_contribution:
-                p.bonus_counter += 1
-            if p.post_belief_co1 == p.p3_contribution:
-                p.bonus_counter += 1
-            if C.PLAYERS_PER_GROUP > 3:
-                if p.post_belief_co2 == p.p4_contribution:
+            if p.info_treatment == False:
+                if p.post_belief_co0 == p.p2_contribution:
                     p.bonus_counter += 1
+                if p.post_belief_co1 == p.p3_contribution:
+                    p.bonus_counter += 1
+                if C.PLAYERS_PER_GROUP > 3:
+                    if p.post_belief_co2 == p.p4_contribution:
+                        p.bonus_counter += 1
+            else: pass
 
 
     def set_other_punishments(self):
@@ -250,16 +252,16 @@ class Player(BasePlayer):
     male_in_group = models.IntegerField(default=0)
     bonus_counter = models.IntegerField(default = 0)
     #Beliefs
-    pre_belief_co0 = models.IntegerField()
-    pre_belief_co1 = models.IntegerField()
-    pre_belief_co2 = models.IntegerField()
+    pre_belief_co0 = models.IntegerField(label = "Contribution of")
+    pre_belief_co1 = models.IntegerField(label = "Contribution of")
+    pre_belief_co2 = models.IntegerField(label = "Contribution of")
     post_belief_co0 = models.IntegerField()
     post_belief_co1 = models.IntegerField()
     post_belief_co2 = models.IntegerField()
     #Beliefs about punishment
-    pun_belief_co0 = models.IntegerField()
-    pun_belief_co1 = models.IntegerField()
-    pun_belief_co2 = models.IntegerField()
+    pun_belief_co0 = models.IntegerField(label = "Spent by")
+    pun_belief_co1 = models.IntegerField(label = "Spent by")
+    pun_belief_co2 = models.IntegerField(label = "Spent by")
     pun_cond_0_co0 = models.IntegerField()
     pun_cond_0_co1 = models.IntegerField()
     pun_cond_0_co2 = models.IntegerField()
@@ -272,9 +274,9 @@ class Player(BasePlayer):
     #Punishment
     punishment_costs = models.IntegerField()
     pun_received_costs = models.IntegerField()
-    punishment_co0 = models.IntegerField()
-    punishment_co1 = models.IntegerField()
-    punishment_co2 = models.IntegerField()
+    punishment_co0 = models.IntegerField(label = "Spent for")
+    punishment_co1 = models.IntegerField(label = "Spent for")
+    punishment_co2 = models.IntegerField(label = "Spent for")
     pun_received = models.FloatField()
     #Earnings
     earnings = models.CurrencyField()
@@ -349,6 +351,7 @@ class NameWait(WaitPage):
 class GroupDisplay(Page):
     pass
 
+
 class PreBeliefs(Page):
     form_model = 'player'
     form_fields = ['pre_belief_co0', 'pre_belief_co1', 'pre_belief_co2']
@@ -412,11 +415,11 @@ class Punishment(Page):
         if (values['punishment_co0'] < 0
             or values['punishment_co1'] < 0
             or values['punishment_co2'] < 0) :
-            return "Punishment cannot be negative"
+            return "Value cannot be negative"
         if (values['punishment_co0'] > 20 or
             values['punishment_co1'] > 20 or
             values['punishment_co2'] > 20) :
-            return "Punishment cannot be greater than 20"
+            return "Value cannot be greater than 20"
         return None
 
 class ComputeResults(WaitPage):

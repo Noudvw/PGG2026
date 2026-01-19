@@ -1,5 +1,5 @@
 {{ block title }}
-    PreBeliefPage
+    Estimate 1
 {{ endblock }}
 
 {% block styles %}
@@ -19,9 +19,10 @@ You ({{player.nickname}})
 {% if C.PLAYERS_PER_GROUP > 3 %}
 {{player.p4_nickname}}
 {% endif %}
+<br>
+Please indicate for each player how much you think they will contribute to the public good. Remember, the contribution can be any number from 0 to 20.
 
-    {{ formfields }}
-
+{{ formfields}}
 
 {{next_button}}
 {{ endblock }}

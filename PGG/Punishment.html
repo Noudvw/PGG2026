@@ -1,5 +1,5 @@
 {{ block title }}
-    Page title
+    Choice 2
 {{ endblock }}
 
 {% block styles %}
@@ -38,6 +38,9 @@
         <td> {{group.collective_contribution}}        </td>
     </tr>
 </table>
+
+Please indicate for each player how much you want to spend to deduct their earnings.
+Remember: for each token you spend, their earnings will decrease by {{C.PUN_MULTIPLIER}} tokens
 
     {{ formfields }}
     {{ next_button }}
