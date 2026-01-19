@@ -7,6 +7,7 @@ from otree.api import (
     WaitPage,
     models,
 )
+import random
 
 doc = """
 Public Goods Game, starting with the most basic implementation possible
@@ -23,7 +24,6 @@ class C(BaseConstants):
     MPCR = 0.4
     PUN_MULTIPLIER = 3
     BONUS_MULTIPLIER = 4
-
 
 class Subsession(BaseSubsession):
     pass
@@ -50,6 +50,9 @@ class Group(BaseGroup):
     def set_nicknames_group(self):
         fem = 0
         male = 0
+        random.shuffle(MALE_NAMES)
+        random.shuffle(FEMALE_NAMES)
+
         for p in self.get_players():
             #count genders
             if p.gender == 1:
@@ -227,6 +230,7 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+    info_treatment = models.BooleanField(initial = True)
     nickname = models.StringField()
     nickname_choices = models.StringField()
     gender = models.IntegerField(
@@ -373,7 +377,13 @@ class ComputePunishment(WaitPage):
 
 class PostBeliefs(Page):
     form_model = 'player'
-    form_fields = ['post_belief_co0', 'post_belief_co1', 'post_belief_co2']
+    def get_form_fields(player):
+        if player.info_treatment == 0:
+            return ['post_belief_co0', 'post_belief_co1', 'post_belief_co2']
+        if player.info_treatment == 1:
+            return []
+
+
 
 class IntermediateResults(Page):
     pass
