@@ -8,9 +8,16 @@
 
 {{ block content }}
 
-Each player can spend tokens to decrease your earnings. Please indicate how much you expect each player to spend on this
+Each player can spend tokens to decrease your earnings. Please indicate how much you expect each player to spend on this.
+
+{% if C.TREATMENT == False%} <br>
+The total group contribution is {{group.collective_contribution}} <br>
+Your contribution is {{player.contribution}}
+{% endif %}
 <br> <br>
 
+
+{% if C.TREATMENT == True %}
 <table>
     <tr>
         <th> Player </th>
@@ -40,6 +47,7 @@ Each player can spend tokens to decrease your earnings. Please indicate how much
         <td> {{group.collective_contribution}}   </td>
     </tr>
 </table>
+{% endif %}
 
 <br>
 {{ formfield 'pun_belief_co0' label=pun_belief_co0_label }}

@@ -27,7 +27,7 @@ class C(BaseConstants):
     MPCR = 0.4
     PUN_MULTIPLIER = 3
     BONUS_MULTIPLIER = 4
-    TREATMENT = True
+    TREATMENT = False
 class Subsession(BaseSubsession):
     pass
 
@@ -49,6 +49,7 @@ class Group(BaseGroup):
         for p in self.get_players():
             p.fem_in_group = fem_count
             p.male_in_group = male_count
+            p.info_treatment = C.TREATMENT
 
     def set_nicknames_group(self):
         fem = 0
@@ -217,7 +218,7 @@ class Group(BaseGroup):
                 p.p4_nickname = others[2].nickname
 
 class Player(BasePlayer):
-    info_treatment = models.BooleanField(initial = True)
+    info_treatment = models.BooleanField()
     nickname = models.StringField()
     nickname_choices = models.StringField()
     gender = models.IntegerField(
@@ -369,13 +370,14 @@ class ComputeContribution(WaitPage):
 
 class PostBeliefs(Page):
     form_model = 'player'
-
     @staticmethod
     def get_form_fields(player):
         fields = ['post_belief_co0', 'post_belief_co1']
         if C.PLAYERS_PER_GROUP > 3:
             fields.append('post_belief_co2')
         return fields
+    def is_displayed(player):
+        return player.info_treatment == False
 
     @staticmethod
     def vars_for_template(player):
@@ -392,7 +394,8 @@ class PostBeliefs(Page):
             )
 
 class IntermediateResults(Page):
-    pass
+    def is_displayed(player):
+        return player.info_treatment
 
 class PunBeliefsUncond(Page):
     form_model = 'player'

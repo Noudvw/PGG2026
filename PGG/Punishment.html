@@ -8,7 +8,13 @@
 
 {{ block content }}
 
+{% if C.TREATMENT == False%} <br>
+The total group contribution is {{group.collective_contribution}} <br>
+Your contribution is {{player.contribution}}
+<br>
+{% endif %}
 
+{% if C.TREATMENT == True %}
 <table>
     <tr>
         <th> Player </th>
@@ -38,6 +44,8 @@
         <td> {{group.collective_contribution}}        </td>
     </tr>
 </table>
+{% endif %}
+
 </br>
 Please indicate for each player how much you want to spend to deduct their earnings.
 Remember: for each token you spend, their earnings will decrease by {{C.PUN_MULTIPLIER}} tokens

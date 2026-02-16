@@ -8,11 +8,10 @@
 
 {{ block content }}
 
+{% if C.TREATMENT == True %}
+
 This table gives an overview of the contribution of each group member
-
 <br><br>
-
-
 <table>
     <tr>
         <th> Player </th>
@@ -48,14 +47,14 @@ This table gives an overview of punishment behavior
     {% if player.id_in_group == 1 %}
     <tr>
         <th> Player </th>
-        <th> You (punish) </th>
-        <th> {{player.p2_nickname}} (punishes) </th>
-        <th> {{player.p3_nickname}} (punishes) </th>
+        <th> You (deduct) </th>
+        <th> {{player.p2_nickname}} (deduct) </th>
+        <th> {{player.p3_nickname}} (deduct) </th>
         {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (punishes) </th> {% endif %}
     </tr>
 
     <tr>
-        <td> You (are punished) </td>
+        <td> You (are deducted) </td>
         <td> X  </td>
         <td> {{player.p2_punishment_co0 }} </td>
         <td> {{player.p3_punishment_co0 }} </td>
@@ -63,7 +62,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> {{player.p2_nickname}} (is punished)</td>
+        <td> {{player.p2_nickname}} (is deducted)</td>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co1 }} </td>
@@ -71,7 +70,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> {{player.p3_nickname}} (is punished) </td>
+        <td> {{player.p3_nickname}} (is deducted) </td>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co1 }} </td>
         <td> X </td>
@@ -79,7 +78,7 @@ This table gives an overview of punishment behavior
     </tr>
 {% if C.PLAYERS_PER_GROUP > 3 %}
     <tr>
-         <td> {{player.p4_nickname}} (is punished) </td>
+         <td> {{player.p4_nickname}} (is deducted) </td>
         <td> {{player.punishment_co2}}  </td>
         <td> {{player.p2_punishment_co2 }} </td>
         <td> {{player.p3_punishment_co2 }}</td>
@@ -93,14 +92,14 @@ This table gives an overview of punishment behavior
     {% if player.id_in_group == 2 %}
     <tr>
         <th> Player </th>
-        <th> You (punish) </th>
-        <th> {{player.p2_nickname}} (punishes) </th>
-        <th> {{player.p3_nickname}} (punishes) </th>
+        <th> You (deduct) </th>
+        <th> {{player.p2_nickname}} (deducts) </th>
+        <th> {{player.p3_nickname}} (deducts) </th>
         {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (punishes) </th> {% endif %}
     </tr>
 
     <tr>
-        <td> You (are punished) </td>
+        <td> You (are deducted) </td>
         <td> X  </td>
         <td> {{player.p2_punishment_co0 }} </td>
         <td> {{player.p3_punishment_co1 }} </td>
@@ -108,7 +107,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> {{player.p2_nickname}} (is punished)</td>
+        <td> {{player.p2_nickname}} (is deducted)</td>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co0 }} </td>
@@ -116,7 +115,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> {{player.p3_nickname}} (is punished) </td>
+        <td> {{player.p3_nickname}} (is deducted) </td>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co1 }} </td>
         <td> X </td>
@@ -124,7 +123,7 @@ This table gives an overview of punishment behavior
     </tr>
 {% if C.PLAYERS_PER_GROUP > 3 %}
     <tr>
-         <td> {{player.p4_nickname}} (is punished) </td>
+         <td> {{player.p4_nickname}} (is deducted) </td>
         <td> {{player.punishment_co2}}  </td>
         <td> {{player.p2_punishment_co2 }} </td>
         <td> {{player.p3_punishment_co2 }}</td>
@@ -138,14 +137,14 @@ This table gives an overview of punishment behavior
     {% if player.id_in_group == 3 %}
     <tr>
         <th> Player </th>
-        <th> You (punish) </th>
-        <th> {{player.p2_nickname}} (punishes) </th>
-        <th> {{player.p3_nickname}} (punishes) </th>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (punishes) </th> {% endif %}
+        <th> You (deduct) </th>
+        <th> {{player.p2_nickname}} (deducts) </th>
+        <th> {{player.p3_nickname}} (deducts) </th>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (deducts) </th> {% endif %}
     </tr>
 
     <tr>
-        <td> You (are punished) </td>
+        <td> You (are deducted) </td>
         <td> X  </td>
         <td> {{player.p2_punishment_co1 }} </td>
         <td> {{player.p3_punishment_co1 }} </td>
@@ -153,7 +152,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> {{player.p2_nickname}} (is punished)</td>
+        <td> {{player.p2_nickname}} (is deducted)</td>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co0 }} </td>
@@ -161,7 +160,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> {{player.p3_nickname}} (is punished) </td>
+        <td> {{player.p3_nickname}} (is deducted) </td>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co0 }} </td>
         <td> X </td>
@@ -169,7 +168,7 @@ This table gives an overview of punishment behavior
     </tr>
 {% if C.PLAYERS_PER_GROUP > 3 %}
     <tr>
-         <td> {{player.p4_nickname}} (is punished) </td>
+         <td> {{player.p4_nickname}} (is deducted) </td>
         <td> {{player.punishment_co2}}  </td>
         <td> {{player.p2_punishment_co2 }} </td>
         <td> {{player.p3_punishment_co2 }}</td>
@@ -183,14 +182,14 @@ This table gives an overview of punishment behavior
     {% if player.id_in_group == 4 %}
     <tr>
         <th> Player </th>
-        <th> You (punish) </th>
-        <th> {{player.p2_nickname}} (punishes) </th>
-        <th> {{player.p3_nickname}} (punishes) </th>
-        <th> {{player.p4_nickname}} (punishes) </th>
+        <th> You (deduct) </th>
+        <th> {{player.p2_nickname}} (deducts) </th>
+        <th> {{player.p3_nickname}} (deducts) </th>
+        <th> {{player.p4_nickname}} (deducts) </th>
     </tr>
 
     <tr>
-        <td> You (are punished) </td>
+        <td> You (are deducted) </td>
         <td> X  </td>
         <td> {{player.p2_punishment_co2 }} </td>
         <td> {{player.p3_punishment_co2 }} </td>
@@ -198,7 +197,7 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> {{player.p2_nickname}} (is punished)</td>
+        <td> {{player.p2_nickname}} (is deducted)</td>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co0 }} </td>
@@ -206,14 +205,14 @@ This table gives an overview of punishment behavior
     </tr>
 
     <tr>
-        <td> {{player.p3_nickname}} (is punished) </td>
+        <td> {{player.p3_nickname}} (is deducted) </td>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co0 }} </td>
         <td> X </td>
         <td>  {{player.p4_punishment_co1 }} </td>
     </tr>
     <tr>
-        <td> {{player.p4_nickname}} (is punished) </td>
+        <td> {{player.p4_nickname}} (is deducted) </td>
         <td> {{player.punishment_co2}}  </td>
         <td> {{player.p2_punishment_co1}} </td>
         <td> {{player.p3_punishment_co1 }}</td>
@@ -221,32 +220,17 @@ This table gives an overview of punishment behavior
     </tr>
 {% endif %}
 </table>
-
+{% endif %}
 <br>
-This table gives an overview of your earnings
-<br> <br>
 
-<table>
-    <tr>
-        <th> Remaining endowment </th>
-        <th> Earnings from public good </th>
-        <th> Total earnings </th>
-    </tr>
-    <tr>
-        <td> {{player.remaining_endowment}} </td>
-        <td> {{group.PG_earnings}} </td>
-        <td> {{player.earnings}} </td>
-    </tr>
-</table>
-
-
-<br><br>
-You contributed {{player.contribution}} to the public good. <br>
-Your remaining endowment is {{player.remaining_endowment}}. <br>
+For an overview of your earnings, see the calculations below:
+<br>
+You contributed {{player.contribution}} to the group project. <br>
+Your remaining endowment is {{player.remaining_endowment}}, you keep this. <br>
 Total group contribution = {{group.collective_contribution}}. <br>
-You earn {{C.MPCR}} x {{group.collective_contribution}} = {{group.PG_earnings}} from the public good. <br>
-You have spent {{player.punishment_costs}} on punishing other players. <br>
-You lose {{player.pun_received_costs}} due to punishment of other players. <br>
+You earn {{C.MPCR}} x {{group.collective_contribution}} = {{group.PG_earnings}} from the group project. <br>
+You have spent {{player.punishment_costs}} to deduct earnings of other players. <br>
+You lose {{player.pun_received_costs}} due to other player deducting your earnings. <br>
 You have guessed correctly {{player.bonus_counter}} times. Your bonus earnings are {{player.bonus_earnings}}. <br>
 Your earnings are {{player.remaining_endowment}} + {{group.PG_earnings}} - {{player.punishment_costs}} - {{player.pun_received}} X {{C.PUN_MULTIPLIER}} + {{player.bonus_earnings}}= {{player.earnings}}. <br>
 
