@@ -10,11 +10,12 @@ from otree.api import (
 import random
 
 doc = """
-Public Goods Game, starting with the most basic implementation possible
+Public Goods Game
 """
 
 MALE_NAMES = ['Male1', 'Male2', 'Male3', 'Male4', 'Male5', 'Male6', 'Male7', 'Male8' ]
 FEMALE_NAMES = ['Female1', 'Female2', 'Female3', 'Female4', 'Female5', 'Female6', 'Female7', 'Female8']
+RANDOM_LIST = [0, 1]
 
 class C(BaseConstants):
     NAME_IN_URL = 'PGG'
@@ -24,7 +25,7 @@ class C(BaseConstants):
     MPCR = 0.4
     PUN_MULTIPLIER = 3
     BONUS_MULTIPLIER = 4
-
+    TREATMENT = True
 class Subsession(BaseSubsession):
     pass
 
@@ -53,47 +54,23 @@ class Group(BaseGroup):
         random.shuffle(MALE_NAMES)
         random.shuffle(FEMALE_NAMES)
 
+
         for p in self.get_players():
             #count genders
             if p.gender == 1:
+                p.nickname = FEMALE_NAMES[fem]
                 fem +=1
             elif p.gender == 2:
+                p.nickname = MALE_NAMES[male]
                 male +=1
             else:
-                fem +=1
-                male +=1
-            #Indices
-            self.fem_low_index = 0
-            if fem >= 3:
-                self.fem_high_index = 2
-            else:
-                self.fem_high_index = 4
-            self.male_low_index = 0
-            if male >= 3:
-                self.male_high_index = 2
-            else:
-                self.male_high_index = 4
-        for p in self.get_players():
-            if p.gender == 1:
-                names = FEMALE_NAMES[self.fem_low_index: self.fem_high_index]
-                self.fem_low_index = self.fem_high_index
-                if fem >=3: self.fem_high_index += 2
-                else: self.fem_high_index += 4
-            elif p.gender == 2:
-                names = MALE_NAMES[self.male_low_index: self.male_high_index]
-                self.male_low_index = self.male_high_index
-                if male >=3:
-                    self.male_high_index += 2
-                else:
-                    self.male_high_index += 4
-            else:
-                names = (FEMALE_NAMES[self.fem_low_index: self.fem_low_index + 2] +
-                         MALE_NAMES[self.male_low_index: self.male_low_index + 2])
-                self.fem_low_index += 2
-                self.fem_high_index += 2
-                self.male_low_index += 2
-                self.male_high_index += 2
-            p.nickname_choices = ",".join(names)
+                random.shuffle(RANDOM_LIST)
+                if RANDOM_LIST[0] == 0:
+                    p.nickname = FEMALE_NAMES[fem]
+                    fem +=1
+                elif RANDOM_LIST[0] == 1:
+                    p.nickname = MALE_NAMES[male]
+                    male +=1
 
     def compute_group_earnings(self):
         self.collective_contribution = sum(p.contribution for p in self.get_players())
@@ -221,15 +198,6 @@ class Group(BaseGroup):
             p.p3_nickname = others[1].nickname
             if len(others) > 2:
                 p.p4_nickname = others[2].nickname
-    fem_low_index = models.IntegerField(initial=0)
-    fem_high_index = models.IntegerField(initial=2)
-    rare_fem_low_index = models.IntegerField(initial=0)
-    rare_fem_high_index = models.IntegerField(initial=4)
-    male_low_index = models.IntegerField(initial=0)
-    male_high_index = models.IntegerField(initial=2)
-    rare_male_low_index = models.IntegerField(initial=0)
-    rare_male_high_index = models.IntegerField(initial=4)
-
 
 class Player(BasePlayer):
     info_treatment = models.BooleanField(initial = True)
@@ -313,11 +281,6 @@ class Player(BasePlayer):
         if C.PLAYERS_PER_GROUP > 3:
             return self.get_others_in_group()[2]
         return None
-#Comment: nickname_choices does not work currently. This is because things are updated every time
-# a player puts in a value, so too dynamically. See if you can change this using a group-based function on a waitpage
-# before using nickname_choices (for example, storing low_index and high_index separately, before creating the name list with options)
-def nickname_choices(player):
-    return player.nickname_choices.split(",")
 
 class SetUpRound(WaitPage):
     wait_for_all_groups = True
@@ -333,19 +296,7 @@ class Demographics(Page):
 class DemographicsWait(WaitPage):
     def after_all_players_arrive(group):
         group.compute_group_gender()
-
-class AssignNicknames(WaitPage):
-    def after_all_players_arrive(group):
         group.set_nicknames_group()
-
-class NameChoice(Page):
-    form_model = 'player'
-    form_fields = ['nickname']
-
-
-class NameWait(WaitPage):
-    @staticmethod
-    def after_all_players_arrive(group):
         group.set_other_names()
 
 class GroupDisplay(Page):
@@ -385,8 +336,6 @@ class PostBeliefs(Page):
             return ['post_belief_co0', 'post_belief_co1', 'post_belief_co2']
         if player.info_treatment == 1:
             return []
-
-
 
 class IntermediateResults(Page):
     pass
@@ -441,9 +390,6 @@ page_sequence = [
     SetUpRound,
     Demographics,
     DemographicsWait,
-    AssignNicknames,
-    NameChoice,
-    NameWait,
     GroupDisplay,
     PreBeliefs,
     Contribution,
