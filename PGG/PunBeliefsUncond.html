@@ -8,7 +8,7 @@
 
 {{ block content }}
 
-Each player can spend tokens to decrease your earnings. Please indicate how much you expect each player to decrease your earnings.
+Each player can spend tokens to decrease your earnings. Please indicate how much you expect each player to spend on this
 <br> <br>
 
 <table>
@@ -42,7 +42,12 @@ Each player can spend tokens to decrease your earnings. Please indicate how much
 </table>
 
 <br>
-    {{ formfields }}
+{{ formfield 'pun_belief_co0' label=pun_belief_co0_label }}
+{{ formfield 'pun_belief_co1' label=pun_belief_co1_label }}
+{% if C.PLAYERS_PER_GROUP > 3 %}
+{{ formfield 'pun_belief_co2' label=pun_belief_co2_label }}
+{% endif %}
+
 
 
 {{next_button}}

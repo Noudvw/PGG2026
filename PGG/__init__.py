@@ -1,3 +1,5 @@
+from multiprocessing.spawn import prepare
+
 from otree.api import (
     BaseConstants,
     BaseGroup,
@@ -85,7 +87,10 @@ class Group(BaseGroup):
     def compute_earnings_post_punishment(self):
         for p in self.get_players():
             p.remaining_endowment = p.endowment - p.contribution
-            p.punishment_costs = p.punishment_co0 + p.punishment_co1 + p.punishment_co2
+            if C.PLAYERS_PER_GROUP > 3:
+                p.punishment_costs = p.punishment_co0 + p.punishment_co1 + p.punishment_co2
+            else:
+                p.punishment_costs = p.punishment_co0 + p.punishment_co1
             if p.id_in_group == 1 and C.PLAYERS_PER_GROUP > 3:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0 + p.p4_punishment_co0
                 if p.p2_punishment_co0 == p.pun_belief_co0:
@@ -178,18 +183,30 @@ class Group(BaseGroup):
     def set_other_punishments(self):
         for p in self.get_players():
             others = p.get_others_in_group()
-            if len(others) > 0:
-                p.p2_punishment_co0 = others[0].punishment_co0
-                p.p2_punishment_co1 = others[0].punishment_co1
-                p.p2_punishment_co2 = others[0].punishment_co2
-            if len(others) > 1:
-                p.p3_punishment_co0 = others[1].punishment_co0
-                p.p3_punishment_co1 = others[1].punishment_co1
-                p.p3_punishment_co2 = others[1].punishment_co2
-            if len(others) > 2:
-                p.p4_punishment_co0 = others[2].punishment_co0
-                p.p4_punishment_co1 = others[2].punishment_co1
-                p.p4_punishment_co2 = others[2].punishment_co2
+            if C.PLAYERS_PER_GROUP < 4:
+                if len(others) > 0:
+                    p.p2_punishment_co0 = others[0].punishment_co0
+                    p.p2_punishment_co1 = others[0].punishment_co1
+                if len(others) > 1:
+                    p.p3_punishment_co0 = others[1].punishment_co0
+                    p.p3_punishment_co1 = others[1].punishment_co1
+                if len(others) > 2:
+                    p.p4_punishment_co0 = others[2].punishment_co0
+                    p.p4_punishment_co1 = others[2].punishment_co1
+
+            if C.PLAYERS_PER_GROUP > 3:
+                if len(others) > 0:
+                    p.p2_punishment_co0 = others[0].punishment_co0
+                    p.p2_punishment_co1 = others[0].punishment_co1
+                    p.p2_punishment_co2 = others[0].punishment_co2
+                if len(others) > 1:
+                    p.p3_punishment_co0 = others[1].punishment_co0
+                    p.p3_punishment_co1 = others[1].punishment_co1
+                    p.p3_punishment_co2 = others[1].punishment_co2
+                if len(others) > 2:
+                    p.p4_punishment_co0 = others[2].punishment_co0
+                    p.p4_punishment_co1 = others[2].punishment_co1
+                    p.p4_punishment_co2 = others[2].punishment_co2
 
     def set_other_names(self):
         for p in self.get_players():
@@ -215,21 +232,21 @@ class Player(BasePlayer):
     #Misc
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
-    contribution = models.IntegerField()
+    contribution = models.IntegerField(label = "Please indicate your own contribution to the project")
     fem_in_group = models.IntegerField(default=0)
     male_in_group = models.IntegerField(default=0)
     bonus_counter = models.IntegerField(default = 0)
     #Beliefs
-    pre_belief_co0 = models.IntegerField(label = "Contribution of")
-    pre_belief_co1 = models.IntegerField(label = "Contribution of")
-    pre_belief_co2 = models.IntegerField(label = "Contribution of")
+    pre_belief_co0 = models.IntegerField()
+    pre_belief_co1 = models.IntegerField()
+    pre_belief_co2 = models.IntegerField()
     post_belief_co0 = models.IntegerField()
     post_belief_co1 = models.IntegerField()
     post_belief_co2 = models.IntegerField()
     #Beliefs about punishment
-    pun_belief_co0 = models.IntegerField(label = "Spent by")
-    pun_belief_co1 = models.IntegerField(label = "Spent by")
-    pun_belief_co2 = models.IntegerField(label = "Spent by")
+    pun_belief_co0 = models.IntegerField()
+    pun_belief_co1 = models.IntegerField()
+    pun_belief_co2 = models.IntegerField()
     pun_cond_0_co0 = models.IntegerField()
     pun_cond_0_co1 = models.IntegerField()
     pun_cond_0_co2 = models.IntegerField()
@@ -242,9 +259,9 @@ class Player(BasePlayer):
     #Punishment
     punishment_costs = models.IntegerField()
     pun_received_costs = models.IntegerField()
-    punishment_co0 = models.IntegerField(label = "Spent for")
-    punishment_co1 = models.IntegerField(label = "Spent for")
-    punishment_co2 = models.IntegerField(label = "Spent for")
+    punishment_co0 = models.IntegerField()
+    punishment_co1 = models.IntegerField()
+    punishment_co2 = models.IntegerField()
     pun_received = models.FloatField()
     #Earnings
     earnings = models.CurrencyField()
@@ -305,7 +322,28 @@ class GroupDisplay(Page):
 
 class PreBeliefs(Page):
     form_model = 'player'
-    form_fields = ['pre_belief_co0', 'pre_belief_co1', 'pre_belief_co2']
+    @staticmethod
+    def get_form_fields(player):
+        fields = ['pre_belief_co0', 'pre_belief_co1']
+        if C.PLAYERS_PER_GROUP > 3:
+            fields.append('pre_belief_co2')
+        return fields
+
+    @staticmethod
+    def vars_for_template(player):
+        if C.PLAYERS_PER_GROUP > 3:
+            return dict(
+                pre_belief_co0_label = 'How much will {} contribute to the project?'.format(player.p2_nickname),
+                pre_belief_co1_label = 'How much will {} contribute to the project?'.format(player.p3_nickname),
+                pre_belief_co2_label = 'How much will {} contribute to the project?'.format(player.p4_nickname)
+            )
+        else:
+            return dict(
+                pre_belief_co0_label='How much will {} contribute to the project?'.format(player.p2_nickname),
+                pre_belief_co1_label='How much will {} contribute to the project?'.format(player.p3_nickname)
+            )
+
+
 
 class Contribution(Page):
     form_model = 'player'
@@ -319,7 +357,7 @@ class Contribution(Page):
             return "Contribution cannot be greater than 20"
         return None
 
-class ComputePunishment(WaitPage):
+class ComputeContribution(WaitPage):
     wait_for_participants = True
     @staticmethod
     def after_all_players_arrive(group):
@@ -331,18 +369,53 @@ class ComputePunishment(WaitPage):
 
 class PostBeliefs(Page):
     form_model = 'player'
+
+    @staticmethod
     def get_form_fields(player):
-        if player.info_treatment == 0:
-            return ['post_belief_co0', 'post_belief_co1', 'post_belief_co2']
-        if player.info_treatment == 1:
-            return []
+        fields = ['post_belief_co0', 'post_belief_co1']
+        if C.PLAYERS_PER_GROUP > 3:
+            fields.append('post_belief_co2')
+        return fields
+
+    @staticmethod
+    def vars_for_template(player):
+        if C.PLAYERS_PER_GROUP > 3:
+            return dict(
+                post_belief_co0_label='How much did {} contribute to the project?'.format(player.p2_nickname),
+                post_belief_co1_label='How much did {} contribute to the project?'.format(player.p3_nickname),
+                post_belief_co2_label='How much did {} contribute to the project?'.format(player.p4_nickname)
+            )
+        else:
+            return dict(
+                post_belief_co0_label='How much did {} contribute to the project?'.format(player.p2_nickname),
+                post_belief_co1_label='How much did {} contribute to the project?'.format(player.p3_nickname)
+            )
 
 class IntermediateResults(Page):
     pass
 
 class PunBeliefsUncond(Page):
     form_model = 'player'
-    form_fields = ['pun_belief_co0', 'pun_belief_co1', 'pun_belief_co2']
+    @staticmethod
+    def get_form_fields(player):
+        fields = ['pun_belief_co0', 'pun_belief_co1']
+        if C.PLAYERS_PER_GROUP > 3:
+            fields.append('pun_belief_co2')
+        return fields
+
+    @staticmethod
+    def vars_for_template(player):
+        if C.PLAYERS_PER_GROUP > 3:
+            return dict(
+                pun_belief_co0_label='How much will {} spend to decrease your earnings?'.format(player.p2_nickname),
+                pun_belief_co1_label='How much will {} spend to decrease your earnings?'.format(player.p3_nickname),
+                pun_belief_co2_label='How much will {} spend to decrease your earnings?'.format(player.p4_nickname)
+            )
+        else:
+            return dict(
+                pun_belief_co0_label='How much will {} spend to decrease your earnings?'.format(player.p2_nickname),
+                pun_belief_co1_label='How much will {} spend to decrease your earnings?'.format(player.p3_nickname)
+            )
 
 class PunBeliefsCond0(Page):
     form_model = 'player'
@@ -358,16 +431,36 @@ class PunBeliefsCond20(Page):
 
 class Punishment(Page):
     form_model = 'player'
-    form_fields = ['punishment_co0', 'punishment_co1', 'punishment_co2']
+    @staticmethod
+    def get_form_fields(player):
+        fields = ['punishment_co0', 'punishment_co1']
+        if C.PLAYERS_PER_GROUP > 3:
+            fields.append('punishment_co2')
+        return fields
+
+    @staticmethod
+    def vars_for_template(player):
+        if C.PLAYERS_PER_GROUP > 3:
+            return dict(
+                punishment_co0_label='How much do you spend to deduct earnings of {}?'.format(player.p2_nickname),
+                punishment_co1_label='How much do you spend to deduct earnings of {}?'.format(player.p3_nickname),
+                punishment_co2_label='How much do you spend to deduct earnings of {}?'.format(player.p4_nickname)
+            )
+        else:
+            return dict(
+                punishment_co0_label='How much do you spend to deduct earnings of {}?'.format(player.p2_nickname),
+                punishment_co1_label='How much do you spend to deduct earnings of {}?'.format(player.p3_nickname)
+            )
+
     @staticmethod
     def error_message(player, values):
         if (values['punishment_co0'] < 0
             or values['punishment_co1'] < 0
-            or values['punishment_co2'] < 0) :
+            or C.PLAYERS_PER_GROUP > 3 and ['punishment_co2'] < 0) :
             return "Value cannot be negative"
         if (values['punishment_co0'] > 20 or
             values['punishment_co1'] > 20 or
-            values['punishment_co2'] > 20) :
+            C.PLAYERS_PER_GROUP > 3 and values['punishment_co2'] > 20):
             return "Value cannot be greater than 20"
         return None
 
@@ -393,7 +486,7 @@ page_sequence = [
     GroupDisplay,
     PreBeliefs,
     Contribution,
-    ComputePunishment,
+    ComputeContribution,
     PostBeliefs,
     IntermediateResults,
     PunBeliefsUncond,

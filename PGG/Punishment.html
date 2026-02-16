@@ -38,11 +38,18 @@
         <td> {{group.collective_contribution}}        </td>
     </tr>
 </table>
-
+</br>
 Please indicate for each player how much you want to spend to deduct their earnings.
 Remember: for each token you spend, their earnings will decrease by {{C.PUN_MULTIPLIER}} tokens
+</br>
 
-    {{ formfields }}
+{{ formfield 'punishment_co0' label=punishment_co0_label }}
+{{ formfield 'punishment_co1' label=punishment_co1_label }}
+
+{% if C.PLAYERS_PER_GROUP > 3 %}
+{{ formfield 'punishment_co2' label=punishment_co2_label }}
+{% endif %}
+
     {{ next_button }}
 
 {{ endblock }}

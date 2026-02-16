@@ -8,42 +8,6 @@
 
 {{ block content }}
 
-{% if player.info_treatment == True %}
-
-
-<table>
-    <tr>
-        <th> Player </th>
-        <th> Contribution </th>
-    </tr>
-
-    <tr>
-        <td> You </td>
-        <td> {{player.contribution}} </td>
-    </tr>
-    <tr>
-        <td> {{player.p2_nickname}}</td>
-        <td> {{player.p2_contribution}} </td>
-    </tr>
-    <tr>
-        <td> {{player.p3_nickname}} </td>
-        <td> {{player.p3_contribution}} </td>
-    </tr>
-{% if C.PLAYERS_PER_GROUP > 3 %}
-    <tr>
-        <td> {{player.p4_nickname}} </td>
-        <td> {{player.p4_contribution}} </td>
-    </tr>
-{% endif %}
-    <tr>
-        <td> Total </td>
-        <td> {{group.collective_contribution}}   </td>
-    </tr>
-</table>
-
-{% endif %}
-
-{% if player.info_treatment == False %}
 These are the players in your group:
 <br>
 You ({{player.nickname}})
@@ -56,11 +20,16 @@ You ({{player.nickname}})
 {{player.p4_nickname}}
 {% endif %}
 
+</br>
 <b> The group total contribution is {{group.collective_contribution}} <br>
 You contributed {{player.contribution}} </b>
-    {{ formfields }}
-{% endif %}
+</br>
 
+{{ formfield 'post_belief_co0' label=post_belief_co0_label }}
+{{ formfield 'post_belief_co1' label=post_belief_co1_label }}
+{% if C.PLAYERS_PER_GROUP > 3 %}
+{{ formfield 'post_belief_co2' label=post_belief_co2_label }}
+{% endif %}
 
 {{next_button}}
 {{ endblock }}
