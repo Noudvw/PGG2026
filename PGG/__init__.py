@@ -84,6 +84,7 @@ class Group(BaseGroup):
         for p in self.get_players():
             p.remaining_endowment = p.endowment - p.contribution
             p.intermediate_earnings = p.remaining_endowment + self.PG_earnings
+            p.contribution_others = self.collective_contribution - p.contribution
 
     def compute_earnings_post_punishment(self):
         for p in self.get_players():
@@ -234,6 +235,7 @@ class Player(BasePlayer):
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
     contribution = models.IntegerField(label = "Please indicate your own contribution to the project")
+    contribution_others = models.IntegerField()
     fem_in_group = models.IntegerField(default=0)
     male_in_group = models.IntegerField(default=0)
     bonus_counter = models.IntegerField(default = 0)
@@ -344,6 +346,14 @@ class PreBeliefs(Page):
                 pre_belief_co1_label='How much will {} contribute to the project?'.format(player.p3_nickname)
             )
 
+    @staticmethod
+    def error_message(player, values):
+        if values['pre_belief_co0'] > 20 or values['pre_belief_co1'] > 20:
+            return "Please report a belief between 0 and 20 for each person"
+        if C.PLAYERS_PER_GROUP > 3:
+            if values['pre_belief_co2'] > 20:
+                return "Please report a belief between 0 and 20 for each person"
+        return None
 
 
 class Contribution(Page):
@@ -355,7 +365,7 @@ class Contribution(Page):
         if values['contribution'] < 0:
             return "Contribution cannot be negative"
         if values['contribution'] > 20:
-            return "Contribution cannot be greater than 20"
+            return "Please choose a contribution level between 0 and 20"
         return None
 
 class ComputeContribution(WaitPage):
@@ -393,6 +403,15 @@ class PostBeliefs(Page):
                 post_belief_co1_label='How much did {} contribute to the project?'.format(player.p3_nickname)
             )
 
+    @staticmethod
+    def error_message(player, values):
+        if values['post_belief_co0'] > 20 or values['post_belief_co1'] > 20:
+            return "Please report a belief between 0 and 20 for each person"
+        if C.PLAYERS_PER_GROUP > 3:
+            if values['post_belief_co2'] > 20:
+                return "Please report a belief between 0 and 20 for each person"
+        return None
+
 class IntermediateResults(Page):
     def is_displayed(player):
         return player.info_treatment
@@ -420,6 +439,14 @@ class PunBeliefsUncond(Page):
                 pun_belief_co1_label='How much will {} spend to decrease your earnings?'.format(player.p3_nickname)
             )
 
+    @staticmethod
+    def error_message(player, values):
+        if values['pun_belief_co0'] > 10 or values['pun_belief_co1'] > 10:
+            return "Please report a belief between 0 and 10 for each person"
+        if C.PLAYERS_PER_GROUP > 3:
+            if values['pun_belief_co2'] > 10:
+                return "Please report a belief between 0 and 10 for each person"
+        return None
 class PunBeliefsCond0(Page):
     form_model = 'player'
     form_fields = ['pun_cond_0_co0', 'pun_cond_0_co1', 'pun_cond_0_co2']
@@ -461,10 +488,10 @@ class Punishment(Page):
             or values['punishment_co1'] < 0
             or C.PLAYERS_PER_GROUP > 3 and ['punishment_co2'] < 0) :
             return "Value cannot be negative"
-        if (values['punishment_co0'] > 20 or
-            values['punishment_co1'] > 20 or
-            C.PLAYERS_PER_GROUP > 3 and values['punishment_co2'] > 20):
-            return "Value cannot be greater than 20"
+        if (values['punishment_co0'] > 10 or
+            values['punishment_co1'] > 10 or
+            C.PLAYERS_PER_GROUP > 3 and values['punishment_co2'] > 10):
+            return "Please choose a value between 0 and 10 for each person"
         return None
 
 class ComputeResults(WaitPage):

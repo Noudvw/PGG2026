@@ -10,7 +10,8 @@
 
 {% if C.TREATMENT == False%} <br>
 The total group contribution is {{group.collective_contribution}} <br>
-Your contribution is {{player.contribution}}
+Your contribution is {{player.contribution}} <br>
+This means that other players collectively contributed {{player.contribution_others}}
 <br>
 {% endif %}
 
