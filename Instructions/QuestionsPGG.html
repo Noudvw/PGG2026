@@ -1,0 +1,22 @@
+{{ extends "global/Page.html" }}
+
+{{ block title }}
+Question {{ player.round_number }}
+{{ endblock }}
+
+{{ block content }}
+<p>
+    {{ question_text }}
+</p>
+
+{{ formfield 'answer' }}
+
+<div class="row mt-3 mb-3">
+    <div class="col text-center">
+        {{ next_button }}
+    </div>
+</div>
+
+
+
+{{ endblock }}

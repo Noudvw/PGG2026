@@ -20,7 +20,7 @@ FEMALE_NAMES = ['Female1', 'Female2', 'Female3', 'Female4', 'Female5', 'Female6'
 RANDOM_LIST = [0, 1]
 
 class C(BaseConstants):
-    NAME_IN_URL = 'PGG'
+    NAME_IN_URL = 'Experiment'
     PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 1
     ENDOWMENT = 20
