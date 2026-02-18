@@ -484,14 +484,14 @@ class Punishment(Page):
 
     @staticmethod
     def error_message(player, values):
-        if (values['punishment_co0'] < 0
+        if  (values['punishment_co0'] < 0
             or values['punishment_co1'] < 0
-            or C.PLAYERS_PER_GROUP > 3 and ['punishment_co2'] < 0) :
-            return "Value cannot be negative"
+            or C.PLAYERS_PER_GROUP > 3 and values['punishment_co2'] < 0):
+                return "Value cannot be negative"
         if (values['punishment_co0'] > 10 or
             values['punishment_co1'] > 10 or
             C.PLAYERS_PER_GROUP > 3 and values['punishment_co2'] > 10):
-            return "Please choose a value between 0 and 10 for each person"
+                return "Please choose a value between 0 and 10 for each person"
         return None
 
 class ComputeResults(WaitPage):
