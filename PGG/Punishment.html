@@ -8,6 +8,10 @@
 
 {{ block content }}
 
+Please specify for each player how many Deduction Points you will assign to them.
+Remember: for each Deduction Point you assign to them, their total will decrease by {{C.PUN_MULTIPLIER}} Points.
+
+
 {% if C.TREATMENT == False%} <br>
 The total group contribution is {{group.collective_contribution}} <br>
 Your contribution is {{player.contribution}} <br>
@@ -47,10 +51,7 @@ This means that other players collectively contributed {{player.contribution_oth
 </table>
 {% endif %}
 
-</br>
-Please indicate for each player how much you want to spend to deduct their earnings.
-Remember: for each token you spend, their earnings will decrease by {{C.PUN_MULTIPLIER}} tokens
-</br>
+
 
 {{ formfield 'punishment_co0' label=punishment_co0_label }}
 {{ formfield 'punishment_co1' label=punishment_co1_label }}

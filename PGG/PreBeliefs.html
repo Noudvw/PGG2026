@@ -9,7 +9,7 @@
 {{ block content }}
 
 
-These are the players in the group:
+These are the players in the group: <br>
 <br>
 You ({{player.nickname}})
 <br>
@@ -21,7 +21,9 @@ You ({{player.nickname}})
 {{player.p4_nickname}}
 {% endif %}
 <br>
-Please indicate for each player how much you think they will contribute to the public good. Remember, the contribution can be any number from 0 to 20.
+<br>
+Please predict for each group member how many Points they will contribute to the group project.
+Remember, the contribution can be any number from 0 to 20. <br> <br>
 
 {{ formfield 'pre_belief_co0' label=pre_belief_co0_label }}
 {{ formfield 'pre_belief_co1' label=pre_belief_co1_label }}

@@ -39,7 +39,8 @@ This table gives an overview of the contribution of each group member
 </table>
 
 <br>
-This table gives an overview of punishment behavior
+
+This table shows who deducted Points from whom
 
 <br> <br>
 
@@ -48,9 +49,9 @@ This table gives an overview of punishment behavior
     <tr>
         <th> Player </th>
         <th> You (deduct) </th>
-        <th> {{player.p2_nickname}} (deduct) </th>
-        <th> {{player.p3_nickname}} (deduct) </th>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (punishes) </th> {% endif %}
+        <th> {{player.p2_nickname}} (deducts) </th>
+        <th> {{player.p3_nickname}} (deducts) </th>
+        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (deducts) </th> {% endif %}
     </tr>
 
     <tr>
@@ -95,7 +96,7 @@ This table gives an overview of punishment behavior
         <th> You (deduct) </th>
         <th> {{player.p2_nickname}} (deducts) </th>
         <th> {{player.p3_nickname}} (deducts) </th>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (punishes) </th> {% endif %}
+        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (deducts) </th> {% endif %}
     </tr>
 
     <tr>

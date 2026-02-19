@@ -15,19 +15,19 @@ doc = """
 Public Goods Game
 """
 
-MALE_NAMES = ['Male1', 'Male2', 'Male3', 'Male4', 'Male5', 'Male6', 'Male7', 'Male8' ]
-FEMALE_NAMES = ['Female1', 'Female2', 'Female3', 'Female4', 'Female5', 'Female6', 'Female7', 'Female8']
+MALE_NAMES = ['Christopher', 'Daniel', 'David', 'James', 'Joseph', 'Matthew', 'Michael', 'Thomas' ]
+FEMALE_NAMES = ['Emily', 'Julia', 'Katherine', 'Natalie', 'Rachel', 'Samantha', 'Sarah']
 RANDOM_LIST = [0, 1]
 
 class C(BaseConstants):
     NAME_IN_URL = 'Experiment'
-    PLAYERS_PER_GROUP = 3
+    PLAYERS_PER_GROUP = 4
     NUM_ROUNDS = 1
     ENDOWMENT = 20
     MPCR = 0.4
     PUN_MULTIPLIER = 3
     BONUS_MULTIPLIER = 4
-    TREATMENT = False
+    TREATMENT = True
 class Subsession(BaseSubsession):
     pass
 
@@ -234,7 +234,7 @@ class Player(BasePlayer):
     #Misc
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
-    contribution = models.IntegerField(label = "Please indicate your own contribution to the project")
+    contribution = models.IntegerField(label = "How many Points do you contribute to the group project?")
     contribution_others = models.IntegerField()
     fem_in_group = models.IntegerField(default=0)
     male_in_group = models.IntegerField(default=0)
@@ -336,23 +336,23 @@ class PreBeliefs(Page):
     def vars_for_template(player):
         if C.PLAYERS_PER_GROUP > 3:
             return dict(
-                pre_belief_co0_label = 'How much will {} contribute to the project?'.format(player.p2_nickname),
-                pre_belief_co1_label = 'How much will {} contribute to the project?'.format(player.p3_nickname),
-                pre_belief_co2_label = 'How much will {} contribute to the project?'.format(player.p4_nickname)
+                pre_belief_co0_label = 'How many Points will {} contribute to the project?'.format(player.p2_nickname),
+                pre_belief_co1_label = 'How many Points will {} contribute to the project?'.format(player.p3_nickname),
+                pre_belief_co2_label = 'How many Points will {} contribute to the project?'.format(player.p4_nickname)
             )
         else:
             return dict(
-                pre_belief_co0_label='How much will {} contribute to the project?'.format(player.p2_nickname),
-                pre_belief_co1_label='How much will {} contribute to the project?'.format(player.p3_nickname)
+                pre_belief_co0_label='How many Points will {} contribute to the project?'.format(player.p2_nickname),
+                pre_belief_co1_label='How many Points will {} contribute to the project?'.format(player.p3_nickname)
             )
 
     @staticmethod
     def error_message(player, values):
         if values['pre_belief_co0'] > 20 or values['pre_belief_co1'] > 20:
-            return "Please report a belief between 0 and 20 for each person"
+            return "Please report a number between 0 and 20 for each person"
         if C.PLAYERS_PER_GROUP > 3:
             if values['pre_belief_co2'] > 20:
-                return "Please report a belief between 0 and 20 for each person"
+                return "Please report a number between 0 and 20 for each person"
         return None
 
 
@@ -386,21 +386,20 @@ class PostBeliefs(Page):
         if C.PLAYERS_PER_GROUP > 3:
             fields.append('post_belief_co2')
         return fields
-    def is_displayed(player):
-        return player.info_treatment == False
+
 
     @staticmethod
     def vars_for_template(player):
         if C.PLAYERS_PER_GROUP > 3:
             return dict(
-                post_belief_co0_label='How much did {} contribute to the project?'.format(player.p2_nickname),
-                post_belief_co1_label='How much did {} contribute to the project?'.format(player.p3_nickname),
-                post_belief_co2_label='How much did {} contribute to the project?'.format(player.p4_nickname)
+                post_belief_co0_label='How many Points did {} contribute to the project?'.format(player.p2_nickname),
+                post_belief_co1_label='How many Points did {} contribute to the project?'.format(player.p3_nickname),
+                post_belief_co2_label='How many Points did {} contribute to the project?'.format(player.p4_nickname)
             )
         else:
             return dict(
-                post_belief_co0_label='How much did {} contribute to the project?'.format(player.p2_nickname),
-                post_belief_co1_label='How much did {} contribute to the project?'.format(player.p3_nickname)
+                post_belief_co0_label='How many Points did {} contribute to the project?'.format(player.p2_nickname),
+                post_belief_co1_label='How many Points did {} contribute to the project?'.format(player.p3_nickname)
             )
 
     @staticmethod
@@ -429,14 +428,14 @@ class PunBeliefsUncond(Page):
     def vars_for_template(player):
         if C.PLAYERS_PER_GROUP > 3:
             return dict(
-                pun_belief_co0_label='How much will {} spend to decrease your earnings?'.format(player.p2_nickname),
-                pun_belief_co1_label='How much will {} spend to decrease your earnings?'.format(player.p3_nickname),
-                pun_belief_co2_label='How much will {} spend to decrease your earnings?'.format(player.p4_nickname)
+                pun_belief_co0_label='How many Deduction Points will {} assign to you?'.format(player.p2_nickname),
+                pun_belief_co1_label='How many Deduction Points will {} assign to you?'.format(player.p3_nickname),
+                pun_belief_co2_label='How many Deduction Points will {} assign to you?'.format(player.p4_nickname)
             )
         else:
             return dict(
-                pun_belief_co0_label='How much will {} spend to decrease your earnings?'.format(player.p2_nickname),
-                pun_belief_co1_label='How much will {} spend to decrease your earnings?'.format(player.p3_nickname)
+                pun_belief_co0_label='How many Deduction Points will {} assign to you?'.format(player.p2_nickname),
+                pun_belief_co1_label='How many Deduction Points will {} assign to you?'.format(player.p3_nickname)
             )
 
     @staticmethod
@@ -472,14 +471,14 @@ class Punishment(Page):
     def vars_for_template(player):
         if C.PLAYERS_PER_GROUP > 3:
             return dict(
-                punishment_co0_label='How much do you spend to deduct earnings of {}?'.format(player.p2_nickname),
-                punishment_co1_label='How much do you spend to deduct earnings of {}?'.format(player.p3_nickname),
-                punishment_co2_label='How much do you spend to deduct earnings of {}?'.format(player.p4_nickname)
+                punishment_co0_label='How many Deduction Points do you assign to {}?'.format(player.p2_nickname),
+                punishment_co1_label='How many Deduction Points do you assign to {}?'.format(player.p3_nickname),
+                punishment_co2_label='How many Deduction Points do you assign to {}?'.format(player.p4_nickname)
             )
         else:
             return dict(
-                punishment_co0_label='How much do you spend to deduct earnings of {}?'.format(player.p2_nickname),
-                punishment_co1_label='How much do you spend to deduct earnings of {}?'.format(player.p3_nickname)
+                punishment_co0_label='How many Deduction Points do you assign to {}?'.format(player.p2_nickname),
+                punishment_co1_label='How many Deduction Points do you assign to {}?'.format(player.p3_nickname)
             )
 
     @staticmethod
