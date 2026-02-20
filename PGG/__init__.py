@@ -21,7 +21,7 @@ RANDOM_LIST = [0, 1]
 
 class C(BaseConstants):
     NAME_IN_URL = 'Experiment'
-    PLAYERS_PER_GROUP = 4
+    PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 1
     ENDOWMENT = 20
     MPCR = 0.4
@@ -50,6 +50,15 @@ class Group(BaseGroup):
             p.fem_in_group = fem_count
             p.male_in_group = male_count
             p.info_treatment = C.TREATMENT
+
+    def set_bonus_rounds(self):
+        for p in self.get_players():
+            if C.PLAYERS_PER_GROUP == 4:
+                p.belief_that_counts_1 = random.randint(0,8)
+                p.belief_that_counts_2 = random.randint(0,8)
+            if C.PLAYERS_PER_GROUP < 4:
+                p.belief_that_counts_1 = random.randint(0,5)
+                p.belief_that_counts_2 = random.randint(0,5)
 
     def set_nicknames_group(self):
         fem = 0
@@ -96,55 +105,78 @@ class Group(BaseGroup):
             if p.id_in_group == 1 and C.PLAYERS_PER_GROUP > 3:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0 + p.p4_punishment_co0
                 if p.p2_punishment_co0 == p.pun_belief_co0:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co0 += 1
                 if p.p3_punishment_co0 == p.pun_belief_co1:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co1 += 1
                 if p.p4_punishment_co0 == p.pun_belief_co2:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co2 += 1
             if p.id_in_group == 1 and C.PLAYERS_PER_GROUP < 4:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0
                 if p.p2_punishment_co0 == p.pun_belief_co0:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co0 += 1
                 if p.p3_punishment_co0 == p.pun_belief_co1:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co1 += 1
             if p.id_in_group == 2 and C.PLAYERS_PER_GROUP > 3:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1 + p.p4_punishment_co1
                 if p.p2_punishment_co0 == p.pun_belief_co0:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co0 += 1
                 if p.p3_punishment_co1 == p.pun_belief_co1:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co1 += 1
                 if p.p4_punishment_co1 == p.pun_belief_co2:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co2 += 1
             if p.id_in_group == 2 and C.PLAYERS_PER_GROUP < 4:
                 p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1
                 if p.p2_punishment_co0 == p.pun_belief_co0:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co0 += 1
                 if p.p3_punishment_co1 == p.pun_belief_co1:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co1 += 1
             if p.id_in_group == 3 and C.PLAYERS_PER_GROUP > 3:
                 p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1 + p.p4_punishment_co2
                 if p.p2_punishment_co1 == p.pun_belief_co0:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co0 += 1
                 if p.p3_punishment_co1 == p.pun_belief_co1:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co1 += 1
                 if p.p4_punishment_co2 == p.pun_belief_co2:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co2 += 1
             if p.id_in_group == 3 and C.PLAYERS_PER_GROUP < 4:
                 p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1
                 if p.p2_punishment_co0 == p.pun_belief_co1:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co0 += 1
                 if p.p3_punishment_co0 == p.pun_belief_co1:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co1 += 1
             if p.id_in_group == 4:
                 p.pun_received = p.p2_punishment_co2 + p.p3_punishment_co2 + p.p4_punishment_co2
                 if p.p2_punishment_co2 == p.pun_belief_co0:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co0 += 1
                 if p.p3_punishment_co2 == p.pun_belief_co1:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co1 += 1
                 if p.p4_punishment_co2 == p.pun_belief_co2:
-                    p.bonus_counter += 1
+                    p.bonus_pun_co2 += 1
             p.pun_received_costs = C.PUN_MULTIPLIER * p.pun_received
-            p.bonus_earnings = p.bonus_counter * C.BONUS_MULTIPLIER
+
+            if C.PLAYERS_PER_GROUP > 3:
+                bonuses_list = [
+                    p.bonus_pre_co0,
+                    p.bonus_pre_co1,
+                    p.bonus_pre_co2,
+                    p.bonus_post_co0,
+                    p.bonus_post_co1,
+                    p.bonus_post_co2,
+                    p.bonus_pun_co0,
+                    p.bonus_pun_co1,
+                    p.bonus_pun_co2
+                ]
+                p.bonus_earnings = bonuses_list[p.belief_that_counts_1] * C.BONUS_MULTIPLIER
+            if C.PLAYERS_PER_GROUP < 4:
+                bonuses_list = [
+                    p.bonus_pre_co0,
+                    p.bonus_pre_co1,
+                    p.bonus_post_co0,
+                    p.bonus_post_co1,
+                    p.bonus_pun_co0,
+                    p.bonus_pun_co1,
+                ]
+                p.bonus_earnings = bonuses_list[p.belief_that_counts_1]
             p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
 
     def set_other_contributions(self):
@@ -161,24 +193,24 @@ class Group(BaseGroup):
         for p in self.get_players():
             others = p.get_others_in_group()
             if p.pre_belief_co0 == p.p2_contribution :
-                p.bonus_counter += 1
+                p.bonus_pre_co0 += 1
             if p.pre_belief_co1 == p.p3_contribution :
-                p.bonus_counter += 1
+                p.bonus_pre_co1 += 1
             if C.PLAYERS_PER_GROUP > 3:
                 if p.pre_belief_co2 == p.p4_contribution:
-                    p.bonus_counter += 1
+                    p.bonus_pre_co2 += 1
 
     def bonus_post_beliefs(self):
         for p in self.get_players():
             others = p.get_others_in_group()
             if p.info_treatment == False:
                 if p.post_belief_co0 == p.p2_contribution:
-                    p.bonus_counter += 1
+                    p.bonus_post_co0 += 1
                 if p.post_belief_co1 == p.p3_contribution:
-                    p.bonus_counter += 1
+                    p.bonus_post_co1 += 1
                 if C.PLAYERS_PER_GROUP > 3:
                     if p.post_belief_co2 == p.p4_contribution:
-                        p.bonus_counter += 1
+                        p.bonus_post_co2 += 1
             else: pass
 
 
@@ -239,6 +271,26 @@ class Player(BasePlayer):
     fem_in_group = models.IntegerField(default=0)
     male_in_group = models.IntegerField(default=0)
     bonus_counter = models.IntegerField(default = 0)
+    belief_that_counts_1 = models.IntegerField()
+    belief_that_counts_2 = models.IntegerField()
+    bonus_pre_co0 = models.IntegerField(default = 0)
+    bonus_pre_co1 = models.IntegerField(default = 0)
+    bonus_pre_co2 = models.IntegerField(default = 0)
+    bonus_post_co0 = models.IntegerField(default = 0)
+    bonus_post_co1 = models.IntegerField(default = 0)
+    bonus_post_co2 = models.IntegerField(default = 0)
+    bonus_pun_co0 = models.IntegerField(default = 0)
+    bonus_pun_co1 = models.IntegerField(default = 0)
+    bonus_pun_co2 = models.IntegerField(default = 0)
+    prob_bonus_pre_co0 = models.IntegerField(default = 0)
+    prob_bonus_pre_co1 = models.IntegerField(default = 0)
+    prob_bonus_pre_co2 = models.IntegerField(default = 0)
+    prob_bonus_post_co0 = models.IntegerField(default = 0)
+    prob_bonus_post_co1 = models.IntegerField(default = 0)
+    prob_bonus_post_co2 = models.IntegerField(default = 0)
+    prob_bonus_pun_co0 = models.IntegerField(default = 0)
+    prob_bonus_pun_co1 = models.IntegerField(default = 0)
+    prob_bonus_pun_co2 = models.IntegerField(default = 0)
     #Beliefs
     pre_belief_co0 = models.IntegerField()
     pre_belief_co1 = models.IntegerField()
@@ -315,6 +367,7 @@ class Demographics(Page):
 
 class DemographicsWait(WaitPage):
     def after_all_players_arrive(group):
+        group.set_bonus_rounds()
         group.compute_group_gender()
         group.set_nicknames_group()
         group.set_other_names()

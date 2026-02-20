@@ -20,9 +20,10 @@ dict(
         app_sequence=[
             "PGG"
         ],
-        num_demo_participants=4,
+        num_demo_participants=3,
     ),
 ]
+
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
 # in SESSION_CONFIGS, except those that explicitly override it.
