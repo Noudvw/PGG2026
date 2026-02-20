@@ -1,0 +1,22 @@
+{{ block content }}
+
+Please fill in the following questions. We will show you the results of the game on the next page.
+
+{{ formfield 'nickname_child_own' label=nickname_child_own_label }}
+{{ formfield 'nickname_friends_own' label=nickname_friends_own_label }}
+{{ formfield 'nickname_others_own' label=nickname_others_own_label }}
+{{ formfield 'nickname_child_co0' label=nickname_child_co0_label }}
+{{ formfield 'nickname_friends_co0' label=nickname_friends_co0_label }}
+{{ formfield 'nickname_others_co0' label=nickname_others_co0_label }}
+{{ formfield 'nickname_child_co1' label=nickname_child_co1_label }}
+{{ formfield 'nickname_friends_co1' label=nickname_friends_co1_label }}
+{{ formfield 'nickname_others_co1' label=nickname_others_co1_label }}
+{% if player.participant.group_size > 3%}
+{{ formfield 'nickname_child_co2' label=nickname_child_co2_label }}
+{{ formfield 'nickname_friends_co2' label=nickname_friends_co2_label }}
+{{ formfield 'nickname_others_co2' label=nickname_others_co2_label }}
+{% endif %}
+
+    {{ next_button }}
+
+{{ endblock }}

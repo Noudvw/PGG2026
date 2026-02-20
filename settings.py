@@ -22,6 +22,14 @@ dict(
         ],
         num_demo_participants=3,
     ),
+dict(
+        name="Debrief_demo",
+        app_sequence=[
+            "PGG",
+            "Debrief"
+        ],
+        num_demo_participants=3,
+    ),
 ]
 
 
@@ -36,7 +44,12 @@ SESSION_CONFIG_DEFAULTS = dict(
     doc=""
 )
 
-PARTICIPANT_FIELDS = []
+PARTICIPANT_FIELDS = [
+    'nickname_own',
+    'nickname_co0',
+    'nickname_co1',
+    'nickname_co2',
+    'group_size']
 SESSION_FIELDS = []
 
 # ISO-639 code

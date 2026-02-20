@@ -1,5 +1,3 @@
-from multiprocessing.spawn import prepare
-
 from otree.api import (
     BaseConstants,
     BaseGroup,
@@ -178,6 +176,7 @@ class Group(BaseGroup):
                 ]
                 p.bonus_earnings = bonuses_list[p.belief_that_counts_1]
             p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
+            p.participant.group_size = C.PLAYERS_PER_GROUP
 
     def set_other_contributions(self):
         for p in self.get_players():
@@ -249,6 +248,14 @@ class Group(BaseGroup):
             p.p3_nickname = others[1].nickname
             if len(others) > 2:
                 p.p4_nickname = others[2].nickname
+            p.participant.nickname_own = p.nickname
+            p.participant.nickname_co0 = p.p2_nickname
+            p.participant.nickname_co1 = p.p3_nickname
+            if C.PLAYERS_PER_GROUP > 3:
+                p.participant.nickname_co2 = p.p4_nickname
+            else:
+                p.participant.nickname_co2 = None
+
 
 class Player(BasePlayer):
     info_treatment = models.BooleanField()
