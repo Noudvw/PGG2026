@@ -33,28 +33,27 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     attempt_count = models.IntegerField(initial=0)
-    question1 = models.IntegerField()
+    question1 = models.IntegerField(label ="Your income?" )
+    question2 = models.IntegerField(label ="The income of the other group members?" )
 
 
 # PAGES
-class ControlQuestion(Page):
+class QuestionsPGG(Page):
     form_model = "player"
-    form_fields = ["question1"]
-
-    @staticmethod
-    def vars_for_template(player: Player) -> dict:
-        return Questions.question_data[player.round_number]
+    form_fields = ["question1", "question2"]
 
     @staticmethod
     def error_message(player: Player, values: dict) -> str | None:
         player.attempt_count += 1
-        if values["question"] != Questions.question_data[player.round_number]["question_answer"]:
-            return Questions.question_data[player.round_number]["question_hint"]
+        if values["question1"] != Questions.question_data[1]["question_answer"]:
+            return Questions.question_data[1]["question_hint"]
+        if values["question2"] != Questions.question_data[2]["question_answer"]:
+            return Questions.question_data[2]["question_hint"]
         return None
 
 
-class CQWaitPage(WaitPage):
-    template_name = "quiz/CQWaitPage.html"
+class WaitPageCompleted(WaitPage):
+    template_name = "quiz/WaitPageCompleted.html"
     wait_for_all_groups = True
 
     @staticmethod
@@ -63,6 +62,6 @@ class CQWaitPage(WaitPage):
 
 
 page_sequence = [
-    ControlQuestion,
-    CQWaitPage,
+    QuestionsPGG,
+    WaitPageCompleted,
 ]

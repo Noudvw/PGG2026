@@ -22,6 +22,13 @@ dict(
         ],
         num_demo_participants=3,
     ),
+
+dict(
+        name = "Instructions_demo",
+        app_sequence=["Instructions"],
+        num_demo_participants = 3,
+),
+
 dict(
         name="Debrief_demo",
         app_sequence=[

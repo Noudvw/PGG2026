@@ -2,10 +2,15 @@
 
 question_data = {
     1: {
-        "question_text": "How much would you earn from the group project?",
-        "question_answer": "20",
+        "question_answer": 20,
         "question_hint": (
-            "Earnings consist of remaining endowment and earnings received from the group project"
+            "Your answer to question 1 is incorrect. Reminder: Earnings consist of remaining endowment and earnings received from the group project"
+        ),
+    },
+    2: {
+        "question_answer": 20,
+        "question_hint": (
+            "Your answer to question 2 is incorrect. Reminder:Earnings consist of remaining endowment and earnings received from the group project"
         ),
     },
 }

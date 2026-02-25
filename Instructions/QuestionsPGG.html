@@ -5,11 +5,12 @@ Question {{ player.round_number }}
 {{ endblock }}
 
 {{ block content }}
-<p>
-    {{ question_text }}
-</p>
 
-{{ formfield 'answer' }}
+At the start of the game, each group member receives 20 Points. Suppose nobody (including you) contributes any
+Points to the group project. What is:
+{{ formfield 'question1' }}
+{{ formfield 'question2' }}
+
 
 <div class="row mt-3 mb-3">
     <div class="col text-center">
