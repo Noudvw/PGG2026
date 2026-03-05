@@ -42,7 +42,7 @@ class Player(BasePlayer):
     question7 = models.IntegerField(label="Q7: By how many Points will your income be reduced by assigning Deduction Points?")
     question8 = models.IntegerField(label="Q8: By how many Points will your income be reduced by assigning Deduction Points?")
     question9 = models.IntegerField(label="Q9: By how many Points will your income be reduced by receiving Deduction Points?")
-    question10 = models.IntegerField(label="Q10: How many Points will be added to your income?")
+    question10 = models.IntegerField(label="Q10: Suppose you got the question_that_counts correct. How many Points will be added to your income?")
 
 
     q1mistakes = models.IntegerField(initial=0)

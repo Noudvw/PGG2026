@@ -1,22 +1,23 @@
 {{ extends "global/Page.html" }}
+{% load static %}
 
 {{ block title }}
 Comprehension Questions: Part 3 of 3
 {{ endblock }}
 
+{% block styles %}
+<link rel="stylesheet" href="{% static 'global/theme.css' %}">
+{% endblock %}
+
 {{ block content }}
-Suppose you correctly predict the contribution of another player. This prediction is also the question_that_counts.
-{{formfield 'question10'}}
-
-
-
-
-<div class="row mt-3 mb-3">
-    <div class="col text-center">
-        {{ next_button }}
-    </div>
+<div class="question-box">
+{{ formfield 'question10' }}
 </div>
 
-
+<div class="row mt-4">
+<div class="col text-center">
+{{ next_button }}
+</div>
+</div>
 
 {{ endblock }}
