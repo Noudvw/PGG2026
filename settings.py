@@ -37,6 +37,26 @@ dict(
         ],
         num_demo_participants=3,
     ),
+
+dict(
+        name="Demographics_demo",
+        app_sequence=[
+            "Demographics",
+            "PGG"
+        ],
+        num_demo_participants=3,
+    ),
+
+dict(
+        name="Full_Exp_Demo",
+        app_sequence=[
+            "Demographics",
+            "Instructions",
+            "PGG",
+            "Debrief"
+        ],
+        num_demo_participants=3,
+    ),
 ]
 
 

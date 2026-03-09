@@ -26,9 +26,9 @@ class C(BaseConstants):
     PUN_MULTIPLIER = 3
     BONUS_MULTIPLIER = 4
     TREATMENT = True
+
 class Subsession(BaseSubsession):
     pass
-
 
 class Group(BaseGroup):
     PG_earnings = models.FloatField()
@@ -51,6 +51,8 @@ class Group(BaseGroup):
 
     def set_bonus_rounds(self):
         for p in self.get_players():
+            p.endowment = C.ENDOWMENT
+            p.gender = p.participant.vars['gender']
             if C.PLAYERS_PER_GROUP == 4:
                 p.belief_that_counts_1 = random.randint(0,8)
                 p.belief_that_counts_2 = random.randint(0,8)
@@ -347,8 +349,6 @@ class Player(BasePlayer):
     p4_punishment_co1 = models.IntegerField()
     p4_punishment_co2 = models.IntegerField()
 
-    def setup_round(self):
-        self.endowment = C.ENDOWMENT
 
     def coplayer0(self):
         return self.get_others_in_group()[0]
@@ -361,16 +361,6 @@ class Player(BasePlayer):
             return self.get_others_in_group()[2]
         return None
 
-class SetUpRound(WaitPage):
-    wait_for_all_groups = True
-    @staticmethod
-    def after_all_players_arrive(subsession):
-        for p in subsession.get_players():
-            p.setup_round()
-
-class Demographics(Page):
-    form_model = 'player'
-    form_fields = ['gender']
 
 class DemographicsWait(WaitPage):
     def after_all_players_arrive(group):
@@ -569,8 +559,6 @@ class Results(Page):
 
 # PAGES
 page_sequence = [
-    SetUpRound,
-    Demographics,
     DemographicsWait,
     GroupDisplay,
     PreBeliefs,
