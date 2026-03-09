@@ -30,6 +30,9 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+    study_purpose = models.StringField(label = "What do you think is the purpose of this study?")
+    study_issues = models.StringField(label = "Did you experience any issues during this study? If so, include them here")
+
     nickname_child_own = models.IntegerField(choices = [ 1, 2, 3, 4, 5, 6, 7],
                                              widget= widgets.RadioSelect)
     nickname_friends_own = models.StringField()
@@ -53,7 +56,7 @@ class Debrief_Page(Page):
 
     @staticmethod
     def get_form_fields(player):
-        fields = ['nickname_child_own', 'nickname_friends_own', 'nickname_others_own',
+        fields = ['study_purpose', 'study_issues', 'nickname_child_own', 'nickname_friends_own', 'nickname_others_own',
                   'nickname_child_co0', 'nickname_friends_co0', 'nickname_others_co0',
                   'nickname_child_co1', 'nickname_friends_co1', 'nickname_others_co1']
         if PGG_C.PLAYERS_PER_GROUP > 3:
@@ -71,7 +74,7 @@ class Debrief_Page(Page):
         own = player.participant.nickname_own
         labels.update({
             'nickname_child_own_label':
-                f'From a 1-7 scale, how much would you consider giving your child {own}? (1 = not at all, 7 = absolutely)',
+                f'From a 1-7 scale, how much would you consider giving your child the name {own}? (1 = not at all, 7 = absolutely)',
             'nickname_friends_own_label':
                 f'Are any of your best friends or relatives called {own}? Please mention the relationship you have with them',
             'nickname_others_own_label':
@@ -85,7 +88,7 @@ class Debrief_Page(Page):
             if nickname:
                 labels.update({
                     f'nickname_child_co{i}_label':
-                        f'From a 1-7 scale, how much would you consider giving your child {nickname}? (1 = not at all, 7 = absolutely)',
+                        f'From a 1-7 scale, how much would you consider giving your child the name {nickname}? (1 = not at all, 7 = absolutely)',
                     f'nickname_friends_co{i}_label':
                         f'Are any of your best friends or relatives called {nickname}? Please mention the relationship you have with them',
                     f'nickname_others_co{i}_label':
