@@ -16,14 +16,6 @@ SESSION_CONFIGS = [
         num_demo_participants=3,
     ),
 dict(
-        name="PGG_demo",
-        app_sequence=[
-            "PGG"
-        ],
-        num_demo_participants=3,
-    ),
-
-dict(
         name = "Instructions_demo",
         app_sequence=["Instructions"],
         num_demo_participants = 3,

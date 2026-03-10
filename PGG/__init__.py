@@ -311,15 +311,6 @@ class Player(BasePlayer):
     pun_belief_co0 = models.IntegerField()
     pun_belief_co1 = models.IntegerField()
     pun_belief_co2 = models.IntegerField()
-    pun_cond_0_co0 = models.IntegerField()
-    pun_cond_0_co1 = models.IntegerField()
-    pun_cond_0_co2 = models.IntegerField()
-    pun_cond_10_co0 = models.IntegerField()
-    pun_cond_10_co1 = models.IntegerField()
-    pun_cond_10_co2 = models.IntegerField()
-    pun_cond_20_co0 = models.IntegerField()
-    pun_cond_20_co1 = models.IntegerField()
-    pun_cond_20_co2 = models.IntegerField()
     #Punishment
     punishment_costs = models.IntegerField()
     pun_received_costs = models.IntegerField()
@@ -459,6 +450,16 @@ class PostBeliefs(Page):
         if C.PLAYERS_PER_GROUP > 3:
             if values['post_belief_co2'] > 20:
                 return "Please report a belief between 0 and 20 for each person"
+        total = values['post_belief_co0'] + values ['post_belief_co1']
+        if C.PLAYERS_PER_GROUP > 3:
+            total += values['post_belief_co2']
+        if total != player.contribution_others:
+            return (
+                f"Note: Your reported values add up to "
+            f"{total} points. "
+            f"Please ensure that your reported values add up to "
+            f"{player.contribution_others} points."
+            )
         return None
 
 class IntermediateResults(Page):
@@ -496,17 +497,6 @@ class PunBeliefsUncond(Page):
             if values['pun_belief_co2'] > 10:
                 return "Please report a belief between 0 and 10 for each person"
         return None
-class PunBeliefsCond0(Page):
-    form_model = 'player'
-    form_fields = ['pun_cond_0_co0', 'pun_cond_0_co1', 'pun_cond_0_co2']
-
-class PunBeliefsCond10(Page):
-    form_model = 'player'
-    form_fields = ['pun_cond_10_co0', 'pun_cond_10_co1', 'pun_cond_10_co2']
-
-class PunBeliefsCond20(Page):
-    form_model = 'player'
-    form_fields = ['pun_cond_20_co0', 'pun_cond_20_co1', 'pun_cond_20_co2']
 
 class Punishment(Page):
     form_model = 'player'
@@ -566,8 +556,8 @@ page_sequence = [
     ComputeContribution,
     PostBeliefs,
     IntermediateResults,
-    PunBeliefsUncond,
     Punishment,
+    PunBeliefsUncond,
     ComputeResults,
     Results,
 ]
