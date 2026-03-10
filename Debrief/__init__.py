@@ -30,25 +30,29 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    study_purpose = models.StringField(label = "What do you think is the purpose of this study?")
-    study_issues = models.StringField(label = "Did you experience any issues during this study? If so, include them here")
+    study_purpose = models.LongStringField(label = "What do you think is the purpose of this study?")
+    study_issues = models.LongStringField(label = "Did you experience any issues during this study? If so, include them here")
+
+    prior_experience = models.IntegerField(label = "How many times have you participated in other Prolific studies?")
+    similar_prior_experience = models.IntegerField(label = "How many times have you participated in studies that are similar to this one?")
+    similar_prior_experience_descriptive = models.LongStringField(label = "Can you tell us something about the similar studies that you participated in?")
 
     nickname_child_own = models.IntegerField(choices = [ 1, 2, 3, 4, 5, 6, 7],
                                              widget= widgets.RadioSelect)
-    nickname_friends_own = models.StringField()
-    nickname_others_own = models.StringField()
+    nickname_friends_own = models.LongStringField()
+    nickname_others_own = models.LongStringField()
     nickname_child_co0 = models.IntegerField(choices = [ 1, 2, 3, 4, 5, 6, 7],
                                              widget= widgets.RadioSelect)
-    nickname_friends_co0 = models.StringField()
-    nickname_others_co0 = models.StringField()
+    nickname_friends_co0 = models.LongStringField()
+    nickname_others_co0 = models.LongStringField()
     nickname_child_co1 = models.IntegerField(choices = [ 1, 2, 3, 4, 5, 6, 7],
                                              widget= widgets.RadioSelect)
-    nickname_friends_co1 = models.StringField()
-    nickname_others_co1 = models.StringField()
+    nickname_friends_co1 = models.LongStringField()
+    nickname_others_co1 = models.LongStringField()
     nickname_child_co2 = models.IntegerField(choices = [ 1, 2, 3, 4, 5, 6, 7],
                                              widget= widgets.RadioSelect)
-    nickname_friends_co2 = models.StringField()
-    nickname_others_co2 = models.StringField()
+    nickname_friends_co2 = models.LongStringField()
+    nickname_others_co2 = models.LongStringField()
 
 # PAGES
 class Debrief_Page(Page):
@@ -56,8 +60,9 @@ class Debrief_Page(Page):
 
     @staticmethod
     def get_form_fields(player):
-        fields = ['study_purpose', 'study_issues', 'nickname_child_own', 'nickname_friends_own', 'nickname_others_own',
-                  'nickname_child_co0', 'nickname_friends_co0', 'nickname_others_co0',
+        fields = ['study_purpose', 'study_issues', 'prior_experience', 'similar_prior_experience',
+                  'similar_prior_experience_descriptive', 'nickname_child_own', 'nickname_friends_own',
+                  'nickname_others_own', 'nickname_child_co0', 'nickname_friends_co0', 'nickname_others_co0',
                   'nickname_child_co1', 'nickname_friends_co1', 'nickname_others_co1']
         if PGG_C.PLAYERS_PER_GROUP > 3:
             fields.append('nickname_child_co2')
