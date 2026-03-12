@@ -28,9 +28,12 @@ This means that other players collectively contributed {{player.contribution_oth
 </br>
 
 {{ formfield 'post_belief_co0' label=post_belief_co0_label }}
+{{ formfield 'prob_post_co0'}}
 {{ formfield 'post_belief_co1' label=post_belief_co1_label }}
+{{ formfield 'prob_post_co1'}}
 {% if C.PLAYERS_PER_GROUP > 3 %}
 {{ formfield 'post_belief_co2' label=post_belief_co2_label }}
+{{ formfield 'prob_post_co2'}}
 {% endif %}
 
 {{next_button}}

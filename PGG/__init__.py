@@ -33,6 +33,8 @@ class Subsession(BaseSubsession):
 class Group(BaseGroup):
     PG_earnings = models.FloatField()
     collective_contribution = models.IntegerField()
+
+    #Creates a variable that stores the number of men and women in the group as a variable at the individual level.
     def compute_group_gender(self):
         fem_count = 0
         male_count = 0
@@ -42,17 +44,18 @@ class Group(BaseGroup):
             elif p.gender == 2:
                 male_count += 1
             else:
-                fem_count += 1
-                male_count += 1
+                pass
         for p in self.get_players():
             p.fem_in_group = fem_count
             p.male_in_group = male_count
             p.info_treatment = C.TREATMENT
 
     def set_bonus_rounds(self):
+        #Sets multiple values at the player level, such as size of endowment, gender, round that counts for bonus and probability of winning said bonus
         for p in self.get_players():
             p.endowment = C.ENDOWMENT
             p.gender = p.participant.vars['gender']
+            p.prob_of_winning = random.randint(1,100)
             if C.PLAYERS_PER_GROUP == 4:
                 p.belief_that_counts_1 = random.randint(0,8)
                 p.belief_that_counts_2 = random.randint(0,8)
@@ -60,13 +63,12 @@ class Group(BaseGroup):
                 p.belief_that_counts_1 = random.randint(0,5)
                 p.belief_that_counts_2 = random.randint(0,5)
 
+    # Allocates nicknames to each person. Currently still allocates nicknames to non-binary people. I can change that once a screening-out code has been added
     def set_nicknames_group(self):
         fem = 0
         male = 0
         random.shuffle(MALE_NAMES)
         random.shuffle(FEMALE_NAMES)
-
-
         for p in self.get_players():
             #count genders
             if p.gender == 1:
@@ -83,18 +85,22 @@ class Group(BaseGroup):
                 elif RANDOM_LIST[0] == 1:
                     p.nickname = MALE_NAMES[male]
                     male +=1
-
+    #Computes collective contribution and preliminary earnings, using contribution of each player. Only computes group-level outcomes
+    #, such as group collective contribution and group earnings from the PGG
     def compute_group_earnings(self):
         self.collective_contribution = sum(p.contribution for p in self.get_players())
         unrounded_earnings = self.collective_contribution * C.MPCR
         self.PG_earnings = round(unrounded_earnings, 2)
-
+    # Note: Using the code in this way means that I always have to call compute_earnings after compute_group_earnings
+    # Computes individual variables, such as remaining endowment and contribution of others in group
     def compute_earnings(self):
         for p in self.get_players():
             p.remaining_endowment = p.endowment - p.contribution
             p.intermediate_earnings = p.remaining_endowment + self.PG_earnings
             p.contribution_others = self.collective_contribution - p.contribution
 
+    #Post punishment, so this is where things get a little messy.
+    # Gives bonus points if predictions are correct and received punishment, both dependent on id in group and total group size
     def compute_earnings_post_punishment(self):
         for p in self.get_players():
             p.remaining_endowment = p.endowment - p.contribution
@@ -153,7 +159,7 @@ class Group(BaseGroup):
                 if p.p4_punishment_co2 == p.pun_belief_co2:
                     p.bonus_pun_co2 += 1
             p.pun_received_costs = C.PUN_MULTIPLIER * p.pun_received
-
+# I should change this part to allow for my design
             if C.PLAYERS_PER_GROUP > 3:
                 bonuses_list = [
                     p.bonus_pre_co0,
@@ -166,7 +172,26 @@ class Group(BaseGroup):
                     p.bonus_pun_co1,
                     p.bonus_pun_co2
                 ]
-                p.bonus_earnings = bonuses_list[p.belief_that_counts_1] * C.BONUS_MULTIPLIER
+                beliefs_list = [
+                    p.prob_pre_co0,
+                    p.prob_pre_co1,
+                    p.prob_pre_co2,
+                    p.prob_post_co0,
+                    p.prob_post_co1,
+                    p.prob_post_co2,
+                    p.prob_pun_co0,
+                    p.prob_pun_co1,
+                    p.prob_pun_co2
+                ]
+                p.correct_prediction = bonuses_list[p.belief_that_counts_1]
+                p.prob_stated = beliefs_list[p.belief_that_counts_1]
+                probability = p.prob_of_winning / 100
+                p.won_lottery = 1 if random.random() < probability else 0
+                if p.prob_of_winning > p.prob_stated:
+                    p.won_bonus = p.won_lottery
+                elif p.prob_of_winning <= p.prob_stated:
+                    p.won_bonus = p.correct_prediction
+                p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
             if C.PLAYERS_PER_GROUP < 4:
                 bonuses_list = [
                     p.bonus_pre_co0,
@@ -176,7 +201,24 @@ class Group(BaseGroup):
                     p.bonus_pun_co0,
                     p.bonus_pun_co1,
                 ]
-                p.bonus_earnings = bonuses_list[p.belief_that_counts_1] * C.BONUS_MULTIPLIER
+                beliefs_list = [
+                    p.prob_pre_co0,
+                    p.prob_pre_co1,
+                    p.prob_post_co0,
+                    p.prob_post_co1,
+                    p.prob_pun_co0,
+                    p.prob_pun_co1
+                ]
+
+                p.correct_prediction = bonuses_list[p.belief_that_counts_1]
+                p.prob_stated = beliefs_list[p.belief_that_counts_1]
+                probability = p.prob_of_winning / 100
+                p.won_lottery = 1 if random.random() < probability else 0
+                if p.prob_of_winning > p.prob_stated:
+                    p.won_bonus = p.won_lottery
+                elif p.prob_of_winning <= p.prob_stated:
+                    p.won_bonus = bonuses_list[p.belief_that_counts_1]
+                p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
             p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
             p.participant.group_size = C.PLAYERS_PER_GROUP
 
@@ -203,15 +245,13 @@ class Group(BaseGroup):
 
     def bonus_post_beliefs(self):
         for p in self.get_players():
-            others = p.get_others_in_group()
-            if p.info_treatment == False:
-                if p.post_belief_co0 == p.p2_contribution:
-                    p.bonus_post_co0 += 1
-                if p.post_belief_co1 == p.p3_contribution:
-                    p.bonus_post_co1 += 1
-                if C.PLAYERS_PER_GROUP > 3:
-                    if p.post_belief_co2 == p.p4_contribution:
-                        p.bonus_post_co2 += 1
+            if p.post_belief_co0 == p.p2_contribution:
+                p.bonus_post_co0 += 1
+            if p.post_belief_co1 == p.p3_contribution:
+                p.bonus_post_co1 += 1
+            if C.PLAYERS_PER_GROUP > 3:
+                if p.post_belief_co2 == p.p4_contribution:
+                    p.bonus_post_co2 += 1
             else: pass
 
 
@@ -301,16 +341,25 @@ class Player(BasePlayer):
     prob_bonus_pun_co1 = models.IntegerField(default = 0)
     prob_bonus_pun_co2 = models.IntegerField(default = 0)
     #Beliefs
+    prob_of_winning = models.IntegerField()
     pre_belief_co0 = models.IntegerField()
+    prob_pre_co0 = models.IntegerField()
     pre_belief_co1 = models.IntegerField()
+    prob_pre_co1 = models.IntegerField()
     pre_belief_co2 = models.IntegerField()
+    prob_pre_co2 = models.IntegerField()
     post_belief_co0 = models.IntegerField()
+    prob_post_co0 = models.IntegerField()
     post_belief_co1 = models.IntegerField()
+    prob_post_co1 = models.IntegerField()
     post_belief_co2 = models.IntegerField()
-    #Beliefs about punishment
+    prob_post_co2 = models.IntegerField()
     pun_belief_co0 = models.IntegerField()
+    prob_pun_co0 = models.IntegerField()
     pun_belief_co1 = models.IntegerField()
+    prob_pun_co1 = models.IntegerField()
     pun_belief_co2 = models.IntegerField()
+    prob_pun_co2 = models.IntegerField()
     #Punishment
     punishment_costs = models.IntegerField()
     pun_received_costs = models.IntegerField()
@@ -322,6 +371,10 @@ class Player(BasePlayer):
     earnings = models.CurrencyField()
     intermediate_earnings = models.FloatField()
     bonus_earnings = models.IntegerField()
+    won_bonus = models.IntegerField( default = 0)
+    won_lottery = models.IntegerField( default = 0)
+    correct_prediction = models.IntegerField( default = 0)
+    prob_stated = models.IntegerField( default = 0)
 
     #Fields filled in by other players
     p2_nickname = models.StringField()
@@ -368,9 +421,9 @@ class PreBeliefs(Page):
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
-        fields = ['pre_belief_co0', 'pre_belief_co1']
+        fields = ['pre_belief_co0', 'pre_belief_co1', 'prob_pre_co0', 'prob_pre_co1']
         if C.PLAYERS_PER_GROUP > 3:
-            fields.append('pre_belief_co2')
+            fields += ['pre_belief_co2', 'prob_pre_co2']
         return fields
 
     @staticmethod
@@ -423,9 +476,9 @@ class PostBeliefs(Page):
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
-        fields = ['post_belief_co0', 'post_belief_co1']
+        fields = ['post_belief_co0', 'post_belief_co1', 'prob_post_co0', 'prob_post_co1']
         if C.PLAYERS_PER_GROUP > 3:
-            fields.append('post_belief_co2')
+            fields += ['post_belief_co2', 'prob_post_co2']
         return fields
 
 
@@ -470,9 +523,9 @@ class PunBeliefsUncond(Page):
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
-        fields = ['pun_belief_co0', 'pun_belief_co1']
+        fields = ['pun_belief_co0', 'pun_belief_co1', 'prob_pun_co0', 'prob_pun_co1']
         if C.PLAYERS_PER_GROUP > 3:
-            fields.append('pun_belief_co2')
+            fields += ['pun_belief_co2', 'prob_pun_co2']
         return fields
 
     @staticmethod

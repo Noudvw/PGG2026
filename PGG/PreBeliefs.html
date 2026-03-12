@@ -26,10 +26,14 @@ Please predict for each group member how many Points they will contribute to the
 Remember, the contribution can be any number from 0 to 20. <br> <br>
 
 {{ formfield 'pre_belief_co0' label=pre_belief_co0_label }}
+{{ formfield 'prob_pre_co0'}}
+
 {{ formfield 'pre_belief_co1' label=pre_belief_co1_label }}
+{{ formfield 'prob_pre_co1'}}
 
 {% if C.PLAYERS_PER_GROUP > 3 %}
 {{ formfield 'pre_belief_co2' label=pre_belief_co2_label }}
+{{ formfield 'prob_pre_co2'}}
 {% endif %}
 
 {{next_button}}

@@ -102,7 +102,8 @@ class Player(BasePlayer):
                                                "Services",
                                                "Natural Sciences",
                                                "History",
-                                               "Other"
+                                               "Other",
+                                               "None"
                                            ])
     nationality = models.StringField( label = "What is your nationality?", choices = COUNTRIES)
     residence = models.StringField( label = "What is your country of residence?", choices = COUNTRIES)
