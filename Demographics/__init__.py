@@ -74,8 +74,6 @@ class Player(BasePlayer):
         ]
     )
     age = models.IntegerField( label= "What is your age?")
-    nationality = models.StringField( label = "What is your nationality?")
-    residence = models.StringField( label = "What is your country of residence?")
     education = models.StringField( label = "What is your highest completed level of education?",
                                      choices = [
                                          "No formal qualifications",
@@ -106,7 +104,7 @@ class Player(BasePlayer):
                                                "History",
                                                "Other"
                                            ])
-    nation = models.StringField( label = "What is your nationality?", choices = COUNTRIES)
+    nationality = models.StringField( label = "What is your nationality?", choices = COUNTRIES)
     residence = models.StringField( label = "What is your country of residence?", choices = COUNTRIES)
     siblings = models.IntegerField( label = "How many siblings do you have?")
 
