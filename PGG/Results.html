@@ -234,7 +234,7 @@ You have spent {{player.punishment_costs}} to deduct earnings of other players. 
 You lose {{player.pun_received_costs}} due to other player deducting your earnings. <br>
 In the randomly selected prediction_that_counts, you were {% if player.bonus_earnings > 0%} correct{%endif%}
 {%if player.bonus_earnings == 0%} incorrect{% endif %}. <br>
-Your reward is {{player.bonus_earnings}} <br>
+Your bonus reward is {{player.bonus_earnings}} <br>
 
 Your earnings are {{player.remaining_endowment}} + {{group.PG_earnings}} - {{player.punishment_costs}} - {{player.pun_received}} X {{C.PUN_MULTIPLIER}} + {{player.bonus_earnings}}= {{player.earnings}}. <br>
 

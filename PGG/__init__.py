@@ -176,7 +176,7 @@ class Group(BaseGroup):
                     p.bonus_pun_co0,
                     p.bonus_pun_co1,
                 ]
-                p.bonus_earnings = bonuses_list[p.belief_that_counts_1]
+                p.bonus_earnings = bonuses_list[p.belief_that_counts_1] * C.BONUS_MULTIPLIER
             p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
             p.participant.group_size = C.PLAYERS_PER_GROUP
 
@@ -377,14 +377,14 @@ class PreBeliefs(Page):
     def vars_for_template(player):
         if C.PLAYERS_PER_GROUP > 3:
             return dict(
-                pre_belief_co0_label = 'How many Points will {} contribute to the project?'.format(player.p2_nickname),
-                pre_belief_co1_label = 'How many Points will {} contribute to the project?'.format(player.p3_nickname),
-                pre_belief_co2_label = 'How many Points will {} contribute to the project?'.format(player.p4_nickname)
+                pre_belief_co0_label = 'How many Points will <strong> {} </strong> contribute to the project?'.format(player.p2_nickname),
+                pre_belief_co1_label = 'How many Points will <strong> {} </strong> contribute to the project?'.format(player.p3_nickname),
+                pre_belief_co2_label = 'How many Points will <strong> {} </strong> contribute to the project?'.format(player.p4_nickname)
             )
         else:
             return dict(
-                pre_belief_co0_label='How many Points will {} contribute to the project?'.format(player.p2_nickname),
-                pre_belief_co1_label='How many Points will {} contribute to the project?'.format(player.p3_nickname)
+                pre_belief_co0_label='How many Points will <strong> {} </strong>  contribute to the project?'.format(player.p2_nickname),
+                pre_belief_co1_label='How many Points will <strong> {} </strong>  contribute to the project?'.format(player.p3_nickname)
             )
 
     @staticmethod
@@ -433,14 +433,14 @@ class PostBeliefs(Page):
     def vars_for_template(player):
         if C.PLAYERS_PER_GROUP > 3:
             return dict(
-                post_belief_co0_label='How many Points did {} contribute to the project?'.format(player.p2_nickname),
-                post_belief_co1_label='How many Points did {} contribute to the project?'.format(player.p3_nickname),
-                post_belief_co2_label='How many Points did {} contribute to the project?'.format(player.p4_nickname)
+                post_belief_co0_label='How many Points did <strong> {} </strong> contribute to the project?'.format(player.p2_nickname),
+                post_belief_co1_label='How many Points did <strong> {} </strong>contribute to the project?'.format(player.p3_nickname),
+                post_belief_co2_label='How many Points did <strong> {} </strong> contribute to the project?'.format(player.p4_nickname)
             )
         else:
             return dict(
-                post_belief_co0_label='How many Points did {} contribute to the project?'.format(player.p2_nickname),
-                post_belief_co1_label='How many Points did {} contribute to the project?'.format(player.p3_nickname)
+                post_belief_co0_label='How many Points did <strong> {} </strong>contribute to the project?'.format(player.p2_nickname),
+                post_belief_co1_label='How many Points did <strong> {} </strong> contribute to the project?'.format(player.p3_nickname)
             )
 
     @staticmethod
@@ -479,14 +479,14 @@ class PunBeliefsUncond(Page):
     def vars_for_template(player):
         if C.PLAYERS_PER_GROUP > 3:
             return dict(
-                pun_belief_co0_label='How many Deduction Points will {} assign to you?'.format(player.p2_nickname),
-                pun_belief_co1_label='How many Deduction Points will {} assign to you?'.format(player.p3_nickname),
-                pun_belief_co2_label='How many Deduction Points will {} assign to you?'.format(player.p4_nickname)
+                pun_belief_co0_label='How many Deduction Points will <strong> {} </strong> assign to you?'.format(player.p2_nickname),
+                pun_belief_co1_label='How many Deduction Points will <strong> {} </strong> assign to you?'.format(player.p3_nickname),
+                pun_belief_co2_label='How many Deduction Points will <strong> {} </strong> assign to you?'.format(player.p4_nickname)
             )
         else:
             return dict(
-                pun_belief_co0_label='How many Deduction Points will {} assign to you?'.format(player.p2_nickname),
-                pun_belief_co1_label='How many Deduction Points will {} assign to you?'.format(player.p3_nickname)
+                pun_belief_co0_label='How many Deduction Points will <strong> {} </strong> assign to you?'.format(player.p2_nickname),
+                pun_belief_co1_label='How many Deduction Points will <strong> {} </strong> assign to you?'.format(player.p3_nickname)
             )
 
     @staticmethod
@@ -511,14 +511,14 @@ class Punishment(Page):
     def vars_for_template(player):
         if C.PLAYERS_PER_GROUP > 3:
             return dict(
-                punishment_co0_label='How many Deduction Points do you assign to {}?'.format(player.p2_nickname),
-                punishment_co1_label='How many Deduction Points do you assign to {}?'.format(player.p3_nickname),
-                punishment_co2_label='How many Deduction Points do you assign to {}?'.format(player.p4_nickname)
+                punishment_co0_label='How many Deduction Points do you assign to <strong> {} </strong>?'.format(player.p2_nickname),
+                punishment_co1_label='How many Deduction Points do you assign to <strong> {} </strong>?'.format(player.p3_nickname),
+                punishment_co2_label='How many Deduction Points do you assign to <strong> {} </strong>?'.format(player.p4_nickname)
             )
         else:
             return dict(
-                punishment_co0_label='How many Deduction Points do you assign to {}?'.format(player.p2_nickname),
-                punishment_co1_label='How many Deduction Points do you assign to {}?'.format(player.p3_nickname)
+                punishment_co0_label='How many Deduction Points do you assign to <strong> {} </strong>?'.format(player.p2_nickname),
+                punishment_co1_label='How many Deduction Points do you assign to <strong> {} </strong>?'.format(player.p3_nickname)
             )
 
     @staticmethod
