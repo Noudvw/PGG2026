@@ -1,5 +1,5 @@
 {{ block title }}
-    Estimate 2
+    Probabilities 2
 {{ endblock }}
 
 {% block styles %}
@@ -27,12 +27,12 @@ You contributed {{player.contribution}}
 This means that other players collectively contributed {{player.contribution_others}}</b>
 </br>
 
-{{ formfield 'post_belief_co0' label=post_belief_co0_label }}
+{{ formfield 'prob_post_co0' label=prob_post_co0_label }}
 
-{{ formfield 'post_belief_co1' label=post_belief_co1_label }}
+{{ formfield 'prob_post_co1' label=prob_post_co1_label }}
 
 {% if C.PLAYERS_PER_GROUP > 3 %}
-{{ formfield 'post_belief_co2' label=post_belief_co2_label }}
+{{ formfield 'prob_post_co2' label=prob_post_co2_label }}
 
 {% endif %}
 

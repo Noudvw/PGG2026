@@ -421,9 +421,9 @@ class PreBeliefs(Page):
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
-        fields = ['pre_belief_co0', 'pre_belief_co1', 'prob_pre_co0', 'prob_pre_co1']
+        fields = ['pre_belief_co0', 'pre_belief_co1',]
         if C.PLAYERS_PER_GROUP > 3:
-            fields += ['pre_belief_co2', 'prob_pre_co2']
+            fields += ['pre_belief_co2']
         return fields
 
     @staticmethod
@@ -449,6 +449,52 @@ class PreBeliefs(Page):
                 return "Please report a number between 0 and 20 for each person"
         return None
 
+class ProbPreBeliefs(Page):
+    form_model = 'player'
+    @staticmethod
+    def get_form_fields(player):
+        fields = [ 'prob_pre_co0', 'prob_pre_co1']
+        if C.PLAYERS_PER_GROUP > 3:
+            fields += [ 'prob_pre_co2']
+        return fields
+
+    @staticmethod
+    def vars_for_template(player):
+        if C.PLAYERS_PER_GROUP > 3:
+            return dict(
+                prob_pre_co0_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. '
+                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p2_nickname,
+                    player.pre_belief_co0),
+                prob_pre_co1_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong> tokens. '
+                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p3_nickname,
+                    player.pre_belief_co1),
+                prob_pre_co2_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. '
+                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p4_nickname,
+                    player.pre_belief_co2),
+            )
+        else:
+            return dict(
+                prob_pre_co0_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. '
+                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p2_nickname,
+                    player.pre_belief_co0),
+                prob_pre_co1_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. '
+                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p3_nickname,
+                    player.pre_belief_co1),
+            )
+
+    @staticmethod
+    def error_message(player, values):
+        if values['prob_pre_co0'] > 100 or values['prob_pre_co1'] > 100:
+            return "Please report a percentage between 0 and 100 for each person."
+        if C.PLAYERS_PER_GROUP > 3:
+            if values['prob_pre_co2'] > 100:
+                return "Please report a percentage between 0 and 100 for each person"
+        return None
 
 class Contribution(Page):
     form_model = 'player'
@@ -476,11 +522,10 @@ class PostBeliefs(Page):
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
-        fields = ['post_belief_co0', 'post_belief_co1', 'prob_post_co0', 'prob_post_co1']
+        fields = ['post_belief_co0', 'post_belief_co1']
         if C.PLAYERS_PER_GROUP > 3:
-            fields += ['post_belief_co2', 'prob_post_co2']
+            fields += ['post_belief_co2']
         return fields
-
 
     @staticmethod
     def vars_for_template(player):
@@ -503,7 +548,7 @@ class PostBeliefs(Page):
         if C.PLAYERS_PER_GROUP > 3:
             if values['post_belief_co2'] > 20:
                 return "Please report a belief between 0 and 20 for each person"
-        total = values['post_belief_co0'] + values ['post_belief_co1']
+        total = values['post_belief_co0'] + values['post_belief_co1']
         if C.PLAYERS_PER_GROUP > 3:
             total += values['post_belief_co2']
         if total != player.contribution_others:
@@ -515,6 +560,58 @@ class PostBeliefs(Page):
             )
         return None
 
+
+class ProbPostBeliefs(Page):
+    form_model = 'player'
+    @staticmethod
+    def get_form_fields(player):
+        fields = [ 'prob_post_co0', 'prob_post_co1']
+        if C.PLAYERS_PER_GROUP > 3:
+            fields += [ 'prob_post_co2']
+        return fields
+
+    @staticmethod
+    def error_message(player, values):
+        if values['prob_post_co0'] > 100 or values['prob_post_co1'] > 100:
+            return "Please report a percentage between 0 and 100 for each person."
+        if C.PLAYERS_PER_GROUP > 3:
+            if values['prob_post_co2'] > 100:
+                return "Please report a percentage between 0 and 100 for each person"
+        return None
+
+    @staticmethod
+    def vars_for_template(player):
+        if C.PLAYERS_PER_GROUP > 3:
+            return dict(
+                prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. '
+                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p2_nickname,
+                    player.post_belief_co0),
+                prob_post_co1_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. '
+                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p3_nickname,
+                    player.post_belief_co1),
+                prob_post_co2_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
+                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p4_nickname,
+                    player.post_belief_co2),
+            )
+        else:
+            return dict(
+                prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
+                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p2_nickname,
+                    player.post_belief_co0),
+                prob_post_co1_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
+                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p3_nickname,
+                    player.post_belief_co1),
+            )
+
+
+
+
+
 class IntermediateResults(Page):
     def is_displayed(player):
         return player.info_treatment
@@ -523,9 +620,9 @@ class PunBeliefsUncond(Page):
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
-        fields = ['pun_belief_co0', 'pun_belief_co1', 'prob_pun_co0', 'prob_pun_co1']
+        fields = ['pun_belief_co0', 'pun_belief_co1']
         if C.PLAYERS_PER_GROUP > 3:
-            fields += ['pun_belief_co2', 'prob_pun_co2']
+            fields += ['pun_belief_co2']
         return fields
 
     @staticmethod
@@ -550,6 +647,56 @@ class PunBeliefsUncond(Page):
             if values['pun_belief_co2'] > 10:
                 return "Please report a belief between 0 and 10 for each person"
         return None
+
+
+class ProbPunBeliefs(Page):
+    form_model = 'player'
+
+    @staticmethod
+    def get_form_fields(player):
+        fields = ['prob_pun_co0', 'prob_pun_co1']
+        if C.PLAYERS_PER_GROUP > 3:
+            fields += ['prob_pun_co2']
+        return fields
+
+    @staticmethod
+    def error_message(player, values):
+        if values['prob_pun_co0'] > 100 or values['prob_pun_co1'] > 100:
+            return "Please report a percentage between 0 and 100 for each person."
+        if C.PLAYERS_PER_GROUP > 3:
+            if values['prob_pun_co2'] > 100:
+                return "Please report a percentage between 0 and 100 for each person"
+        return None
+
+    @staticmethod
+    def vars_for_template(player):
+        if C.PLAYERS_PER_GROUP > 3:
+            return dict(
+                prob_pun_co0_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
+                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p2_nickname,
+                    player.pun_belief_co0),
+                prob_pun_co1_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
+                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p3_nickname,
+                    player.pun_belief_co1),
+                prob_pun_co2_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
+                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p4_nickname,
+                    player.pun_belief_co2),
+            )
+        else:
+            return dict(
+                prob_pun_co0_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
+                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p2_nickname,
+                    player.pun_belief_co0),
+                prob_pun_co1_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
+                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                    player.p3_nickname,
+                    player.pun_belief_co1),
+            )
+
 
 class Punishment(Page):
     form_model = 'player'
@@ -605,12 +752,15 @@ page_sequence = [
     DemographicsWait,
     GroupDisplay,
     PreBeliefs,
+    ProbPreBeliefs,
     Contribution,
     ComputeContribution,
     PostBeliefs,
+    ProbPostBeliefs,
     IntermediateResults,
     Punishment,
     PunBeliefsUncond,
+    ProbPunBeliefs,
     ComputeResults,
     Results,
 ]
