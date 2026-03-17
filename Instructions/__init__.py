@@ -42,8 +42,15 @@ class Player(BasePlayer):
     question7 = models.IntegerField(label="Q7: By how many Points will your income be reduced by assigning Deduction Points?")
     question8 = models.IntegerField(label="Q8: By how many Points will your income be reduced by assigning Deduction Points?")
     question9 = models.IntegerField(label="Q9: By how many Points will your income be reduced by receiving Deduction Points?")
-    question10 = models.IntegerField(label="Q10: Suppose you got the question_that_counts correct. How many Points will be added to your income?")
-
+    question10 = models.IntegerField(label="Q10: Suppose you receive bonus Points for your estimates. How many bonus Points do you receive?")
+    question11 = models.IntegerField(label = "Which statement is correct?",
+                                     choices = (
+                                        [1, "The number of bonus Points I get is fully randomly determined, it does not matter what estimates I make"],
+                                        [2, "To maximize expected earnings, I should not necessarily make estimates I believe in. "
+                                         "Instead, I can increase earnings by estimating strategically."],
+                                        [3, "To maximize expected earnings, I should report estimates I think are true."]
+                                     ))
+    info_clicked = models.IntegerField(initial=0)
 
     q1mistakes = models.IntegerField(initial=0)
     q2mistakes = models.IntegerField(initial=0)
@@ -55,6 +62,7 @@ class Player(BasePlayer):
     q8mistakes = models.IntegerField(initial=0)
     q9mistakes = models.IntegerField(initial=0)
     q10mistakes = models.IntegerField(initial=0)
+    q11mistakes = models.IntegerField(initial=0)
 # PAGES
 class QuestionsPGG(Page):
     form_model = "player"
@@ -148,7 +156,7 @@ class QuestionsDP(Page):
 
 class QuestionsBonus(Page):
     form_model = "player"
-    form_fields = ["question10"]
+    form_fields = ["question10", "question11", "info_clicked"]
     Qpage = 3
 
     # This error message method checks whether answers are correct, and only allows players to the next page if they are.

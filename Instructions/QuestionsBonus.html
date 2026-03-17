@@ -10,14 +10,68 @@ Comprehension Questions: Part 3 of 3
 {% endblock %}
 
 {{ block content }}
+
 <div class="question-box">
-{{ formfield 'question10' }}
+    <p>
+        In this experiment, we will ask you to make some estimates. In some cases, we ask you to report the option
+        that is most likely to you (e.g. how many tokens does player X contribute to the project?). In other cases, we
+        ask you to report the probability that something will happen (e.g. what is the probability that player X
+        contributes Y tokens to the project?).
+        <br> <br>
+        Please report truthfully when asked to make an estimate. You can earn a bonus of 4 points for
+        one randomly-selected estimate (out of a total of 9 estimates). Reporting honestly maximizes the chance of
+        earning the bonus, for more information you can click the button below. If you don't need more information,
+        please answer the questions at the bottom of the page.
+    </p>
+</div>
+
+
+<div class="text-center mt-3">
+    <button type="button" class="btn btn-info" onclick="showInfo()">
+        Show detailed explanation
+    </button>
+</div>
+
+<div id="detailed_info" style="display: none;" class="question-box mt-3">
+    <p>
+        We ask estimates in two stages. In stage 1, you are asked to report the most likely option. As an example: let's
+        say you are asked to estimate how much player X will contribute to the group project. Let's say you pick the
+        number Y. This is your first answer: player X will contribute Y tokens. <br>
+
+        In the second stage, we ask you for a percent chance that your prediction is correct (and player X will actually
+        contribute Y tokens). We will ask you for a percentage (P). At the same time, a computer randomly generates a
+        number N from 1 to 100. <br>
+
+        If N is smaller than your reported chance P, you will earn points if your prediction is true. (In other words,
+        if player X indeed contributed Y tokens).
+
+        If N is greater than or equal to your reported chance P, you will earn the bonus with N percent chance.
+
+        <br>
+        This means that, to increase your chance of winning the 4 bonus Points, you should
+        (1) predict the Y that is most likely to occur, and (2) report the percent chance P that you believe is accurate
+    </p>
+</div>
+
+<input type="hidden" name="info_clicked" id="info_clicked" value="0">
+
+<div class="question-box">
+    {{ formfield 'question10' }}
+    {{ formfield 'question11' }}
 </div>
 
 <div class="row mt-4">
-<div class="col text-center">
-{{ next_button }}
-</div>
+    <div class="col text-center">
+        {{ next_button }}
+    </div>
 </div>
 
+<script>
+function showInfo() {
+    document.getElementById("detailed_info").style.display = "block";
+    document.getElementById("info_clicked").value = "1";
+}
+</script>
+
 {{ endblock }}
+

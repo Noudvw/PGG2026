@@ -51,6 +51,11 @@ question_data = {
         "hint_group":"E",
         "page": 3
     },
+    11: {
+        "question_answer": 3,
+        "hint_group":"F",
+        "page": 3
+    }
 }
 
 hint_messages = {
@@ -61,5 +66,6 @@ hint_messages = {
     "C": "Earnings consist of two parts: remaining endowment and earnings received from the group project. "
          "To solve this question, you need to calculate remaining endowment and earnings from the group project, and then add both",
     "D": "Assigning Deduction Points costs you 1 Point and costs the receiver 3 Points",
-    "E": "The bonus for answering a question correct is 4 Points, as long as it is the question_that_counts"
+    "E": "The bonus for answering a question correct is 4 Points, if the question is randomly selected for payment",
+    "F": "Reporting truthfully is the way to maximize your probability of winning bonus Points. There is no strategic reporting possible."
 }
