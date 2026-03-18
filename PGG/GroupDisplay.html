@@ -1,5 +1,5 @@
 {{ block title }}
-    Overview page
+    Start of the Game
 {{ endblock }}
 
 {% block styles %}
@@ -8,12 +8,49 @@
 
 {{ block content }}
 
-You are matched to three other group members. Each of you has been given a nickname.
-You can find an overview of all participants (with nicknames) below.
-<br>
+You are matched to these other group members. {% if player.info_treatment == True %} Each of you has been given a nickname.
+The table below will be completed as you progress through the experiment. You cannot
+assign Deduction Points to yourself, so that cell will always be zero. <br> <br>
+
+
+<table>
+    <tr>
+        <th> Player </th>
+        <th> Contribution </th>
+        <th> Deduction Points assigned to you </th>
+    </tr>
+
+    <tr>
+        <td> You </td>
+        <td> </td>
+        <td> 0 </td>
+    </tr>
+    <tr>
+        <td> {{player.p2_nickname}}</td>
+        <td>  </td>
+        <td>  </td>
+    </tr>
+    <tr>
+        <td> {{player.p3_nickname}} </td>
+        <td>  </td>
+        <td>  </td>
+    </tr>
+{% if C.PLAYERS_PER_GROUP > 3 %}
+    <tr>
+        <td> {{player.p4_nickname}} </td>
+        <td> </td>
+        <td> </td>
+    </tr>
+{% endif %}
+</table>
+
 <br>
 
 
+{% endif %}
+<br>
+
+{%if player.info_treatment == False %}
 This is your group:
 <br>
 You ({{player.nickname}})
@@ -26,6 +63,8 @@ You ({{player.nickname}})
 {{player.p4_nickname}}
 {% endif %}
 <br>
+{% endif %}
+
 
 {{next_button}}
 {{ endblock }}

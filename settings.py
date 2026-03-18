@@ -24,7 +24,6 @@ dict(
 dict(
         name="Debrief_demo",
         app_sequence=[
-            "PGG",
             "Debrief"
         ],
         num_demo_participants=3,
