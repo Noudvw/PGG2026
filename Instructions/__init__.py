@@ -42,7 +42,8 @@ class Player(BasePlayer):
     question7 = models.IntegerField(label="Q7: By how many Points will your income be reduced by assigning Deduction Points?")
     question8 = models.IntegerField(label="Q8: By how many Points will your income be reduced by assigning Deduction Points?")
     question9 = models.IntegerField(label="Q9: By how many Points will your income be reduced by receiving Deduction Points?")
-    question10 = models.IntegerField(label="Q10: Suppose you receive bonus Points for your estimates. How many bonus Points do you receive?")
+    question10 = models.IntegerField(label="Q10: Suppose you receive the bonus for the randomly-selected estimate. "
+                                           "How many additional Points do you receive?")
     question11 = models.IntegerField(label = "Which statement is correct?",
                                      choices = (
                                         [1, "The number of bonus Points I get is fully randomly determined, it does not matter what estimates I make"],

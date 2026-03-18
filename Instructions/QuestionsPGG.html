@@ -1,10 +1,91 @@
 {{ extends "global/Page.html" }}
 
+{% load static %}
+
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'global/theme.css' %}">
+{% endblock %}
+
 {{ block title }}
 Comprehension Questions: Part 1 of 3
 {{ endblock }}
 
 {{ block content }}
+
+
+<h2>Instructions</h2>
+
+<p>
+In this experiment you will play a game with three other people.
+    You will play the game once. You can earn Points while playing the game. At the end of the experiment,
+    these Points will be converted into real money (INSERT EXCHANGE RATE)
+
+</p>
+
+<h3>Your task</h3>
+
+<p>
+At the beginning of the game, each participant receives 20 Points. You have to decide how many of these 20 Points you
+    want to <strong> contribute to a group project </strong>. The other three members of your group make this decision
+    at the same time.
+
+    The Points you do not contribute, you <strong> keep for yourself </strong>. These Points are added to your total.
+    After all group members have made their decision, all Points contributed to the <strong> group project </strong> are added up,
+    and this number of Points is <strong> multiplied by 1.6 </strong>. The resulting number of Points is then divided
+    equally among the group members (irrespective of how much they individually contributed to the group project).
+</p>
+
+
+<div class="summary-box">
+    <strong>In summary:</strong><br>
+    Your income in a round =<br>
+    The Points you keep for yourself<br>
+    <em>plus</em><br>
+    The Points you receive from the group project
+</div>
+
+
+<div class="example-container">
+
+    <div class="example-box">
+        <strong>Group project – Example 1 </strong>
+        <p>
+        - All four players contribute 20 Points to the group project<br>
+        - Sum of contributions is 80 Points<br><br>
+
+        - The amount is multiplied by 1.6, resulting in 128 Points<br>
+        - Each participant receives (128/4=) 32 Points from the group project.<br><br>
+
+        Therefore, the income of each player 32 Points.
+        </p>
+    </div>
+
+    <div class="example-box">
+        <strong>Group project – Example 2</strong>
+        <p>
+        - A, B, and C each contribute 20 Points to the group project.<br>
+        - Participant D contributes 0 Points to the group project.<br>
+        - The sum of contributions is 60 Points  <br>
+        - This amount is multiplied by 1.6, resulting in 96 Points. <br>
+        - Each participant receives (96/4=) 24 Points from the group project. <br> <br>
+
+        - Therefore, the income of Participants A, B, and C is 24 Points. <br>
+        - The income of Participant D is 44 Points (24 from the group project <em> plus </em> the 20 Points kept for themselves. <br>
+        </p>
+    </div>
+
+</div>
+<br>
+<p>
+Please make your decision within the <strong> time limit </strong> shown on screen. After all members made their decision,
+    you are shown the <strong> total </strong> number of Points in the group project.
+    Please answer the questions below to show you understood the instructions.
+</p>
+
+<br><br>
+
+<h3> Comprehension Questions </h3>
 
 Situation A:
 At the start of the game, each group member receives 20 Points. Suppose nobody (including you) contributes any

@@ -11,3 +11,25 @@ table, th, td {
 body {
     font-family: Verdana, sans-serif;
 }
+
+.summary-box {
+    background-color: #ef9d4b;
+    padding: 15px;
+    border-radius: 8px;
+    width: 40%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.example-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.example-box {
+    background-color: #a0cee1;
+    padding: 15px;
+    border-radius: 8px;
+    width: 50%;
+}
