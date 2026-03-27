@@ -1,0 +1,16 @@
+{{ block title }}
+    Terminated
+{{ endblock }}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ static 'global/theme.css' }}">
+{% endblock %}
+
+{{ block content }}
+
+The game was terminated because multiple players dropped out during playing.
+Therefore, the results for the game will not count for payment, as the game has never been completed.
+
+    {{ next_button }}
+
+{{ endblock }}

@@ -26,6 +26,8 @@ class C(BaseConstants):
     PUN_MULTIPLIER = 3
     BONUS_MULTIPLIER = 4
     TREATMENT = True
+    MINIMUM_PLAYERS_PER_GROUP = 3
+    TIMEOUTTIME = 40
 
 class Subsession(BaseSubsession):
     pass
@@ -33,6 +35,8 @@ class Subsession(BaseSubsession):
 class Group(BaseGroup):
     PG_earnings = models.FloatField()
     collective_contribution = models.IntegerField()
+    active_player_count = models.IntegerField(initial=0)
+    game_terminated = models.BooleanField(initial=False)
 
     #Creates a variable that stores the number of men and women in the group as a variable at the individual level.
     def compute_group_gender(self):
@@ -49,6 +53,20 @@ class Group(BaseGroup):
             p.fem_in_group = fem_count
             p.male_in_group = male_count
             p.info_treatment = C.TREATMENT
+
+    def compute_active_players(self):
+        for p in self.get_players():
+            self.active_player_count = 0
+            if p.time_out_dummy == False:
+                self.active_player_count += 1
+            else:
+                self.active_player_count += 0
+
+    def terminate_game_contribution_check(self):
+        if self.active_player_count < C.MINIMUM_PLAYERS_PER_GROUP:
+            self.game_terminated = True
+        else:
+            pass
 
     def set_bonus_rounds(self):
         #Sets multiple values at the player level, such as size of endowment, gender, round that counts for bonus and probability of winning said bonus
@@ -88,200 +106,213 @@ class Group(BaseGroup):
     #Computes collective contribution and preliminary earnings, using contribution of each player. Only computes group-level outcomes
     #, such as group collective contribution and group earnings from the PGG
     def compute_group_earnings(self):
-        self.collective_contribution = sum(p.contribution for p in self.get_players())
-        unrounded_earnings = self.collective_contribution * C.MPCR
-        self.PG_earnings = round(unrounded_earnings, 2)
+        if self.game_terminated == True: pass
+        else:
+            self.collective_contribution = sum(p.contribution for p in self.get_players())
+            unrounded_earnings = self.collective_contribution * C.MPCR
+            self.PG_earnings = round(unrounded_earnings, 2)
     # Note: Using the code in this way means that I always have to call compute_earnings after compute_group_earnings
     # Computes individual variables, such as remaining endowment and contribution of others in group
     def compute_earnings(self):
-        for p in self.get_players():
-            p.remaining_endowment = p.endowment - p.contribution
-            p.intermediate_earnings = p.remaining_endowment + self.PG_earnings
-            p.contribution_others = self.collective_contribution - p.contribution
+        if self.game_terminated == True: pass
+        else:
+            for p in self.get_players():
+                p.remaining_endowment = p.endowment - p.contribution
+                p.intermediate_earnings = p.remaining_endowment + self.PG_earnings
+                p.contribution_others = self.collective_contribution - p.contribution
 
     #Post punishment, so this is where things get a little messy.
     # Gives bonus points if predictions are correct and received punishment, both dependent on id in group and total group size
     def compute_earnings_post_punishment(self):
-        for p in self.get_players():
-            p.remaining_endowment = p.endowment - p.contribution
-            if C.PLAYERS_PER_GROUP > 3:
-                p.punishment_costs = p.punishment_co0 + p.punishment_co1 + p.punishment_co2
-            else:
-                p.punishment_costs = p.punishment_co0 + p.punishment_co1
-            if p.id_in_group == 1 and C.PLAYERS_PER_GROUP > 3:
-                p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0 + p.p4_punishment_co0
-                if p.p2_punishment_co0 == p.pun_belief_co0:
-                    p.bonus_pun_co0 += 1
-                if p.p3_punishment_co0 == p.pun_belief_co1:
-                    p.bonus_pun_co1 += 1
-                if p.p4_punishment_co0 == p.pun_belief_co2:
-                    p.bonus_pun_co2 += 1
-            if p.id_in_group == 1 and C.PLAYERS_PER_GROUP < 4:
-                p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0
-                if p.p2_punishment_co0 == p.pun_belief_co0:
-                    p.bonus_pun_co0 += 1
-                if p.p3_punishment_co0 == p.pun_belief_co1:
-                    p.bonus_pun_co1 += 1
-            if p.id_in_group == 2 and C.PLAYERS_PER_GROUP > 3:
-                p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1 + p.p4_punishment_co1
-                if p.p2_punishment_co0 == p.pun_belief_co0:
-                    p.bonus_pun_co0 += 1
-                if p.p3_punishment_co1 == p.pun_belief_co1:
-                    p.bonus_pun_co1 += 1
-                if p.p4_punishment_co1 == p.pun_belief_co2:
-                    p.bonus_pun_co2 += 1
-            if p.id_in_group == 2 and C.PLAYERS_PER_GROUP < 4:
-                p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1
-                if p.p2_punishment_co0 == p.pun_belief_co0:
-                    p.bonus_pun_co0 += 1
-                if p.p3_punishment_co1 == p.pun_belief_co1:
-                    p.bonus_pun_co1 += 1
-            if p.id_in_group == 3 and C.PLAYERS_PER_GROUP > 3:
-                p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1 + p.p4_punishment_co2
-                if p.p2_punishment_co1 == p.pun_belief_co0:
-                    p.bonus_pun_co0 += 1
-                if p.p3_punishment_co1 == p.pun_belief_co1:
-                    p.bonus_pun_co1 += 1
-                if p.p4_punishment_co2 == p.pun_belief_co2:
-                    p.bonus_pun_co2 += 1
-            if p.id_in_group == 3 and C.PLAYERS_PER_GROUP < 4:
-                p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1
-                if p.p2_punishment_co0 == p.pun_belief_co1:
-                    p.bonus_pun_co0 += 1
-                if p.p3_punishment_co0 == p.pun_belief_co1:
-                    p.bonus_pun_co1 += 1
-            if p.id_in_group == 4:
-                p.pun_received = p.p2_punishment_co2 + p.p3_punishment_co2 + p.p4_punishment_co2
-                if p.p2_punishment_co2 == p.pun_belief_co0:
-                    p.bonus_pun_co0 += 1
-                if p.p3_punishment_co2 == p.pun_belief_co1:
-                    p.bonus_pun_co1 += 1
-                if p.p4_punishment_co2 == p.pun_belief_co2:
-                    p.bonus_pun_co2 += 1
-            p.pun_received_costs = C.PUN_MULTIPLIER * p.pun_received
+        if self.game_terminated == True: pass
+        else:
+            for p in self.get_players():
+                p.remaining_endowment = p.endowment - p.contribution
+                if C.PLAYERS_PER_GROUP > 3:
+                    p.punishment_costs = p.punishment_co0 + p.punishment_co1 + p.punishment_co2
+                else:
+                    p.punishment_costs = p.punishment_co0 + p.punishment_co1
+                if p.id_in_group == 1 and C.PLAYERS_PER_GROUP > 3:
+                    p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0 + p.p4_punishment_co0
+                    if p.p2_punishment_co0 == p.pun_belief_co0:
+                        p.bonus_pun_co0 += 1
+                    if p.p3_punishment_co0 == p.pun_belief_co1:
+                        p.bonus_pun_co1 += 1
+                    if p.p4_punishment_co0 == p.pun_belief_co2:
+                        p.bonus_pun_co2 += 1
+                if p.id_in_group == 1 and C.PLAYERS_PER_GROUP < 4:
+                    p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0
+                    if p.p2_punishment_co0 == p.pun_belief_co0:
+                        p.bonus_pun_co0 += 1
+                    if p.p3_punishment_co0 == p.pun_belief_co1:
+                        p.bonus_pun_co1 += 1
+                if p.id_in_group == 2 and C.PLAYERS_PER_GROUP > 3:
+                    p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1 + p.p4_punishment_co1
+                    if p.p2_punishment_co0 == p.pun_belief_co0:
+                        p.bonus_pun_co0 += 1
+                    if p.p3_punishment_co1 == p.pun_belief_co1:
+                        p.bonus_pun_co1 += 1
+                    if p.p4_punishment_co1 == p.pun_belief_co2:
+                        p.bonus_pun_co2 += 1
+                if p.id_in_group == 2 and C.PLAYERS_PER_GROUP < 4:
+                    p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1
+                    if p.p2_punishment_co0 == p.pun_belief_co0:
+                        p.bonus_pun_co0 += 1
+                    if p.p3_punishment_co1 == p.pun_belief_co1:
+                        p.bonus_pun_co1 += 1
+                if p.id_in_group == 3 and C.PLAYERS_PER_GROUP > 3:
+                    p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1 + p.p4_punishment_co2
+                    if p.p2_punishment_co1 == p.pun_belief_co0:
+                        p.bonus_pun_co0 += 1
+                    if p.p3_punishment_co1 == p.pun_belief_co1:
+                        p.bonus_pun_co1 += 1
+                    if p.p4_punishment_co2 == p.pun_belief_co2:
+                        p.bonus_pun_co2 += 1
+                if p.id_in_group == 3 and C.PLAYERS_PER_GROUP < 4:
+                    p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1
+                    if p.p2_punishment_co0 == p.pun_belief_co1:
+                        p.bonus_pun_co0 += 1
+                    if p.p3_punishment_co0 == p.pun_belief_co1:
+                        p.bonus_pun_co1 += 1
+                if p.id_in_group == 4:
+                    p.pun_received = p.p2_punishment_co2 + p.p3_punishment_co2 + p.p4_punishment_co2
+                    if p.p2_punishment_co2 == p.pun_belief_co0:
+                        p.bonus_pun_co0 += 1
+                    if p.p3_punishment_co2 == p.pun_belief_co1:
+                        p.bonus_pun_co1 += 1
+                    if p.p4_punishment_co2 == p.pun_belief_co2:
+                        p.bonus_pun_co2 += 1
+                p.pun_received_costs = C.PUN_MULTIPLIER * p.pun_received
 # I should change this part to allow for my design
-            if C.PLAYERS_PER_GROUP > 3:
-                bonuses_list = [
-                    p.bonus_pre_co0,
-                    p.bonus_pre_co1,
-                    p.bonus_pre_co2,
-                    p.bonus_post_co0,
-                    p.bonus_post_co1,
-                    p.bonus_post_co2,
-                    p.bonus_pun_co0,
-                    p.bonus_pun_co1,
-                    p.bonus_pun_co2
-                ]
-                beliefs_list = [
-                    p.prob_pre_co0,
-                    p.prob_pre_co1,
-                    p.prob_pre_co2,
-                    p.prob_post_co0,
-                    p.prob_post_co1,
-                    p.prob_post_co2,
-                    p.prob_pun_co0,
-                    p.prob_pun_co1,
-                    p.prob_pun_co2
-                ]
-                p.correct_prediction = bonuses_list[p.belief_that_counts_1]
-                p.prob_stated = beliefs_list[p.belief_that_counts_1]
-                probability = p.prob_of_winning / 100
-                p.won_lottery = 1 if random.random() < probability else 0
-                if p.prob_of_winning > p.prob_stated:
-                    p.won_bonus = p.won_lottery
-                elif p.prob_of_winning <= p.prob_stated:
-                    p.won_bonus = p.correct_prediction
-                p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
-            if C.PLAYERS_PER_GROUP < 4:
-                bonuses_list = [
-                    p.bonus_pre_co0,
-                    p.bonus_pre_co1,
-                    p.bonus_post_co0,
-                    p.bonus_post_co1,
-                    p.bonus_pun_co0,
-                    p.bonus_pun_co1,
-                ]
-                beliefs_list = [
-                    p.prob_pre_co0,
-                    p.prob_pre_co1,
-                    p.prob_post_co0,
-                    p.prob_post_co1,
-                    p.prob_pun_co0,
-                    p.prob_pun_co1
-                ]
-
-                p.correct_prediction = bonuses_list[p.belief_that_counts_1]
-                p.prob_stated = beliefs_list[p.belief_that_counts_1]
-                probability = p.prob_of_winning / 100
-                p.won_lottery = 1 if random.random() < probability else 0
-                if p.prob_of_winning > p.prob_stated:
-                    p.won_bonus = p.won_lottery
-                elif p.prob_of_winning <= p.prob_stated:
-                    p.won_bonus = bonuses_list[p.belief_that_counts_1]
-                p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
-            p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
-            p.participant.group_size = C.PLAYERS_PER_GROUP
+                if C.PLAYERS_PER_GROUP > 3:
+                    bonuses_list = [
+                        p.bonus_pre_co0,
+                        p.bonus_pre_co1,
+                        p.bonus_pre_co2,
+                        p.bonus_post_co0,
+                        p.bonus_post_co1,
+                        p.bonus_post_co2,
+                        p.bonus_pun_co0,
+                        p.bonus_pun_co1,
+                        p.bonus_pun_co2
+                    ]
+                    beliefs_list = [
+                        p.prob_pre_co0,
+                        p.prob_pre_co1,
+                        p.prob_pre_co2,
+                        p.prob_post_co0,
+                        p.prob_post_co1,
+                        p.prob_post_co2,
+                        p.prob_pun_co0,
+                        p.prob_pun_co1,
+                        p.prob_pun_co2
+                    ]
+                    p.correct_prediction = bonuses_list[p.belief_that_counts_1]
+                    p.prob_stated = beliefs_list[p.belief_that_counts_1]
+                    probability = p.prob_of_winning / 100
+                    p.won_lottery = 1 if random.random() < probability else 0
+                    if p.prob_of_winning > p.prob_stated:
+                        p.won_bonus = p.won_lottery
+                    elif p.prob_of_winning <= p.prob_stated:
+                        p.won_bonus = p.correct_prediction
+                    p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
+                if C.PLAYERS_PER_GROUP < 4:
+                    bonuses_list = [
+                        p.bonus_pre_co0,
+                        p.bonus_pre_co1,
+                        p.bonus_post_co0,
+                        p.bonus_post_co1,
+                        p.bonus_pun_co0,
+                        p.bonus_pun_co1,
+                    ]
+                    beliefs_list = [
+                        p.prob_pre_co0,
+                        p.prob_pre_co1,
+                        p.prob_post_co0,
+                        p.prob_post_co1,
+                        p.prob_pun_co0,
+                        p.prob_pun_co1
+                    ]
+                    p.correct_prediction = bonuses_list[p.belief_that_counts_1]
+                    p.prob_stated = beliefs_list[p.belief_that_counts_1]
+                    probability = p.prob_of_winning / 100
+                    p.won_lottery = 1 if random.random() < probability else 0
+                    if p.prob_of_winning > p.prob_stated:
+                        p.won_bonus = p.won_lottery
+                    elif p.prob_of_winning <= p.prob_stated:
+                        p.won_bonus = bonuses_list[p.belief_that_counts_1]
+                    p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
+                p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
+                p.participant.group_size = C.PLAYERS_PER_GROUP
 
     def set_other_contributions(self):
-        for p in self.get_players():
-                others = p.get_others_in_group()
-                if len(others) > 0:
-                    p.p2_contribution = others[0].contribution
-                if len(others) > 1:
-                    p.p3_contribution = others[1].contribution
-                if len(others) > 2:
-                    p.p4_contribution = others[2].contribution
+        if self.game_terminated == True: pass
+        else:
+            for p in self.get_players():
+                    others = p.get_others_in_group()
+                    if len(others) > 0:
+                        p.p2_contribution = others[0].contribution
+                    if len(others) > 1:
+                        p.p3_contribution = others[1].contribution
+                    if len(others) > 2:
+                        p.p4_contribution = others[2].contribution
 
     def bonus_pre_beliefs(self):
-        for p in self.get_players():
-            others = p.get_others_in_group()
-            if p.pre_belief_co0 == p.p2_contribution :
-                p.bonus_pre_co0 += 1
-            if p.pre_belief_co1 == p.p3_contribution :
-                p.bonus_pre_co1 += 1
-            if C.PLAYERS_PER_GROUP > 3:
-                if p.pre_belief_co2 == p.p4_contribution:
-                    p.bonus_pre_co2 += 1
+        if self.game_terminated == True: pass
+        else:
+            for p in self.get_players():
+                others = p.get_others_in_group()
+                if p.pre_belief_co0 == p.p2_contribution :
+                    p.bonus_pre_co0 += 1
+                if p.pre_belief_co1 == p.p3_contribution :
+                    p.bonus_pre_co1 += 1
+                if C.PLAYERS_PER_GROUP > 3:
+                    if p.pre_belief_co2 == p.p4_contribution:
+                        p.bonus_pre_co2 += 1
 
     def bonus_post_beliefs(self):
-        for p in self.get_players():
-            if p.post_belief_co0 == p.p2_contribution:
-                p.bonus_post_co0 += 1
-            if p.post_belief_co1 == p.p3_contribution:
-                p.bonus_post_co1 += 1
-            if C.PLAYERS_PER_GROUP > 3:
-                if p.post_belief_co2 == p.p4_contribution:
-                    p.bonus_post_co2 += 1
-            else: pass
+        if self.game_terminated == True: pass
+        else:
+            for p in self.get_players():
+                if p.post_belief_co0 == p.p2_contribution:
+                    p.bonus_post_co0 += 1
+                if p.post_belief_co1 == p.p3_contribution:
+                    p.bonus_post_co1 += 1
+                if C.PLAYERS_PER_GROUP > 3:
+                    if p.post_belief_co2 == p.p4_contribution:
+                        p.bonus_post_co2 += 1
+                else: pass
 
 
     def set_other_punishments(self):
-        for p in self.get_players():
-            others = p.get_others_in_group()
-            if C.PLAYERS_PER_GROUP < 4:
-                if len(others) > 0:
-                    p.p2_punishment_co0 = others[0].punishment_co0
-                    p.p2_punishment_co1 = others[0].punishment_co1
-                if len(others) > 1:
-                    p.p3_punishment_co0 = others[1].punishment_co0
-                    p.p3_punishment_co1 = others[1].punishment_co1
-                if len(others) > 2:
-                    p.p4_punishment_co0 = others[2].punishment_co0
-                    p.p4_punishment_co1 = others[2].punishment_co1
+        if self.game_terminated == True: pass
+        else:
+            for p in self.get_players():
+                others = p.get_others_in_group()
+                if C.PLAYERS_PER_GROUP < 4:
+                    if len(others) > 0:
+                        p.p2_punishment_co0 = others[0].punishment_co0
+                        p.p2_punishment_co1 = others[0].punishment_co1
+                    if len(others) > 1:
+                        p.p3_punishment_co0 = others[1].punishment_co0
+                        p.p3_punishment_co1 = others[1].punishment_co1
+                    if len(others) > 2:
+                        p.p4_punishment_co0 = others[2].punishment_co0
+                        p.p4_punishment_co1 = others[2].punishment_co1
 
-            if C.PLAYERS_PER_GROUP > 3:
-                if len(others) > 0:
-                    p.p2_punishment_co0 = others[0].punishment_co0
-                    p.p2_punishment_co1 = others[0].punishment_co1
-                    p.p2_punishment_co2 = others[0].punishment_co2
-                if len(others) > 1:
-                    p.p3_punishment_co0 = others[1].punishment_co0
-                    p.p3_punishment_co1 = others[1].punishment_co1
-                    p.p3_punishment_co2 = others[1].punishment_co2
-                if len(others) > 2:
-                    p.p4_punishment_co0 = others[2].punishment_co0
-                    p.p4_punishment_co1 = others[2].punishment_co1
-                    p.p4_punishment_co2 = others[2].punishment_co2
+                if C.PLAYERS_PER_GROUP > 3:
+                    if len(others) > 0:
+                        p.p2_punishment_co0 = others[0].punishment_co0
+                        p.p2_punishment_co1 = others[0].punishment_co1
+                        p.p2_punishment_co2 = others[0].punishment_co2
+                    if len(others) > 1:
+                        p.p3_punishment_co0 = others[1].punishment_co0
+                        p.p3_punishment_co1 = others[1].punishment_co1
+                        p.p3_punishment_co2 = others[1].punishment_co2
+                    if len(others) > 2:
+                        p.p4_punishment_co0 = others[2].punishment_co0
+                        p.p4_punishment_co1 = others[2].punishment_co1
+                        p.p4_punishment_co2 = others[2].punishment_co2
 
     def set_other_names(self):
         for p in self.get_players():
@@ -313,6 +344,7 @@ class Player(BasePlayer):
         ]
     )
     #Misc
+    time_out_dummy = models.BooleanField(default = False)
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
     contribution = models.IntegerField(label = "How many Points do you contribute to the group project?")
@@ -414,11 +446,26 @@ class DemographicsWait(WaitPage):
         group.set_other_names()
 
 class GroupDisplay(Page):
-    pass
+    timeout_seconds = C.TIMEOUTTIME
+
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.time_out_dummy = True
+
 
 
 class PreBeliefs(Page):
     form_model = 'player'
+
+    def get_timeout_seconds(player):
+        if player.time_out_dummy == False:
+            return C.TIMEOUTTIME
+        if player.time_out_dummy == True:
+            return 1
+
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.time_out_dummy = True
     @staticmethod
     def get_form_fields(player):
         fields = ['pre_belief_co0', 'pre_belief_co1',]
@@ -450,6 +497,17 @@ class PreBeliefs(Page):
         return None
 
 class ProbPreBeliefs(Page):
+
+    @staticmethod
+    def get_timeout_seconds(player):
+        if player.time_out_dummy == False:
+            return C.TIMEOUTTIME
+        if player.time_out_dummy == True:
+            return 1
+
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.time_out_dummy = True
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
@@ -497,6 +555,17 @@ class ProbPreBeliefs(Page):
         return None
 
 class Contribution(Page):
+    @staticmethod
+    def get_timeout_seconds(player):
+        if player.time_out_dummy == False:
+            return C.TIMEOUTTIME
+        if player.time_out_dummy == True:
+            return 1
+
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.time_out_dummy = True
+            player.contribution = 0
     form_model = 'player'
     form_fields = ['contribution']
 
@@ -512,6 +581,8 @@ class ComputeContribution(WaitPage):
     wait_for_participants = True
     @staticmethod
     def after_all_players_arrive(group):
+        group.compute_active_players()
+        group.terminate_game_contribution_check()
         group.compute_group_earnings()
         group.set_other_contributions()
         group.compute_earnings()
@@ -519,6 +590,12 @@ class ComputeContribution(WaitPage):
 
 
 class PostBeliefs(Page):
+    def is_displayed(player):
+        return not player.group.game_terminated
+    timeout_seconds = C.TIMEOUTTIME
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.time_out_dummy = True
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
@@ -529,17 +606,20 @@ class PostBeliefs(Page):
 
     @staticmethod
     def vars_for_template(player):
-        if C.PLAYERS_PER_GROUP > 3:
-            return dict(
-                post_belief_co0_label='How many Points did <strong> {} </strong> contribute to the project?'.format(player.p2_nickname),
-                post_belief_co1_label='How many Points did <strong> {} </strong>contribute to the project?'.format(player.p3_nickname),
-                post_belief_co2_label='How many Points did <strong> {} </strong> contribute to the project?'.format(player.p4_nickname)
-            )
+        if player.group.game_terminated:
+            return {}
         else:
-            return dict(
-                post_belief_co0_label='How many Points did <strong> {} </strong>contribute to the project?'.format(player.p2_nickname),
-                post_belief_co1_label='How many Points did <strong> {} </strong> contribute to the project?'.format(player.p3_nickname)
-            )
+            if C.PLAYERS_PER_GROUP > 3:
+                return dict(
+                    post_belief_co0_label='How many Points did <strong> {} </strong> contribute to the project?'.format(player.p2_nickname),
+                    post_belief_co1_label='How many Points did <strong> {} </strong>contribute to the project?'.format(player.p3_nickname),
+                    post_belief_co2_label='How many Points did <strong> {} </strong> contribute to the project?'.format(player.p4_nickname)
+                )
+            else:
+                return dict(
+                    post_belief_co0_label='How many Points did <strong> {} </strong>contribute to the project?'.format(player.p2_nickname),
+                    post_belief_co1_label='How many Points did <strong> {} </strong> contribute to the project?'.format(player.p3_nickname)
+                )
 
     @staticmethod
     def error_message(player, values):
@@ -562,6 +642,12 @@ class PostBeliefs(Page):
 
 
 class ProbPostBeliefs(Page):
+    timeout_seconds = C.TIMEOUTTIME
+    def is_displayed(player):
+        return not player.group.game_terminated
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.time_out_dummy = True
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
@@ -581,42 +667,54 @@ class ProbPostBeliefs(Page):
 
     @staticmethod
     def vars_for_template(player):
-        if C.PLAYERS_PER_GROUP > 3:
-            return dict(
-                prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. '
-                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
-                    player.p2_nickname,
-                    player.post_belief_co0),
-                prob_post_co1_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. '
-                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
-                    player.p3_nickname,
-                    player.post_belief_co1),
-                prob_post_co2_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
-                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
-                    player.p4_nickname,
-                    player.post_belief_co2),
-            )
+        if player.group.game_terminated:
+            return {}
         else:
-            return dict(
-                prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
-                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
-                    player.p2_nickname,
-                    player.post_belief_co0),
-                prob_post_co1_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
-                                   'On a 0-100 percent scale, how likely do you think this is true?'.format(
-                    player.p3_nickname,
-                    player.post_belief_co1),
-            )
-
-
-
+            if C.PLAYERS_PER_GROUP > 3:
+                return dict(
+                    prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. '
+                                       'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                        player.p2_nickname,
+                        player.post_belief_co0),
+                    prob_post_co1_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. '
+                                       'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                        player.p3_nickname,
+                        player.post_belief_co1),
+                    prob_post_co2_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
+                                       'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                        player.p4_nickname,
+                        player.post_belief_co2),
+                )
+            else:
+                return dict(
+                    prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
+                                       'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                        player.p2_nickname,
+                        player.post_belief_co0),
+                    prob_post_co1_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
+                                       'On a 0-100 percent scale, how likely do you think this is true?'.format(
+                        player.p3_nickname,
+                        player.post_belief_co1),
+                )
 
 
 class IntermediateResults(Page):
+    timeout_seconds = C.TIMEOUTTIME
+
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.time_out_dummy = True
     def is_displayed(player):
-        return player.info_treatment
+        return player.info_treatment and not player.group.game_terminated
 
 class PunBeliefsUncond(Page):
+    def is_displayed(player):
+        return not player.group.game_terminated
+
+    timeout_seconds = C.TIMEOUTTIME
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.time_out_dummy = True
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
@@ -650,6 +748,14 @@ class PunBeliefsUncond(Page):
 
 
 class ProbPunBeliefs(Page):
+    def is_displayed(player):
+        return not player.group.game_terminated
+
+    timeout_seconds = C.TIMEOUTTIME
+
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.time_out_dummy = True
     form_model = 'player'
 
     @staticmethod
@@ -699,6 +805,15 @@ class ProbPunBeliefs(Page):
 
 
 class Punishment(Page):
+    def is_displayed(player):
+        return not player.group.game_terminated
+
+    timeout_seconds = C.TIMEOUTTIME
+
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            player.time_out_dummy = True
+
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
@@ -745,7 +860,11 @@ class ComputeResults(WaitPage):
 
 
 class Results(Page):
-    pass
+    def is_displayed(player):
+        return not player.group.game_terminated
+
+class Terminated(Page):
+    def is_displayed(player): return player.group.game_terminated
 
 # PAGES
 page_sequence = [
@@ -763,4 +882,5 @@ page_sequence = [
     ProbPunBeliefs,
     ComputeResults,
     Results,
+    Terminated
 ]
