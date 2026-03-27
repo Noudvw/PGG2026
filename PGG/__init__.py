@@ -55,8 +55,8 @@ class Group(BaseGroup):
             p.info_treatment = C.TREATMENT
 
     def compute_active_players(self):
+        self.active_player_count = 0
         for p in self.get_players():
-            self.active_player_count = 0
             if p.time_out_dummy == False:
                 self.active_player_count += 1
             else:
@@ -183,7 +183,7 @@ class Group(BaseGroup):
                     if p.p4_punishment_co2 == p.pun_belief_co2:
                         p.bonus_pun_co2 += 1
                 p.pun_received_costs = C.PUN_MULTIPLIER * p.pun_received
-# I should change this part to allow for my design
+# Part that allows for bonus earnings based on reported beliefs and a randomly-drawn bonus round
                 if C.PLAYERS_PER_GROUP > 3:
                     bonuses_list = [
                         p.bonus_pre_co0,
@@ -244,6 +244,8 @@ class Group(BaseGroup):
                     p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
                 p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
                 p.participant.group_size = C.PLAYERS_PER_GROUP
+                if p.time_out_dummy == 1:
+                    p.earnings = 0
 
     def set_other_contributions(self):
         if self.game_terminated == True: pass
@@ -592,7 +594,12 @@ class ComputeContribution(WaitPage):
 class PostBeliefs(Page):
     def is_displayed(player):
         return not player.group.game_terminated
-    timeout_seconds = C.TIMEOUTTIME
+    def get_timeout_seconds(player):
+        if player.time_out_dummy == False:
+            return C.TIMEOUTTIME
+        if player.time_out_dummy == True:
+            return 1
+
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
@@ -642,18 +649,22 @@ class PostBeliefs(Page):
 
 
 class ProbPostBeliefs(Page):
-    timeout_seconds = C.TIMEOUTTIME
     def is_displayed(player):
         return not player.group.game_terminated
+    def get_timeout_seconds(player):
+        if player.time_out_dummy == False:
+            return C.TIMEOUTTIME
+        if player.time_out_dummy == True:
+            return 1
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
     form_model = 'player'
     @staticmethod
     def get_form_fields(player):
-        fields = [ 'prob_post_co0', 'prob_post_co1']
+        fields = ['prob_post_co0', 'prob_post_co1']
         if C.PLAYERS_PER_GROUP > 3:
-            fields += [ 'prob_post_co2']
+            fields += ['prob_post_co2']
         return fields
 
     @staticmethod
@@ -699,8 +710,11 @@ class ProbPostBeliefs(Page):
 
 
 class IntermediateResults(Page):
-    timeout_seconds = C.TIMEOUTTIME
-
+    def get_timeout_seconds(player):
+        if player.time_out_dummy == False:
+            return C.TIMEOUTTIME
+        if player.time_out_dummy == True:
+            return 1
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
@@ -711,7 +725,11 @@ class PunBeliefsUncond(Page):
     def is_displayed(player):
         return not player.group.game_terminated
 
-    timeout_seconds = C.TIMEOUTTIME
+    def get_timeout_seconds(player):
+        if player.time_out_dummy == False:
+            return C.TIMEOUTTIME
+        if player.time_out_dummy == True:
+            return 1
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
@@ -751,7 +769,11 @@ class ProbPunBeliefs(Page):
     def is_displayed(player):
         return not player.group.game_terminated
 
-    timeout_seconds = C.TIMEOUTTIME
+    def get_timeout_seconds(player):
+        if player.time_out_dummy == False:
+            return C.TIMEOUTTIME
+        if player.time_out_dummy == True:
+            return 1
 
     def before_next_page(player, timeout_happened):
         if timeout_happened:
@@ -808,11 +830,18 @@ class Punishment(Page):
     def is_displayed(player):
         return not player.group.game_terminated
 
-    timeout_seconds = C.TIMEOUTTIME
+    def get_timeout_seconds(player):
+        if player.time_out_dummy == False:
+            return C.TIMEOUTTIME
+        if player.time_out_dummy == True:
+            return 1
 
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
+            player.punishment_co0 = 0
+            player.punishment_co1 = 0
+            player.punishment_co2 = 0
 
     form_model = 'player'
     @staticmethod
