@@ -8,7 +8,14 @@
 
 {{ block content }}
 
-The game was terminated because multiple players dropped out during playing.
+{% if player.time_out_dummy == True %}
+<strong> You timed out on one of the pages. </strong> <br>
+Therefore, you have been removed from the game. <br>
+Because you failed to complete the tasks within time, you will not be paid. <br>
+{% endif %}
+
+
+The game was terminated because too many players disconnected.<br>
 Therefore, the results for the game will not count for payment, as the game has never been completed.
 
     {{ next_button }}

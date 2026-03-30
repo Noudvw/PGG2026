@@ -27,8 +27,8 @@ Comprehension Questions: Part 3 of 3
 
 
 <div class="text-center mt-3">
-    <button type="button" class="btn btn-info" onclick="showInfo()">
-        Show detailed explanation
+    <button type="button" class="btn btn-info" onclick="showInfo(this)">
+    Show detailed explanation ▼
     </button>
 </div>
 
@@ -58,19 +58,21 @@ Comprehension Questions: Part 3 of 3
 
         - You report that player B contributes 7 tokens. <br>
         - You report to be 37% certain about your estimate (about player B contributing 7 tokens). <br>
-        - A random number (N) is drawn
+        - A random number (N) is drawn <br>
 
             <strong> Two Options </strong>
-        - N exceeds or equals 37%. This means that you have a N% chance of winning the bonus Points for the estimate.
-        - N is lower than 37%. This means that you get the bonus Points if your estimate is correct (and player B contributed 7 Points).
+        - N exceeds or equals 37%. This means that you have a N% chance of winning the bonus Points for the estimate. <br>
+        - N is lower than 37%. This means that you get the bonus Points if your estimate is correct (and player B contributed 7 Points). <br>
 
 
     </div>
 
 </div>
 <br>
+<div style="display: none;">
+    {{ formfield 'info_clicked' }}
+</div>
 
-<input type="hidden" name="info_clicked" id="info_clicked" value="0">
 
 <div class="question-box">
     {{ formfield 'question10' }}
@@ -83,10 +85,15 @@ Comprehension Questions: Part 3 of 3
     </div>
 </div>
 
+
+
 <script>
-function showInfo() {
-    document.getElementById("detailed_info").style.display = "block";
-    document.getElementById("info_clicked").value = "1";
+function showInfo(btn) {
+    const box = document.getElementById("detailed_info");
+    const isVisible = box.style.display === 'block';
+    box.style.display = isVisible ? 'none' : 'block';
+    btn.textContent = isVisible ? 'Show detailed explanation ▼' : 'Hide detailed explanation ▲';
+    document.getElementById("id_info_clicked").value = "1";
 }
 </script>
 

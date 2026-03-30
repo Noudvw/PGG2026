@@ -242,6 +242,7 @@ class Group(BaseGroup):
                     elif p.prob_of_winning <= p.prob_stated:
                         p.won_bonus = bonuses_list[p.belief_that_counts_1]
                     p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
+                p.both_punishment_costs = p.punishment_costs + p.pun_received_costs
                 p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
                 p.participant.group_size = C.PLAYERS_PER_GROUP
                 if p.time_out_dummy == 1:
@@ -347,6 +348,10 @@ class Player(BasePlayer):
     )
     #Misc
     time_out_dummy = models.BooleanField(default = False)
+    info_contribution_clicked = models.BooleanField(default = False)
+    info_punishment_clicked = models.BooleanField(default = False)
+    info_bonus_clicked = models.BooleanField(default = False)
+    #PGG-related
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
     contribution = models.IntegerField(label = "How many Points do you contribute to the group project?")
@@ -401,6 +406,7 @@ class Player(BasePlayer):
     punishment_co1 = models.IntegerField()
     punishment_co2 = models.IntegerField()
     pun_received = models.FloatField()
+    both_punishment_costs = models.IntegerField()
     #Earnings
     earnings = models.CurrencyField()
     intermediate_earnings = models.FloatField()
@@ -891,9 +897,11 @@ class ComputeResults(WaitPage):
 class Results(Page):
     def is_displayed(player):
         return not player.group.game_terminated
+    form_model = "player"
+    form_fields = ['info_contribution_clicked', 'info_punishment_clicked', 'info_bonus_clicked']
 
 class Terminated(Page):
-    def is_displayed(player): return player.group.game_terminated
+    def is_displayed(player): return player.group.game_terminated or player.time_out_dummy
 
 # PAGES
 page_sequence = [
