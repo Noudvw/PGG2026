@@ -1,0 +1,48 @@
+{{ extends "global/WaitPage.html" }}
+
+{{ block title }}
+    Waiting...
+{{ endblock }}
+
+{{ block content }}
+
+<div id="wait-message">
+    <p>Waiting for other participants...</p>
+    <p>Expected wait time: <span id="countdown_expected"></span> seconds</p>
+    <p>Maximum wait time: <span id="countdown_max"></span> seconds</p>
+</div>
+
+<script>
+    const MAX_WAIT      = {{ max_wait }};
+    const EXPECTED_WAIT = {{ expected_wait }};
+
+    let remainingMax      = MAX_WAIT;
+    let remainingExpected = EXPECTED_WAIT;
+
+    const displayMax      = document.getElementById('countdown_max');
+    const displayExpected = document.getElementById('countdown_expected');
+
+    // Set initial values immediately
+    displayMax.textContent      = remainingMax;
+    displayExpected.textContent = remainingExpected;
+
+    const timer = setInterval(() => {
+        remainingMax--;
+        displayMax.textContent = remainingMax;
+
+        if (remainingExpected > 0) {
+            remainingExpected--;
+            displayExpected.textContent = remainingExpected;
+        } else {
+            displayExpected.textContent = 'any moment now...';
+        }
+
+        if (remainingMax <= 0) {
+            clearInterval(timer);
+            document.getElementById('wait-message').innerHTML =
+                '<p style="color:red;"><strong>Something went wrong. Please contact the experimenter. You can close this tab.</strong></p>';
+        }
+    }, 1000);
+</script>
+
+{{ endblock }}

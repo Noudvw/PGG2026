@@ -586,7 +586,10 @@ class Contribution(Page):
         return None
 
 class ComputeContribution(WaitPage):
-    wait_for_participants = True
+    template_name = 'PGG/ComputeContribution.html'
+    def vars_for_template(player):
+        return {'max_wait': C.TIMEOUTTIME * 5,
+                'expected_wait': C.TIMEOUTTIME * 1.5}
     @staticmethod
     def after_all_players_arrive(group):
         group.compute_active_players()
@@ -884,7 +887,10 @@ class Punishment(Page):
         return None
 
 class ComputeResults(WaitPage):
-    wait_for_participants = True
+    template_name = 'PGG/ComputeResults.html'
+    def vars_for_template(player):
+        return {'max_wait': C.TIMEOUTTIME * 7,
+                'expected_wait': C.TIMEOUTTIME * 1.5,}
     @staticmethod
     def after_all_players_arrive(group):
         group.set_other_punishments()
@@ -902,6 +908,7 @@ class Results(Page):
 
 class Terminated(Page):
     def is_displayed(player): return player.group.game_terminated or player.time_out_dummy
+
 
 # PAGES
 page_sequence = [
