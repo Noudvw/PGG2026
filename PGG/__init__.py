@@ -129,9 +129,9 @@ class Group(BaseGroup):
             for p in self.get_players():
                 p.remaining_endowment = p.endowment - p.contribution
                 if C.PLAYERS_PER_GROUP > 3:
-                    p.punishment_costs = p.punishment_co0 + p.punishment_co1 + p.punishment_co2
+                    p.punishment_costs = p.punishment_co0 * (1- p.p2_time_out_dummy) + p.punishment_co1 * (1 - p.p3_time_out_dummy) + p.punishment_co2 * (1-p.p4_time_out_dummy)
                 else:
-                    p.punishment_costs = p.punishment_co0 + p.punishment_co1
+                    p.punishment_costs = p.punishment_co0 * (1-p.p2_time_out_dummy) + p.punishment_co1 * (1-p.p3_time_out_dummy)
                 if p.id_in_group == 1 and C.PLAYERS_PER_GROUP > 3:
                     p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0 + p.p4_punishment_co0
                     if p.p2_punishment_co0 == p.pun_belief_co0:
