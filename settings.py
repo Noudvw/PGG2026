@@ -35,7 +35,7 @@ dict(
             "Demographics",
             "PGG"
         ],
-        num_demo_participants=3,
+        num_demo_participants=6,
     ),
 
 dict(

@@ -246,6 +246,10 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
 {% endif %}
 </table>
         You have spent {{player.punishment_costs}} to deduct earnings of other players. <br>
+        {% if player.others_time_out_dummy == True %}
+        <strong> Note: </strong> number could be lower than what the table tells you. This is because there were dropouts in your group: some participants failed to complete all steps of the game.
+        You can find more info at the bottom of this page about dropouts and what we decided to do. For now: the Deduction Points you assigned to dropouts were cancelled: they don't cost you anything. <br>
+        {% endif %}
 You lose {{player.pun_received_costs}} ({{player.pun_received}} x {{C.PUN_MULTIPLIER}}) due to other player deducting your earnings. <br>
         In total, this costs you {{player.punishment_costs}} + {{player.pun_received_costs}} = {{player.both_punishment_costs}}
 <br>
@@ -265,19 +269,23 @@ You gain
         You stated {{player.prob_stated}} as the probability that you are correct for the randomly selected prediction_that_counts. <br>
 The randomly drawn probability is {{player.prob_of_winning}}. <br>
 Therefore, we look at
-{% if player.prob_of_winning > player.prob_stated%} the outcome of the lottery {% endif %}
-{% if player.prob_of_winning <= player.prob_stated%} the truthfulness of your prediction {% endif %}
-<br>
-
-<br>
+{% if player.prob_of_winning > player.prob_stated%} the outcome of the lottery
+        <br>
 The lottery gives you a probability of {{player.prob_of_winning}}% to win. <br>
 You did {% if player.won_lottery == 0 %} not {% endif %} win the lottery.
-
-<br>
+        {% endif %}
+{% if player.prob_of_winning <= player.prob_stated%} the truthfulness of your prediction
+        <br>
 In the randomly selected prediction_that_counts, you were
 {% if player.correct_prediction == 1%} correct{%endif%}
 {% if player.correct_prediction == 0%} incorrect{% endif %}.
 <br>
+        {% endif %}
+<br>
+
+
+
+
 This leads to a bonus of {{player.bonus_earnings}} <br> <br>
     </div> <br> <br>
 

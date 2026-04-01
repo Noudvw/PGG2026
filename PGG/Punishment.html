@@ -12,14 +12,14 @@ Please specify for each player how many Deduction Points you will assign to them
 Remember: for each Deduction Point you assign to them, their total will decrease by {{C.PUN_MULTIPLIER}} Points.
 
 
-{% if C.TREATMENT == False%} <br>
+{% if player.info_treatment == False%} <br>
 The total group contribution is {{group.collective_contribution}} <br>
 Your contribution is {{player.contribution}} <br>
 This means that other players collectively contributed {{player.contribution_others}}
 <br>
 {% endif %}
 
-{% if C.TREATMENT == True %}
+{% if player.info_treatment  == True %}
 <table>
     <tr>
         <th> Player </th>

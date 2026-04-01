@@ -12,7 +12,7 @@ Each player can assign Deduction Points to others. For each Deduction Point you 
 the total of the recipient, and 1 Point will be deducted from your total. First, we ask you to predict if others will
 assign Deduction Points to you.
 
-{% if C.TREATMENT == False%} <br>
+{% if player.info_treatment == False%} <br>
 The total group contribution is {{group.collective_contribution}} <br>
 Your contribution is {{player.contribution}} <br>
 Others collectively contributed {{player.contribution_others}}
@@ -20,7 +20,7 @@ Others collectively contributed {{player.contribution_others}}
 <br> <br>
 
 
-{% if C.TREATMENT == True %}
+{% if player.info_treatment  == True %}
 <table>
     <tr>
         <th> Player </th>

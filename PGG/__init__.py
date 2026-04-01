@@ -15,6 +15,7 @@ Public Goods Game
 
 MALE_NAMES = ['Christopher', 'Daniel', 'David', 'James', 'Joseph', 'Matthew', 'Michael', 'Thomas' ]
 FEMALE_NAMES = ['Emily', 'Julia', 'Katherine', 'Natalie', 'Rachel', 'Samantha', 'Sarah']
+TREATMENT_OPTIONS = [True, False]
 RANDOM_LIST = [0, 1]
 
 class C(BaseConstants):
@@ -26,7 +27,6 @@ class C(BaseConstants):
     MPCR = 0.4
     PUN_MULTIPLIER = 3
     BONUS_MULTIPLIER = 4
-    TREATMENT = True
     MINIMUM_PLAYERS_PER_GROUP = 3
     TIMEOUTTIME = 40
 
@@ -41,11 +41,13 @@ class Group(BaseGroup):
     collective_contribution = models.IntegerField()
     active_player_count = models.IntegerField(initial=0)
     game_terminated = models.BooleanField(initial=False)
+    treatment = models.BooleanField()
 
     #Creates a variable that stores the number of men and women in the group as a variable at the individual level.
     def compute_group_gender(self):
         fem_count = 0
         male_count = 0
+        self.treatment= random.choice(TREATMENT_OPTIONS)
         for p in self.get_players():
             if p.gender == 1:
                 fem_count += 1
@@ -56,7 +58,8 @@ class Group(BaseGroup):
         for p in self.get_players():
             p.fem_in_group = fem_count
             p.male_in_group = male_count
-            p.info_treatment = C.TREATMENT
+            p.info_treatment = self.treatment
+
 
     def compute_active_players(self):
         self.active_player_count = 0
@@ -335,6 +338,12 @@ class Group(BaseGroup):
                         p.p4_punishment_co1 = others[2].punishment_co1
                         p.p4_punishment_co2 = others[2].punishment_co2
 
+    def randomize_ids(self):
+        players = self.get_players()
+        random.shuffle(players)
+        for new_id, p in enumerate(players, start=1):
+            p.id_in_group = new_id
+
     def set_other_names(self):
         for p in self.get_players():
             others = p.get_others_in_group()
@@ -425,7 +434,7 @@ class Player(BasePlayer):
     punishment_co0 = models.IntegerField()
     punishment_co1 = models.IntegerField()
     punishment_co2 = models.IntegerField()
-    pun_received = models.FloatField()
+    pun_received = models.IntegerField()
     both_punishment_costs = models.IntegerField()
     #Earnings
     earnings = models.CurrencyField()
@@ -475,6 +484,7 @@ class MatchingWaitPage(WaitPage):
 
 class DemographicsWait(WaitPage):
     def after_all_players_arrive(group):
+        group.randomize_ids()
         group.set_bonus_rounds()
         group.compute_group_gender()
         group.set_nicknames_group()
