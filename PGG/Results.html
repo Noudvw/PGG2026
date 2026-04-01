@@ -281,6 +281,33 @@ In the randomly selected prediction_that_counts, you were
 This leads to a bonus of {{player.bonus_earnings}} <br> <br>
     </div> <br> <br>
 
+<div style="display: none;">
+    {{ formfield 'info_bonus_clicked' }}
+</div>
+{% if player.others_time_out_dummy == True %}
+
+
+During the game, other players dropped out. We wanted to give you the opportunity to play the whole game,
+so the game is programmed to continue in most cases where others drop out.
+To ensure this, some values you encountered were not put in by the other player (they dropped out), but by the program.
+Click the button for detailed information on which values are put in by the program.
+
+<button type="button" onclick="toggleDetail('dropout_info', this, 'id_info_dropout_clicked')">More info ▼</button>
+    <div id="dropout_info" style="display: none;">
+        The following players dropped out during the experiment: <br> <br> {% if player.p2_time_out_dummy == True%} {{player.p2_nickname}} {% endif %}
+       {% if player.p3_time_out_dummy == True%} {{player.p3_nickname}} {% endif %}
+        {% if C.PLAYERS_PER_GROUP > 3%}
+        {% if player.p4_time_out_dummy == True%} {{player.p4_nickname}} {% endif %}
+        {% endif %} <br> <br>
+
+        These players dropped out <strong> after </strong> the contribution to the group project. Therefore, the contribution you saw was truly chosen by them.
+        They dropped out during the "Deduction Points" phase. Therefore, we automatically set all Deduction Points sent by them to zero (to ensure you receive minimal discomfort from this other player dropping out)
+
+
+    </div>
+
+{% endif %}
+
 
     {{ next_button }}
 

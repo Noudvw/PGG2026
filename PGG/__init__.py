@@ -286,6 +286,19 @@ class Group(BaseGroup):
                         p.bonus_post_co2 += 1
                 else: pass
 
+    def set_other_time_outs(self):
+        if self.game_terminated == True: pass
+        else:
+            for p in self.get_players():
+                others = p.get_others_in_group()
+                p.p2_time_out_dummy = others[0].time_out_dummy
+                p.p3_time_out_dummy = others[1].time_out_dummy
+                if C.PLAYERS_PER_GROUP > 3:
+                    p.p4_time_out_dummy = others[2].time_out_dummy
+                if p.p2_time_out_dummy == True or p.p3_time_out_dummy == True or p.p4_time_out_dummy == True:
+                    p.others_time_out_dummy = True
+
+
 
     def set_other_punishments(self):
         if self.game_terminated == True: pass
@@ -351,6 +364,8 @@ class Player(BasePlayer):
     info_contribution_clicked = models.BooleanField(default = False)
     info_punishment_clicked = models.BooleanField(default = False)
     info_bonus_clicked = models.BooleanField(default = False)
+    info_dropout_clicked = models.BooleanField(default = False)
+    others_time_out_dummy = models.BooleanField(default = False)
     #PGG-related
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
@@ -417,16 +432,19 @@ class Player(BasePlayer):
     prob_stated = models.IntegerField( default = 0)
 
     #Fields filled in by other players
+    p2_time_out_dummy = models.BooleanField(default = False)
     p2_nickname = models.StringField()
     p2_contribution = models.IntegerField()
     p2_punishment_co0 = models.IntegerField()
     p2_punishment_co1 = models.IntegerField()
     p2_punishment_co2 = models.IntegerField()
+    p3_time_out_dummy = models.BooleanField(default=False)
     p3_nickname = models.StringField()
     p3_contribution = models.IntegerField()
     p3_punishment_co0 = models.IntegerField()
     p3_punishment_co1 = models.IntegerField()
     p3_punishment_co2 = models.IntegerField()
+    p4_time_out_dummy = models.BooleanField(default=False)
     p4_nickname = models.StringField()
     p4_contribution = models.IntegerField()
     p4_punishment_co0 = models.IntegerField()
@@ -893,6 +911,7 @@ class ComputeResults(WaitPage):
                 'expected_wait': C.TIMEOUTTIME * 1.5,}
     @staticmethod
     def after_all_players_arrive(group):
+        group.set_other_time_outs()
         group.set_other_punishments()
         group.compute_group_earnings()
         group.bonus_post_beliefs()
@@ -902,9 +921,9 @@ class ComputeResults(WaitPage):
 
 class Results(Page):
     def is_displayed(player):
-        return not player.group.game_terminated
+        return not player.group.game_terminated and not player.time_out_dummy
     form_model = "player"
-    form_fields = ['info_contribution_clicked', 'info_punishment_clicked', 'info_bonus_clicked']
+    form_fields = ['info_contribution_clicked', 'info_punishment_clicked', 'info_bonus_clicked', 'info_dropout_clicked']
 
 class Terminated(Page):
     def is_displayed(player): return player.group.game_terminated or player.time_out_dummy

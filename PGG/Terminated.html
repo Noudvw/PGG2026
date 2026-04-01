@@ -14,9 +14,10 @@ Therefore, you have been removed from the game. <br>
 Because you failed to complete the tasks within time, you will not be paid. <br>
 {% endif %}
 
-
+{% if player.group.game_terminated == True%}
 The game was terminated because too many players disconnected.<br>
 Therefore, the results for the game will not count for payment, as the game has never been completed.
+{% endif %}
 
     {{ next_button }}
 
