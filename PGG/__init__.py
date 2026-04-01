@@ -44,6 +44,7 @@ class Group(BaseGroup):
     treatment = models.BooleanField()
 
     #Creates a variable that stores the number of men and women in the group as a variable at the individual level.
+
     def compute_group_gender(self):
         fem_count = 0
         male_count = 0
@@ -374,6 +375,8 @@ class Player(BasePlayer):
         ]
     )
     #Misc
+    time_start_one = models.FloatField(initial=0)
+    time_start_two = models.FloatField(initial=0)
     time_out_dummy = models.BooleanField(default = False)
     info_contribution_clicked = models.BooleanField(default = False)
     info_punishment_clicked = models.BooleanField(default = False)
@@ -483,6 +486,7 @@ class MatchingWaitPage(WaitPage):
     body_text = "Please wait while we match you with other participants..."
 
 class DemographicsWait(WaitPage):
+    @staticmethod
     def after_all_players_arrive(group):
         group.randomize_ids()
         group.set_bonus_rounds()
@@ -492,8 +496,10 @@ class DemographicsWait(WaitPage):
 
 class GroupDisplay(Page):
     timeout_seconds = C.TIMEOUTTIME
-
+    @staticmethod
     def before_next_page(player, timeout_happened):
+        import time
+        player.time_start_one = time.time()
         if timeout_happened:
             player.time_out_dummy = True
 
@@ -502,15 +508,18 @@ class GroupDisplay(Page):
 class PreBeliefs(Page):
     form_model = 'player'
 
+    @staticmethod
     def get_timeout_seconds(player):
         if player.time_out_dummy == False:
             return C.TIMEOUTTIME
         if player.time_out_dummy == True:
             return 1
 
+    @staticmethod
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
+
     @staticmethod
     def get_form_fields(player):
         fields = ['pre_belief_co0', 'pre_belief_co1',]
@@ -607,6 +616,7 @@ class Contribution(Page):
         if player.time_out_dummy == True:
             return 1
 
+    @staticmethod
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
@@ -624,9 +634,18 @@ class Contribution(Page):
 
 class ComputeContribution(WaitPage):
     template_name = 'PGG/ComputeContribution.html'
+    @staticmethod
     def vars_for_template(player):
-        return {'max_wait': C.TIMEOUTTIME * 5,
-                'expected_wait': C.TIMEOUTTIME * 1.5}
+        import time
+        now = time.time()
+        max_wait = C.TIMEOUTTIME * 5
+        elapsed = int(now - player.time_start_one)
+        expected_wait = C.TIMEOUTTIME * 1.5
+
+        return {'max_wait': max(0, max_wait - elapsed),
+                'expected_wait': expected_wait}
+
+
     @staticmethod
     def after_all_players_arrive(group):
         group.compute_active_players()
@@ -638,18 +657,25 @@ class ComputeContribution(WaitPage):
 
 
 class PostBeliefs(Page):
+    @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
+
+    @staticmethod
     def get_timeout_seconds(player):
         if player.time_out_dummy == False:
             return C.TIMEOUTTIME
         if player.time_out_dummy == True:
             return 1
 
+    @staticmethod
     def before_next_page(player, timeout_happened):
+        import time
+        player.time_start_two = time.time()
         if timeout_happened:
             player.time_out_dummy = True
     form_model = 'player'
+
     @staticmethod
     def get_form_fields(player):
         fields = ['post_belief_co0', 'post_belief_co1']
@@ -695,17 +721,23 @@ class PostBeliefs(Page):
 
 
 class ProbPostBeliefs(Page):
+    @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
+
+    @staticmethod
     def get_timeout_seconds(player):
         if player.time_out_dummy == False:
             return C.TIMEOUTTIME
         if player.time_out_dummy == True:
             return 1
+
+    @staticmethod
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
     form_model = 'player'
+
     @staticmethod
     def get_form_fields(player):
         fields = ['prob_post_co0', 'prob_post_co1']
@@ -756,26 +788,35 @@ class ProbPostBeliefs(Page):
 
 
 class IntermediateResults(Page):
+    @staticmethod
     def get_timeout_seconds(player):
         if player.time_out_dummy == False:
             return C.TIMEOUTTIME
         if player.time_out_dummy == True:
             return 1
+
+    @staticmethod
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
+
+    @staticmethod
     def is_displayed(player):
         return player.info_treatment and not player.group.game_terminated
 
 class PunBeliefsUncond(Page):
+    @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
 
+    @staticmethod
     def get_timeout_seconds(player):
         if player.time_out_dummy == False:
             return C.TIMEOUTTIME
         if player.time_out_dummy == True:
             return 1
+
+    @staticmethod
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
@@ -812,15 +853,18 @@ class PunBeliefsUncond(Page):
 
 
 class ProbPunBeliefs(Page):
+    @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
 
+    @staticmethod
     def get_timeout_seconds(player):
         if player.time_out_dummy == False:
             return C.TIMEOUTTIME
         if player.time_out_dummy == True:
             return 1
 
+    @staticmethod
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
@@ -873,15 +917,18 @@ class ProbPunBeliefs(Page):
 
 
 class Punishment(Page):
+    @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
 
+    @staticmethod
     def get_timeout_seconds(player):
         if player.time_out_dummy == False:
             return C.TIMEOUTTIME
         if player.time_out_dummy == True:
             return 1
 
+    @staticmethod
     def before_next_page(player, timeout_happened):
         if timeout_happened:
             player.time_out_dummy = True
@@ -925,9 +972,17 @@ class Punishment(Page):
 
 class ComputeResults(WaitPage):
     template_name = 'PGG/ComputeResults.html'
+
+    @staticmethod
     def vars_for_template(player):
-        return {'max_wait': C.TIMEOUTTIME * 7,
-                'expected_wait': C.TIMEOUTTIME * 1.5,}
+        import time
+        now = time.time()
+        max_wait = C.TIMEOUTTIME * 5
+        elapsed = int(now - player.time_start_two)
+        expected_wait = C.TIMEOUTTIME * 1.5
+
+        return {'max_wait': max(0, max_wait - elapsed),
+                'expected_wait': expected_wait}
     @staticmethod
     def after_all_players_arrive(group):
         group.set_other_time_outs()
@@ -939,12 +994,14 @@ class ComputeResults(WaitPage):
 
 
 class Results(Page):
+    @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated and not player.time_out_dummy
     form_model = "player"
     form_fields = ['info_contribution_clicked', 'info_punishment_clicked', 'info_bonus_clicked', 'info_dropout_clicked']
 
 class Terminated(Page):
+    @staticmethod
     def is_displayed(player): return player.group.game_terminated or player.time_out_dummy
 
 
