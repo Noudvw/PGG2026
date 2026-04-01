@@ -42,7 +42,7 @@ This means that other players collectively contributed {{player.contribution_oth
         <td> {{player.p3_contribution}} </td>
         <td> </td>
     </tr>
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
     <tr>
         <td> {{player.p4_nickname}} </td>
         <td> {{player.p4_contribution}} </td>
@@ -62,7 +62,7 @@ This means that other players collectively contributed {{player.contribution_oth
 {{ formfield 'punishment_co0' label=punishment_co0_label }}
 {{ formfield 'punishment_co1' label=punishment_co1_label }}
 
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
 {{ formfield 'punishment_co2' label=punishment_co2_label }}
 {% endif %}
 

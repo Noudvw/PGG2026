@@ -35,7 +35,7 @@ assign Deduction Points to yourself, so that cell will always be zero. <br> <br>
         <td>  </td>
         <td>  </td>
     </tr>
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
     <tr>
         <td> {{player.p4_nickname}} </td>
         <td> </td>
@@ -59,7 +59,7 @@ You ({{player.nickname}})
 <br>
 {{player.p3_nickname}}
 <br>
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
 {{player.p4_nickname}}
 {% endif %}
 <br>

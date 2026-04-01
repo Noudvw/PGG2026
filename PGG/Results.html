@@ -40,7 +40,7 @@ This table gives an overview of the contribution of each group member
         <td> {{player.p3_nickname}} </td>
         <td> {{player.p3_contribution}} </td>
     </tr>
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
     <tr>
         <td> {{player.p4_nickname}} </td>
         <td> {{player.p4_contribution}} </td>
@@ -75,7 +75,7 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <th> You (deduct) </th>
         <th> {{player.p2_nickname}} (deducts) </th>
         <th> {{player.p3_nickname}} (deducts) </th>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (deducts) </th> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <th>  {{player.p4_nickname}} (deducts) </th> {% endif %}
     </tr>
 
     <tr>
@@ -83,7 +83,7 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <td> X  </td>
         <td> {{player.p2_punishment_co0 }} </td>
         <td> {{player.p3_punishment_co0 }} </td>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co0 }} </td> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <td>  {{player.p4_punishment_co0 }} </td> {% endif %}
     </tr>
 
     <tr>
@@ -91,7 +91,7 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co1 }} </td>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co1 }} </td> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <td>  {{player.p4_punishment_co1 }} </td> {% endif %}
     </tr>
 
     <tr>
@@ -99,9 +99,9 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co1 }} </td>
         <td> X </td>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co2 }} </td> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <td>  {{player.p4_punishment_co2 }} </td> {% endif %}
     </tr>
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
     <tr>
          <td> {{player.p4_nickname}} (is deducted) </td>
         <td> {{player.punishment_co2}}  </td>
@@ -120,7 +120,7 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <th> You (deduct) </th>
         <th> {{player.p2_nickname}} (deducts) </th>
         <th> {{player.p3_nickname}} (deducts) </th>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (deducts) </th> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <th>  {{player.p4_nickname}} (deducts) </th> {% endif %}
     </tr>
 
     <tr>
@@ -128,7 +128,7 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <td> X  </td>
         <td> {{player.p2_punishment_co0 }} </td>
         <td> {{player.p3_punishment_co1 }} </td>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co1 }} </td> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <td>  {{player.p4_punishment_co1 }} </td> {% endif %}
     </tr>
 
     <tr>
@@ -136,7 +136,7 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co0 }} </td>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co0 }} </td> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <td>  {{player.p4_punishment_co0 }} </td> {% endif %}
     </tr>
 
     <tr>
@@ -144,9 +144,9 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co1 }} </td>
         <td> X </td>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co2 }} </td> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <td>  {{player.p4_punishment_co2 }} </td> {% endif %}
     </tr>
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
     <tr>
          <td> {{player.p4_nickname}} (is deducted) </td>
         <td> {{player.punishment_co2}}  </td>
@@ -165,7 +165,7 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <th> You (deduct) </th>
         <th> {{player.p2_nickname}} (deducts) </th>
         <th> {{player.p3_nickname}} (deducts) </th>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <th>  {{player.p4_nickname}} (deducts) </th> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <th>  {{player.p4_nickname}} (deducts) </th> {% endif %}
     </tr>
 
     <tr>
@@ -173,7 +173,7 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <td> X  </td>
         <td> {{player.p2_punishment_co1 }} </td>
         <td> {{player.p3_punishment_co1 }} </td>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co2 }} </td> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <td>  {{player.p4_punishment_co2 }} </td> {% endif %}
     </tr>
 
     <tr>
@@ -181,7 +181,7 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <td> {{player.punishment_co0}}  </td>
         <td>  X  </td>
         <td> {{player.p3_punishment_co0 }} </td>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co0 }} </td> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <td>  {{player.p4_punishment_co0 }} </td> {% endif %}
     </tr>
 
     <tr>
@@ -189,9 +189,9 @@ You lose {{player.both_punishment_costs}} due to Deduction Points <br>
         <td> {{player.punishment_co1}}  </td>
         <td> {{player.p2_punishment_co0 }} </td>
         <td> X </td>
-        {% if C.PLAYERS_PER_GROUP > 3 %} <td>  {{player.p4_punishment_co1 }} </td> {% endif %}
+        {% if C.GROUP_SIZE > 3 %} <td>  {{player.p4_punishment_co1 }} </td> {% endif %}
     </tr>
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
     <tr>
          <td> {{player.p4_nickname}} (is deducted) </td>
         <td> {{player.punishment_co2}}  </td>
@@ -296,7 +296,7 @@ Click the button for detailed information on which values are put in by the prog
     <div id="dropout_info" style="display: none;">
         The following players dropped out during the experiment: <br> <br> {% if player.p2_time_out_dummy == True%} {{player.p2_nickname}} {% endif %}
        {% if player.p3_time_out_dummy == True%} {{player.p3_nickname}} {% endif %}
-        {% if C.PLAYERS_PER_GROUP > 3%}
+        {% if C.GROUP_SIZE > 3%}
         {% if player.p4_time_out_dummy == True%} {{player.p4_nickname}} {% endif %}
         {% endif %} <br> <br>
 

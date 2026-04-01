@@ -19,7 +19,8 @@ RANDOM_LIST = [0, 1]
 
 class C(BaseConstants):
     NAME_IN_URL = 'Experiment'
-    PLAYERS_PER_GROUP = 3
+    PLAYERS_PER_GROUP = None
+    GROUP_SIZE = 3
     NUM_ROUNDS = 1
     ENDOWMENT = 20
     MPCR = 0.4
@@ -30,7 +31,10 @@ class C(BaseConstants):
     TIMEOUTTIME = 40
 
 class Subsession(BaseSubsession):
-    pass
+    def group_by_arrival_time_method(self, waiting_players):
+        if len(waiting_players) >= C.GROUP_SIZE:
+            return waiting_players[: C.GROUP_SIZE]
+        return None
 
 class Group(BaseGroup):
     PG_earnings = models.FloatField()
@@ -74,10 +78,10 @@ class Group(BaseGroup):
             p.endowment = C.ENDOWMENT
             p.gender = p.participant.vars['gender']
             p.prob_of_winning = random.randint(1,100)
-            if C.PLAYERS_PER_GROUP == 4:
+            if C.GROUP_SIZE == 4:
                 p.belief_that_counts_1 = random.randint(0,8)
                 p.belief_that_counts_2 = random.randint(0,8)
-            if C.PLAYERS_PER_GROUP < 4:
+            if C.GROUP_SIZE < 4:
                 p.belief_that_counts_1 = random.randint(0,5)
                 p.belief_that_counts_2 = random.randint(0,5)
 
@@ -128,11 +132,11 @@ class Group(BaseGroup):
         else:
             for p in self.get_players():
                 p.remaining_endowment = p.endowment - p.contribution
-                if C.PLAYERS_PER_GROUP > 3:
+                if C.GROUP_SIZE > 3:
                     p.punishment_costs = p.punishment_co0 * (1- p.p2_time_out_dummy) + p.punishment_co1 * (1 - p.p3_time_out_dummy) + p.punishment_co2 * (1-p.p4_time_out_dummy)
                 else:
                     p.punishment_costs = p.punishment_co0 * (1-p.p2_time_out_dummy) + p.punishment_co1 * (1-p.p3_time_out_dummy)
-                if p.id_in_group == 1 and C.PLAYERS_PER_GROUP > 3:
+                if p.id_in_group == 1 and C.GROUP_SIZE > 3:
                     p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0 + p.p4_punishment_co0
                     if p.p2_punishment_co0 == p.pun_belief_co0:
                         p.bonus_pun_co0 += 1
@@ -140,13 +144,13 @@ class Group(BaseGroup):
                         p.bonus_pun_co1 += 1
                     if p.p4_punishment_co0 == p.pun_belief_co2:
                         p.bonus_pun_co2 += 1
-                if p.id_in_group == 1 and C.PLAYERS_PER_GROUP < 4:
+                if p.id_in_group == 1 and C.GROUP_SIZE < 4:
                     p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co0
                     if p.p2_punishment_co0 == p.pun_belief_co0:
                         p.bonus_pun_co0 += 1
                     if p.p3_punishment_co0 == p.pun_belief_co1:
                         p.bonus_pun_co1 += 1
-                if p.id_in_group == 2 and C.PLAYERS_PER_GROUP > 3:
+                if p.id_in_group == 2 and C.GROUP_SIZE > 3:
                     p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1 + p.p4_punishment_co1
                     if p.p2_punishment_co0 == p.pun_belief_co0:
                         p.bonus_pun_co0 += 1
@@ -154,13 +158,13 @@ class Group(BaseGroup):
                         p.bonus_pun_co1 += 1
                     if p.p4_punishment_co1 == p.pun_belief_co2:
                         p.bonus_pun_co2 += 1
-                if p.id_in_group == 2 and C.PLAYERS_PER_GROUP < 4:
+                if p.id_in_group == 2 and C.GROUP_SIZE < 4:
                     p.pun_received = p.p2_punishment_co0 + p.p3_punishment_co1
                     if p.p2_punishment_co0 == p.pun_belief_co0:
                         p.bonus_pun_co0 += 1
                     if p.p3_punishment_co1 == p.pun_belief_co1:
                         p.bonus_pun_co1 += 1
-                if p.id_in_group == 3 and C.PLAYERS_PER_GROUP > 3:
+                if p.id_in_group == 3 and C.GROUP_SIZE > 3:
                     p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1 + p.p4_punishment_co2
                     if p.p2_punishment_co1 == p.pun_belief_co0:
                         p.bonus_pun_co0 += 1
@@ -168,7 +172,7 @@ class Group(BaseGroup):
                         p.bonus_pun_co1 += 1
                     if p.p4_punishment_co2 == p.pun_belief_co2:
                         p.bonus_pun_co2 += 1
-                if p.id_in_group == 3 and C.PLAYERS_PER_GROUP < 4:
+                if p.id_in_group == 3 and C.GROUP_SIZE < 4:
                     p.pun_received = p.p2_punishment_co1 + p.p3_punishment_co1
                     if p.p2_punishment_co0 == p.pun_belief_co1:
                         p.bonus_pun_co0 += 1
@@ -184,7 +188,7 @@ class Group(BaseGroup):
                         p.bonus_pun_co2 += 1
                 p.pun_received_costs = C.PUN_MULTIPLIER * p.pun_received
 # Part that allows for bonus earnings based on reported beliefs and a randomly-drawn bonus round
-                if C.PLAYERS_PER_GROUP > 3:
+                if C.GROUP_SIZE > 3:
                     bonuses_list = [
                         p.bonus_pre_co0,
                         p.bonus_pre_co1,
@@ -216,7 +220,7 @@ class Group(BaseGroup):
                     elif p.prob_of_winning <= p.prob_stated:
                         p.won_bonus = p.correct_prediction
                     p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
-                if C.PLAYERS_PER_GROUP < 4:
+                if C.GROUP_SIZE < 4:
                     bonuses_list = [
                         p.bonus_pre_co0,
                         p.bonus_pre_co1,
@@ -244,10 +248,11 @@ class Group(BaseGroup):
                     p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
                 p.both_punishment_costs = p.punishment_costs + p.pun_received_costs
                 p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
-                p.participant.group_size = C.PLAYERS_PER_GROUP
+                p.participant.group_size = C.GROUP_SIZE
                 if p.time_out_dummy == 1:
                     p.earnings = 0
-
+                if p.earnings <= 0:
+                    p.earnings = 0
     def set_other_contributions(self):
         if self.game_terminated == True: pass
         else:
@@ -269,7 +274,7 @@ class Group(BaseGroup):
                     p.bonus_pre_co0 += 1
                 if p.pre_belief_co1 == p.p3_contribution :
                     p.bonus_pre_co1 += 1
-                if C.PLAYERS_PER_GROUP > 3:
+                if C.GROUP_SIZE > 3:
                     if p.pre_belief_co2 == p.p4_contribution:
                         p.bonus_pre_co2 += 1
 
@@ -281,7 +286,7 @@ class Group(BaseGroup):
                     p.bonus_post_co0 += 1
                 if p.post_belief_co1 == p.p3_contribution:
                     p.bonus_post_co1 += 1
-                if C.PLAYERS_PER_GROUP > 3:
+                if C.GROUP_SIZE > 3:
                     if p.post_belief_co2 == p.p4_contribution:
                         p.bonus_post_co2 += 1
                 else: pass
@@ -293,7 +298,7 @@ class Group(BaseGroup):
                 others = p.get_others_in_group()
                 p.p2_time_out_dummy = others[0].time_out_dummy
                 p.p3_time_out_dummy = others[1].time_out_dummy
-                if C.PLAYERS_PER_GROUP > 3:
+                if C.GROUP_SIZE > 3:
                     p.p4_time_out_dummy = others[2].time_out_dummy
                 if p.p2_time_out_dummy == True or p.p3_time_out_dummy == True or p.p4_time_out_dummy == True:
                     p.others_time_out_dummy = True
@@ -305,7 +310,7 @@ class Group(BaseGroup):
         else:
             for p in self.get_players():
                 others = p.get_others_in_group()
-                if C.PLAYERS_PER_GROUP < 4:
+                if C.GROUP_SIZE < 4:
                     if len(others) > 0:
                         p.p2_punishment_co0 = others[0].punishment_co0
                         p.p2_punishment_co1 = others[0].punishment_co1
@@ -316,7 +321,7 @@ class Group(BaseGroup):
                         p.p4_punishment_co0 = others[2].punishment_co0
                         p.p4_punishment_co1 = others[2].punishment_co1
 
-                if C.PLAYERS_PER_GROUP > 3:
+                if C.GROUP_SIZE > 3:
                     if len(others) > 0:
                         p.p2_punishment_co0 = others[0].punishment_co0
                         p.p2_punishment_co1 = others[0].punishment_co1
@@ -340,7 +345,7 @@ class Group(BaseGroup):
             p.participant.nickname_own = p.nickname
             p.participant.nickname_co0 = p.p2_nickname
             p.participant.nickname_co1 = p.p3_nickname
-            if C.PLAYERS_PER_GROUP > 3:
+            if C.GROUP_SIZE > 3:
                 p.participant.nickname_co2 = p.p4_nickname
             else:
                 p.participant.nickname_co2 = None
@@ -459,10 +464,14 @@ class Player(BasePlayer):
         return self.get_others_in_group()[1]
 
     def coplayer2(self):
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             return self.get_others_in_group()[2]
         return None
 
+
+class MatchingWaitPage(WaitPage):
+    group_by_arrival_time = True
+    body_text = "Please wait while we match you with other participants..."
 
 class DemographicsWait(WaitPage):
     def after_all_players_arrive(group):
@@ -495,13 +504,13 @@ class PreBeliefs(Page):
     @staticmethod
     def get_form_fields(player):
         fields = ['pre_belief_co0', 'pre_belief_co1',]
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             fields += ['pre_belief_co2']
         return fields
 
     @staticmethod
     def vars_for_template(player):
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             return dict(
                 pre_belief_co0_label = 'How many Points will <strong> {} </strong> contribute to the project?'.format(player.p2_nickname),
                 pre_belief_co1_label = 'How many Points will <strong> {} </strong> contribute to the project?'.format(player.p3_nickname),
@@ -517,7 +526,7 @@ class PreBeliefs(Page):
     def error_message(player, values):
         if values['pre_belief_co0'] > 20 or values['pre_belief_co1'] > 20:
             return "Please report a number between 0 and 20 for each person"
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             if values['pre_belief_co2'] > 20:
                 return "Please report a number between 0 and 20 for each person"
         return None
@@ -538,13 +547,13 @@ class ProbPreBeliefs(Page):
     @staticmethod
     def get_form_fields(player):
         fields = [ 'prob_pre_co0', 'prob_pre_co1']
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             fields += [ 'prob_pre_co2']
         return fields
 
     @staticmethod
     def vars_for_template(player):
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             return dict(
                 prob_pre_co0_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. '
                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
@@ -575,7 +584,7 @@ class ProbPreBeliefs(Page):
     def error_message(player, values):
         if values['prob_pre_co0'] > 100 or values['prob_pre_co1'] > 100:
             return "Please report a percentage between 0 and 100 for each person."
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             if values['prob_pre_co2'] > 100:
                 return "Please report a percentage between 0 and 100 for each person"
         return None
@@ -634,7 +643,7 @@ class PostBeliefs(Page):
     @staticmethod
     def get_form_fields(player):
         fields = ['post_belief_co0', 'post_belief_co1']
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             fields += ['post_belief_co2']
         return fields
 
@@ -643,7 +652,7 @@ class PostBeliefs(Page):
         if player.group.game_terminated:
             return {}
         else:
-            if C.PLAYERS_PER_GROUP > 3:
+            if C.GROUP_SIZE > 3:
                 return dict(
                     post_belief_co0_label='How many Points did <strong> {} </strong> contribute to the project?'.format(player.p2_nickname),
                     post_belief_co1_label='How many Points did <strong> {} </strong>contribute to the project?'.format(player.p3_nickname),
@@ -659,11 +668,11 @@ class PostBeliefs(Page):
     def error_message(player, values):
         if values['post_belief_co0'] > 20 or values['post_belief_co1'] > 20:
             return "Please report a belief between 0 and 20 for each person"
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             if values['post_belief_co2'] > 20:
                 return "Please report a belief between 0 and 20 for each person"
         total = values['post_belief_co0'] + values['post_belief_co1']
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             total += values['post_belief_co2']
         if total != player.contribution_others:
             return (
@@ -690,7 +699,7 @@ class ProbPostBeliefs(Page):
     @staticmethod
     def get_form_fields(player):
         fields = ['prob_post_co0', 'prob_post_co1']
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             fields += ['prob_post_co2']
         return fields
 
@@ -698,7 +707,7 @@ class ProbPostBeliefs(Page):
     def error_message(player, values):
         if values['prob_post_co0'] > 100 or values['prob_post_co1'] > 100:
             return "Please report a percentage between 0 and 100 for each person."
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             if values['prob_post_co2'] > 100:
                 return "Please report a percentage between 0 and 100 for each person"
         return None
@@ -708,7 +717,7 @@ class ProbPostBeliefs(Page):
         if player.group.game_terminated:
             return {}
         else:
-            if C.PLAYERS_PER_GROUP > 3:
+            if C.GROUP_SIZE > 3:
                 return dict(
                     prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. '
                                        'On a 0-100 percent scale, how likely do you think this is true?'.format(
@@ -764,13 +773,13 @@ class PunBeliefsUncond(Page):
     @staticmethod
     def get_form_fields(player):
         fields = ['pun_belief_co0', 'pun_belief_co1']
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             fields += ['pun_belief_co2']
         return fields
 
     @staticmethod
     def vars_for_template(player):
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             return dict(
                 pun_belief_co0_label='How many Deduction Points will <strong> {} </strong> assign to you?'.format(player.p2_nickname),
                 pun_belief_co1_label='How many Deduction Points will <strong> {} </strong> assign to you?'.format(player.p3_nickname),
@@ -786,7 +795,7 @@ class PunBeliefsUncond(Page):
     def error_message(player, values):
         if values['pun_belief_co0'] > 10 or values['pun_belief_co1'] > 10:
             return "Please report a belief between 0 and 10 for each person"
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             if values['pun_belief_co2'] > 10:
                 return "Please report a belief between 0 and 10 for each person"
         return None
@@ -810,7 +819,7 @@ class ProbPunBeliefs(Page):
     @staticmethod
     def get_form_fields(player):
         fields = ['prob_pun_co0', 'prob_pun_co1']
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             fields += ['prob_pun_co2']
         return fields
 
@@ -818,14 +827,14 @@ class ProbPunBeliefs(Page):
     def error_message(player, values):
         if values['prob_pun_co0'] > 100 or values['prob_pun_co1'] > 100:
             return "Please report a percentage between 0 and 100 for each person."
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             if values['prob_pun_co2'] > 100:
                 return "Please report a percentage between 0 and 100 for each person"
         return None
 
     @staticmethod
     def vars_for_template(player):
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             return dict(
                 prob_pun_co0_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
                                     'On a 0-100 percent scale, how likely do you think this is true?'.format(
@@ -874,13 +883,13 @@ class Punishment(Page):
     @staticmethod
     def get_form_fields(player):
         fields = ['punishment_co0', 'punishment_co1']
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             fields.append('punishment_co2')
         return fields
 
     @staticmethod
     def vars_for_template(player):
-        if C.PLAYERS_PER_GROUP > 3:
+        if C.GROUP_SIZE > 3:
             return dict(
                 punishment_co0_label='How many Deduction Points do you assign to <strong> {} </strong>?'.format(player.p2_nickname),
                 punishment_co1_label='How many Deduction Points do you assign to <strong> {} </strong>?'.format(player.p3_nickname),
@@ -896,11 +905,11 @@ class Punishment(Page):
     def error_message(player, values):
         if  (values['punishment_co0'] < 0
             or values['punishment_co1'] < 0
-            or C.PLAYERS_PER_GROUP > 3 and values['punishment_co2'] < 0):
+            or C.GROUP_SIZE > 3 and values['punishment_co2'] < 0):
                 return "Value cannot be negative"
         if (values['punishment_co0'] > 10 or
             values['punishment_co1'] > 10 or
-            C.PLAYERS_PER_GROUP > 3 and values['punishment_co2'] > 10):
+            C.GROUP_SIZE > 3 and values['punishment_co2'] > 10):
                 return "Please choose a value between 0 and 10 for each person"
         return None
 
@@ -931,6 +940,7 @@ class Terminated(Page):
 
 # PAGES
 page_sequence = [
+    MatchingWaitPage,
     DemographicsWait,
     GroupDisplay,
     PreBeliefs,

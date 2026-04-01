@@ -43,7 +43,7 @@ Others collectively contributed {{player.contribution_others}}
         <td> {{player.p3_contribution}} </td>
         <td> </td>
     </tr>
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
     <tr>
         <td> {{player.p4_nickname}} </td>
         <td> {{player.p4_contribution}} </td>
@@ -64,7 +64,7 @@ Others collectively contributed {{player.contribution_others}}
 {{formfield 'prob_pun_co1' label=prob_pun_co1_label}}
 
 
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
 {{formfield 'prob_pun_co2' label=prob_pun_co2_label}}
 {% endif %}
 

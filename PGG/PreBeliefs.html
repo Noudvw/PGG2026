@@ -17,7 +17,7 @@ You ({{player.nickname}})
 <br>
 {{player.p3_nickname}}
 <br>
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
 {{player.p4_nickname}}
 {% endif %}
 <br>
@@ -29,7 +29,7 @@ Remember, the contribution can be any number from 0 to 20. <br> <br>
 
 {{ formfield 'pre_belief_co1' label=pre_belief_co1_label }}
 
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
 {{ formfield 'pre_belief_co2' label=pre_belief_co2_label }}
 {% endif %}
 

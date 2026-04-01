@@ -4,7 +4,6 @@ from otree.api import (
     BasePlayer,
     BaseSubsession,
     Page,
-    WaitPage,
     models,
 )
 
@@ -127,10 +126,7 @@ class DemoQuestions(Page):
             return ('Please return a number of siblings of 15 or lower. '
                     'If you have more than 15 siblings, please return 15')
 
-class DemoWait(WaitPage):
-    pass
 
 page_sequence = [
-    DemoQuestions,
-    DemoWait,
+    DemoQuestions
 ]

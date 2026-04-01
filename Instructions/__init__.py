@@ -199,17 +199,8 @@ class QuestionsBonus(Page):
         return "<br><br>".join(messages)
 
 
-class WaitPageCompleted(WaitPage):
-    wait_for_all_groups = True
-
-    @staticmethod
-    def is_displayed(player: Player) -> bool:
-        return player.round_number == C.NUM_ROUNDS
-
-
 page_sequence = [
     QuestionsPGG,
     QuestionsDP,
     QuestionsBonus,
-    WaitPageCompleted,
 ]

@@ -17,7 +17,7 @@ You ({{player.nickname}})
 <br>
 {{player.p3_nickname}}
 <br>
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
 {{player.p4_nickname}}
 {% endif %}
 <br>
@@ -29,7 +29,7 @@ You ({{player.nickname}})
 {{formfield 'prob_pre_co1' label=prob_pre_co1_label}}
 
 
-{% if C.PLAYERS_PER_GROUP > 3 %}
+{% if C.GROUP_SIZE > 3 %}
 {{formfield 'prob_pre_co2' label=prob_pre_co2_label}}
 {% endif %}
 
