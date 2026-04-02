@@ -5,5 +5,17 @@
 <link rel="stylesheet" href="{{ static 'global/theme.css' }}">
 {{ endblock }}
 
-{{ block global_scripts }}
+{{ block scripts }}
+{{ super() }}
+<script>
+    if (typeof liveSend !== 'undefined') {
+        setTimeout(() => {
+            liveSend({'type': 'heartbeat'});
+        }, 500);
+
+        setInterval(() => {
+            liveSend({'type': 'heartbeat'});
+        }, 5000);
+    }
+</script>
 {{ endblock }}
