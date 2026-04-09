@@ -64,7 +64,7 @@ class Debrief_Page(Page):
                   'similar_prior_experience_descriptive', 'nickname_child_own', 'nickname_friends_own',
                   'nickname_others_own', 'nickname_child_co0', 'nickname_friends_co0', 'nickname_others_co0',
                   'nickname_child_co1', 'nickname_friends_co1', 'nickname_others_co1']
-        if PGG_C.PLAYERS_PER_GROUP > 3:
+        if PGG_C.GROUP_SIZE > 3:
             fields.append('nickname_child_co2')
             fields.append('nickname_friends_co2')
             fields.append('nickname_others_co2')
