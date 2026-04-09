@@ -21,7 +21,7 @@ RANDOM_LIST = [0, 1]
 class C(BaseConstants):
     NAME_IN_URL = 'Experiment'
     PLAYERS_PER_GROUP = None
-    GROUP_SIZE = 3
+    GROUP_SIZE = 4
     NUM_ROUNDS = 1
     ENDOWMENT = 20
     MPCR = 0.4

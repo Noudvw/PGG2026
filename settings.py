@@ -30,16 +30,16 @@ dict(
     ),
 
 dict(
-        name="Demographics_demo",
+        name="Demo_For_PGG",
         app_sequence=[
             "Demographics",
             "PGG"
         ],
-        num_demo_participants=6,
+        num_demo_participants=8,
     ),
 
 dict(
-        name="Full_Exp_Demo",
+        name="Demo_Full_Experiment",
         app_sequence=[
             "Demographics",
             "Instructions",
