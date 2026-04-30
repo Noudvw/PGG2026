@@ -8,6 +8,7 @@ from otree.api import (
     models,
 )
 import random
+import time
 
 doc = """
 Public Goods Game
@@ -44,7 +45,7 @@ class Group(BaseGroup):
     treatment = models.BooleanField()
 
     #Creates a variable that stores the number of men and women in the group as a variable at the individual level.
-
+    #Also assigns treatment (at the group level)
     def compute_group_gender(self):
         fem_count = 0
         male_count = 0
@@ -61,14 +62,9 @@ class Group(BaseGroup):
             p.male_in_group = male_count
             p.info_treatment = self.treatment
 
-
+    # This logic is called when
     def compute_active_players(self):
-        self.active_player_count = 0
-        for p in self.get_players():
-            if p.time_out_dummy == False:
-                self.active_player_count += 1
-            else:
-                self.active_player_count += 0
+        self.active_player_count = sum(1 for p in self.get_players() if not p.time_out_dummy)
 
     def terminate_game_contribution_check(self):
         if self.active_player_count < C.MINIMUM_PLAYERS_PER_GROUP:
@@ -307,8 +303,6 @@ class Group(BaseGroup):
                 if p.p2_time_out_dummy == True or p.p3_time_out_dummy == True or p.p4_time_out_dummy == True:
                     p.others_time_out_dummy = True
 
-
-
     def set_other_punishments(self):
         if self.game_terminated == True: pass
         else:
@@ -345,6 +339,7 @@ class Group(BaseGroup):
         for new_id, p in enumerate(players, start=1):
             p.id_in_group = new_id
 
+    # Assigns nicknames to other players and sets a starting time to each player
     def set_other_names(self):
         import time
         for p in self.get_players():
@@ -664,9 +659,8 @@ class ComputeContribution(WaitPage):
     template_name = 'PGG/ComputeContribution.html'
     @staticmethod
     def vars_for_template(player):
-        import time
         now = time.time()
-        max_wait = C.TIMEOUTTIME * 5
+        max_wait = C.TIMEOUTTIME * 4+5
         if player.time_start_one > 0:
             elapsed = int(now - player.time_start_one)
             max_wait = max(0, max_wait - elapsed)
@@ -674,7 +668,6 @@ class ComputeContribution(WaitPage):
             'max_wait': max(0, max_wait),
             'expected_wait': C.TIMEOUTTIME * 1.5
         }
-
 
     @staticmethod
     def after_all_players_arrive(group):
@@ -1019,7 +1012,7 @@ class ComputeResults(WaitPage):
     def vars_for_template(player):
         import time
         now = time.time()
-        max_wait = C.TIMEOUTTIME * 5
+        max_wait = C.TIMEOUTTIME * 4 + 5
         if player.time_start_two > 0:
             elapsed = int(now - player.time_start_two)
             max_wait = max(0, max_wait - elapsed)
