@@ -11,9 +11,8 @@ from otree.api import (
 from PGG import C as PGG_C
 
 doc = """
-A splash-screen welcome page for the experiment
+Some debrief questions at the end of the experiment.
 """
-
 
 class C(BaseConstants):
     NAME_IN_URL = "Debrief"
@@ -81,7 +80,7 @@ class Debrief_Page(Page):
             'nickname_child_own_label':
                 f'From a 1-7 scale, how much would you consider giving your child the name {own}? (1 = not at all, 7 = absolutely)',
             'nickname_friends_own_label':
-                f'Are any of your best friends or relatives called {own}? Please mention the relationship you have with them',
+                f'Are any of your friends or relatives called {own}? Please mention the relationship you have with them',
             'nickname_others_own_label':
                 f'Is there anything else you connect with {own} you would like to tell us?',
         })
@@ -95,7 +94,7 @@ class Debrief_Page(Page):
                     f'nickname_child_co{i}_label':
                         f'From a 1-7 scale, how much would you consider giving your child the name {nickname}? (1 = not at all, 7 = absolutely)',
                     f'nickname_friends_co{i}_label':
-                        f'Are any of your best friends or relatives called {nickname}? Please mention the relationship you have with them',
+                        f'Are any of your friends or relatives called {nickname}? Please mention the relationship you have with them',
                     f'nickname_others_co{i}_label':
                         f'Is there anything else you connect with {nickname} you would like to tell us?',
                 })

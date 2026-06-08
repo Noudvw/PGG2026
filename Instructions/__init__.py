@@ -33,17 +33,17 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     attempt_count = models.IntegerField(initial=0)
-    question1 = models.IntegerField(label ="Q1: Your income?" )
-    question2 = models.IntegerField(label ="Q2: The income of the other group members?" )
-    question3 = models.IntegerField(label="Q3: Your income?")
-    question4 = models.IntegerField(label="Q4: The income of the other group members?")
-    question5 = models.IntegerField(label="Q5: Your income if you contribute 0 Points to the group project?")
-    question6 = models.IntegerField(label="Q6: Your income if you contribute 10 Points to the group project?")
+    question1 = models.IntegerField(label ="Q1: What is your income?" )
+    question2 = models.IntegerField(label ="Q2: What is the income of the other group members?" )
+    question3 = models.IntegerField(label="Q3: What is your income?")
+    question4 = models.IntegerField(label="Q4: What is the income of the other group members?")
+    question5 = models.IntegerField(label="Q5: What is your income if you contribute 0 Points to the group project?")
+    question6 = models.IntegerField(label="Q6: What is your income if you contribute 10 Points to the group project?")
     question7 = models.IntegerField(label="Q7: By how many Points will your income be reduced by assigning Deduction Points?")
     question8 = models.IntegerField(label="Q8: By how many Points will your income be reduced by assigning Deduction Points?")
     question9 = models.IntegerField(label="Q9: By how many Points will your income be reduced by receiving Deduction Points?")
-    question10 = models.IntegerField(label="Q10: Suppose you receive the bonus for the randomly-selected estimate. "
-                                           "How many additional Points do you receive?")
+    question10 = models.IntegerField(label="Q10: You can earn bonus Points by making correct estimates. "
+                                           "What is the maximum bonus you can receive by making estimates?")
     question11 = models.IntegerField(label = "Which statement is correct?",
                                      choices = (
                                         [1, "The number of bonus Points I get is fully randomly determined, it does not matter what estimates I make"],

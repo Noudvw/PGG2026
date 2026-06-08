@@ -6,11 +6,12 @@
 
 {{ block content }}
 
-You are matched to these other group members. {% if player.info_treatment == True %} Each of you has been given a nickname.
-The table below will be completed as you progress through the experiment. You cannot
-assign Deduction Points to yourself, so that cell will always be zero. <br> <br>
+You are matched to these other group members for the rest of the experiment. Each of you has been given a nickname.
 
-
+{% if player.info_treatment == True %}
+The table below will be completed as you progress through the experiment. <br>
+Your contribution and Deduction Points decisions will thus be visible for others <br>
+You cannot assign Deduction Points to yourself, so that cell will always be zero. <br> <br>
 <table>
     <tr>
         <th> Player </th>
@@ -19,7 +20,7 @@ assign Deduction Points to yourself, so that cell will always be zero. <br> <br>
     </tr>
 
     <tr>
-        <td> You </td>
+        <td> You ({{player.nickname}})</td>
         <td> </td>
         <td> 0 </td>
     </tr>
@@ -43,8 +44,6 @@ assign Deduction Points to yourself, so that cell will always be zero. <br> <br>
 </table>
 
 <br>
-
-
 {% endif %}
 <br>
 

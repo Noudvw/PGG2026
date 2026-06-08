@@ -7,8 +7,8 @@
 
 {{ block content }}
 
-Please specify for each player how many Deduction Points you will assign to them.
-Remember: for each Deduction Point you assign to them, their total will decrease by {{C.PUN_MULTIPLIER}} Points.
+Please specify for each player how many Deduction Points you will assign to them. <br>
+Remember: for each Deduction Point you assign to them, their total will decrease by {{C.PUN_MULTIPLIER}} Points. <br>
 
 
 {% if player.info_treatment == False%} <br>
@@ -17,6 +17,7 @@ Your contribution is {{player.contribution}} <br>
 This means that other players collectively contributed {{player.contribution_others}}
 <br>
 {% endif %}
+<br>
 
 {% if player.info_treatment  == True %}
 <table>
@@ -56,7 +57,7 @@ This means that other players collectively contributed {{player.contribution_oth
 
 {% endif %}
 
-
+<br>
 
 {{ formfield 'punishment_co0' label=punishment_co0_label }}
 {{ formfield 'punishment_co1' label=punishment_co1_label }}

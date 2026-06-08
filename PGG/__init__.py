@@ -29,7 +29,7 @@ class C(BaseConstants):
     PUN_MULTIPLIER = 3
     BONUS_MULTIPLIER = 4
     MINIMUM_PLAYERS_PER_GROUP = 3
-    TIMEOUTTIME = 40
+    TIMEOUTTIME = 120
 
 class Subsession(BaseSubsession):
     def group_by_arrival_time_method(self, waiting_players):
@@ -248,6 +248,7 @@ class Group(BaseGroup):
                     p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
                 p.both_punishment_costs = p.punishment_costs + p.pun_received_costs
                 p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
+                p.income = p.earnings
                 p.participant.group_size = C.GROUP_SIZE
                 if p.time_out_dummy == 1:
                     p.earnings = 0
@@ -380,7 +381,6 @@ class Player(BasePlayer):
     info_bonus_clicked = models.BooleanField(default = False)
     info_dropout_clicked = models.BooleanField(default = False)
     others_time_out_dummy = models.BooleanField(default = False)
-    last_heartbeat = models.FloatField(initial = 0)
     #PGG-related
     endowment = models.IntegerField()
     remaining_endowment = models.IntegerField()
@@ -439,6 +439,7 @@ class Player(BasePlayer):
     both_punishment_costs = models.IntegerField()
     #Earnings
     earnings = models.CurrencyField()
+    income = models.IntegerField()
     intermediate_earnings = models.FloatField()
     bonus_earnings = models.IntegerField()
     won_bonus = models.IntegerField( default = 0)
@@ -478,18 +479,6 @@ class Player(BasePlayer):
             return self.get_others_in_group()[2]
         return None
 
-#Helper functions defined below
-
-def live_heartbeat(player, data):
-    import time
-    if data.get('type') == 'heartbeat':
-        player.last_heartbeat = time.time()
-        return{ 0: {'type': 'ack'}}
-
-def update_heartbeat(player):
-    import time
-    player.last_heartbeat = time.time()
-
 #Pages defined below
 
 class MatchingWaitPage(WaitPage):
@@ -507,23 +496,19 @@ class DemographicsWait(WaitPage):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         import time
         player.time_start_one = time.time()
 
 class GroupDisplay(Page):
-    live_method = live_heartbeat
     timeout_seconds = C.TIMEOUTTIME
     @staticmethod
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         if timeout_happened:
             player.time_out_dummy = True
 
 
 
 class PreBeliefs(Page):
-    live_method = live_heartbeat
     form_model = 'player'
 
     @staticmethod
@@ -535,7 +520,6 @@ class PreBeliefs(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         if timeout_happened:
             player.time_out_dummy = True
 
@@ -570,8 +554,6 @@ class PreBeliefs(Page):
         return None
 
 class ProbPreBeliefs(Page):
-    live_method = live_heartbeat
-
     @staticmethod
     def get_timeout_seconds(player):
         if player.time_out_dummy == False:
@@ -580,7 +562,6 @@ class ProbPreBeliefs(Page):
             return 1
 
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         if timeout_happened:
             player.time_out_dummy = True
     form_model = 'player'
@@ -595,26 +576,26 @@ class ProbPreBeliefs(Page):
     def vars_for_template(player):
         if C.GROUP_SIZE > 3:
             return dict(
-                prob_pre_co0_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. '
+                prob_pre_co0_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. <br> '
                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
                     player.p2_nickname,
                     player.pre_belief_co0),
-                prob_pre_co1_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong> tokens. '
+                prob_pre_co1_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong> tokens.<br> '
                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
                     player.p3_nickname,
                     player.pre_belief_co1),
-                prob_pre_co2_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. '
+                prob_pre_co2_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. <br> '
                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
                     player.p4_nickname,
                     player.pre_belief_co2),
             )
         else:
             return dict(
-                prob_pre_co0_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. '
+                prob_pre_co0_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. <br>'
                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
                     player.p2_nickname,
                     player.pre_belief_co0),
-                prob_pre_co1_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. '
+                prob_pre_co1_label='You reported that <strong> {} </strong>  will contribute <strong> {} </strong>  tokens. <br>'
                                    'On a 0-100 percent scale, how likely do you think this is true?'.format(
                     player.p3_nickname,
                     player.pre_belief_co1),
@@ -630,7 +611,6 @@ class ProbPreBeliefs(Page):
         return None
 
 class Contribution(Page):
-    live_method = live_heartbeat
     @staticmethod
     def get_timeout_seconds(player):
         if player.time_out_dummy == False:
@@ -640,7 +620,6 @@ class Contribution(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         if timeout_happened:
             player.time_out_dummy = True
             player.contribution = 0
@@ -680,7 +659,6 @@ class ComputeContribution(WaitPage):
 
 
 class PostBeliefs(Page):
-    live_method = live_heartbeat
     @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
@@ -694,7 +672,6 @@ class PostBeliefs(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         import time
         player.time_start_two = time.time()
         if timeout_happened:
@@ -746,7 +723,6 @@ class PostBeliefs(Page):
 
 
 class ProbPostBeliefs(Page):
-    live_method = live_heartbeat
     @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
@@ -760,7 +736,6 @@ class ProbPostBeliefs(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         if timeout_happened:
             player.time_out_dummy = True
     form_model = 'player'
@@ -788,26 +763,26 @@ class ProbPostBeliefs(Page):
         else:
             if C.GROUP_SIZE > 3:
                 return dict(
-                    prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. '
+                    prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. <br>'
                                        'On a 0-100 percent scale, how likely do you think this is true?'.format(
                         player.p2_nickname,
                         player.post_belief_co0),
-                    prob_post_co1_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. '
+                    prob_post_co1_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong> tokens. <br>'
                                        'On a 0-100 percent scale, how likely do you think this is true?'.format(
                         player.p3_nickname,
                         player.post_belief_co1),
-                    prob_post_co2_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
+                    prob_post_co2_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. <br>'
                                        'On a 0-100 percent scale, how likely do you think this is true?'.format(
                         player.p4_nickname,
                         player.post_belief_co2),
                 )
             else:
                 return dict(
-                    prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
+                    prob_post_co0_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. <br>'
                                        'On a 0-100 percent scale, how likely do you think this is true?'.format(
                         player.p2_nickname,
                         player.post_belief_co0),
-                    prob_post_co1_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. '
+                    prob_post_co1_label='You reported that <strong> {} </strong>  has contributed <strong> {} </strong>  tokens. <br>'
                                        'On a 0-100 percent scale, how likely do you think this is true?'.format(
                         player.p3_nickname,
                         player.post_belief_co1),
@@ -815,7 +790,6 @@ class ProbPostBeliefs(Page):
 
 
 class IntermediateResults(Page):
-    live_method = live_heartbeat
     @staticmethod
     def get_timeout_seconds(player):
         if player.time_out_dummy == False:
@@ -825,7 +799,6 @@ class IntermediateResults(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         if timeout_happened:
             player.time_out_dummy = True
 
@@ -834,7 +807,6 @@ class IntermediateResults(Page):
         return player.info_treatment and not player.group.game_terminated
 
 class PunBeliefsUncond(Page):
-    live_method = live_heartbeat
     @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
@@ -848,7 +820,6 @@ class PunBeliefsUncond(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         if timeout_happened:
             player.time_out_dummy = True
     form_model = 'player'
@@ -884,7 +855,6 @@ class PunBeliefsUncond(Page):
 
 
 class ProbPunBeliefs(Page):
-    live_method = live_heartbeat
     @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
@@ -898,7 +868,6 @@ class ProbPunBeliefs(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         if timeout_happened:
             player.time_out_dummy = True
     form_model = 'player'
@@ -923,26 +892,26 @@ class ProbPunBeliefs(Page):
     def vars_for_template(player):
         if C.GROUP_SIZE > 3:
             return dict(
-                prob_pun_co0_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
+                prob_pun_co0_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. <br>'
                                     'On a 0-100 percent scale, how likely do you think this is true?'.format(
                     player.p2_nickname,
                     player.pun_belief_co0),
-                prob_pun_co1_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
+                prob_pun_co1_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. <br>'
                                     'On a 0-100 percent scale, how likely do you think this is true?'.format(
                     player.p3_nickname,
                     player.pun_belief_co1),
-                prob_pun_co2_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
+                prob_pun_co2_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. <br>'
                                     'On a 0-100 percent scale, how likely do you think this is true?'.format(
                     player.p4_nickname,
                     player.pun_belief_co2),
             )
         else:
             return dict(
-                prob_pun_co0_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
+                prob_pun_co0_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. <br>'
                                     'On a 0-100 percent scale, how likely do you think this is true?'.format(
                     player.p2_nickname,
                     player.pun_belief_co0),
-                prob_pun_co1_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. '
+                prob_pun_co1_label='You reported that <strong> {} </strong>  will assign <strong> {} </strong> deduction points to you. <br>'
                                     'On a 0-100 percent scale, how likely do you think this is true?'.format(
                     player.p3_nickname,
                     player.pun_belief_co1),
@@ -950,7 +919,6 @@ class ProbPunBeliefs(Page):
 
 
 class Punishment(Page):
-    live_method = live_heartbeat
     @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
@@ -964,7 +932,6 @@ class Punishment(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        update_heartbeat(player)
         if timeout_happened:
             player.time_out_dummy = True
             player.punishment_co0 = 0

@@ -7,24 +7,10 @@
 
 {{ block content }}
 
-These are the players in your group:
-<br>
-You ({{player.nickname}})
-<br>
-{{player.p2_nickname}}
-<br>
-{{player.p3_nickname}}
-<br>
-{% if C.GROUP_SIZE > 3 %}
-{{player.p4_nickname}}
-{% endif %}
+The group total contribution is <b> {{group.collective_contribution}} </b> Points.<br>
+You contributed <b> {{player.contribution}} </b> Points. <br>
+This means that other players collectively contributed <b> {{player.contribution_others}} </b> Points.<br>
 
-<br> <br>
-<b> The group total contribution is {{group.collective_contribution}} <br>
-You contributed {{player.contribution}}
-</br>
-This means that other players collectively contributed {{player.contribution_others}}</b>
-</br>
 
 {{ formfield 'prob_post_co0' label=prob_post_co0_label }}
 

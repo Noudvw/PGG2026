@@ -61,11 +61,13 @@ question_data = {
 hint_messages = {
     "A": "Earnings consist of two parts: remaining endowment and earnings received from the group project. "
          "For these questions, earnings from the group project are zero",
-    "B": "Earnings consist of two parts: remaining endowment and earnings received from the group project."
+    "B": "Earnings consist of two parts: remaining endowment and earnings received from the group project. "
           "For these questions, the remaining endowment is zero",
     "C": "Earnings consist of two parts: remaining endowment and earnings received from the group project. "
-         "To solve this question, you need to calculate remaining endowment and earnings from the group project, and then add both",
+         "To solve this question, you need to calculate earnings from the group project. Then, you add remaining "
+         "endowment and group project earnings to find total income.",
     "D": "Assigning Deduction Points costs you 1 Point and costs the receiver 3 Points",
-    "E": "The bonus for answering a question correct is 4 Points, if the question is randomly selected for payment",
-    "F": "Reporting truthfully is the way to maximize your probability of winning bonus Points. There is no strategic reporting possible."
+    "E": "The bonus for a correct estimate is 4 Points. 1 estimate will randomly be selected to be paid out.",
+    "F": "Reporting your estimates truthfully is the way to maximize your probability of winning bonus Points. "
+         "There is no strategic reporting possible."
 }

@@ -79,9 +79,9 @@ class Player(BasePlayer):
                                          "Secondary education (e.g. GED/GCSE)",
                                          "High school diploma / A-levels",
                                          "Technical/Community college",
-                                         "Undergraduate degree (BA/BSc/other",
-                                         "Graduate degree (MA/MSc/MPhil/other",
-                                         "Doctorate degree (PhD/other",
+                                         "Undergraduate degree (BA/BSc/other)",
+                                         "Graduate degree (MA/MSc/MPhil/other)",
+                                         "Doctorate degree (PhD/other)",
                                          "Don't know/not applicable"
                                      ]
                                      )
