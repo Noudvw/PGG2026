@@ -248,7 +248,10 @@ class Group(BaseGroup):
                     p.bonus_earnings = p.won_bonus * C.BONUS_MULTIPLIER
                 p.both_punishment_costs = p.punishment_costs + p.pun_received_costs
                 p.earnings = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
-                p.income = p.earnings
+                p.income = p.remaining_endowment + self.PG_earnings - p.punishment_costs - p.pun_received_costs + p.bonus_earnings
+                p.income = round(p.income, 2)
+                if p.income < 0:
+                    p.income = 0
                 p.participant.group_size = C.GROUP_SIZE
                 if p.time_out_dummy == 1:
                     p.earnings = 0
@@ -439,7 +442,7 @@ class Player(BasePlayer):
     both_punishment_costs = models.IntegerField()
     #Earnings
     earnings = models.CurrencyField()
-    income = models.IntegerField()
+    income = models.FloatField()
     intermediate_earnings = models.FloatField()
     bonus_earnings = models.IntegerField()
     won_bonus = models.IntegerField( default = 0)
@@ -918,7 +921,7 @@ class ProbPunBeliefs(Page):
             )
 
 
-class Punishment(Page):
+class DeductionPoints(Page):
     @staticmethod
     def is_displayed(player):
         return not player.group.game_terminated
@@ -1022,7 +1025,7 @@ page_sequence = [
     PostBeliefs,
     ProbPostBeliefs,
     IntermediateResults,
-    Punishment,
+    DeductionPoints,
     PunBeliefsUncond,
     ProbPunBeliefs,
     ComputeResults,
