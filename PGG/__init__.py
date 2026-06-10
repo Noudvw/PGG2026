@@ -29,7 +29,7 @@ class C(BaseConstants):
     PUN_MULTIPLIER = 3
     BONUS_MULTIPLIER = 4
     MINIMUM_PLAYERS_PER_GROUP = 3
-    TIMEOUTTIME = 120
+    TIMEOUTTIME = 3600
 
 class Subsession(BaseSubsession):
     def group_by_arrival_time_method(self, waiting_players):

@@ -46,7 +46,7 @@ dict(
             "PGG",
             "Debrief"
         ],
-        num_demo_participants=12,
+        num_demo_participants=4,
     ),
 ]
 
