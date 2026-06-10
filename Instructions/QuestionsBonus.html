@@ -70,6 +70,47 @@ Comprehension Questions: Part 3 of 3
 
 </div>
 <br>
+<br>
+
+You can use a Calculator by clicking this button:
+<!-- Toggle button -->
+<button type="button" onclick="toggleCalculator()">🧮 Calculator</button>
+
+<!-- Calculator (hidden by default) -->
+<div id="calculator" style="display:none; margin-top:10px;">
+    <input type="number" id="calc_a" placeholder="Number 1">
+    <select id="calc_op">
+        <option value="add">+</option>
+        <option value="subtract">-</option>
+        <option value="multiply">×</option>
+        <option value="divide">÷</option>
+    </select>
+    <input type="number" id="calc_b" placeholder="Number 2">
+    <button type="button" onclick="calculate()">Calculate</button>
+    <p>Result: <span id="calc_result">-</span></p>
+</div>
+
+<script>
+function toggleCalculator() {
+    let calc = document.getElementById('calculator');
+    calc.style.display = calc.style.display === 'none' ? 'block' : 'none';
+}
+
+function calculate() {
+    let a = parseFloat(document.getElementById('calc_a').value);
+    let b = parseFloat(document.getElementById('calc_b').value);
+    let op = document.getElementById('calc_op').value;
+    let result;
+    if (op === 'add') result = a + b;
+    else if (op === 'subtract') result = a - b;
+    else if (op === 'multiply') result = a * b;
+    else if (op === 'divide') result = b !== 0 ? a / b : 'Cannot divide by zero';
+    document.getElementById('calc_result').innerHTML = result;
+}
+</script>
+<br>
+<br>
+<br>
 <div style="display: none;">
     {{ formfield 'info_clicked' }}
 </div>
