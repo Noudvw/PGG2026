@@ -509,8 +509,6 @@ class GroupDisplay(Page):
         if timeout_happened:
             player.time_out_dummy = True
 
-
-
 class PreBeliefs(Page):
     form_model = 'player'
 

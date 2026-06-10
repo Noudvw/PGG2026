@@ -265,7 +265,64 @@ You gain
 
 <button type="button" onclick="toggleDetail('detail_bonus', this, 'id_info_bonus_clicked')">More info ▼</button>
     <div id="detail_bonus" style="display: none;">
-        You stated {{player.prob_stated}} as the probability that you are correct for the randomly selected prediction that counts. <br>
+
+
+        The randomly selected question that counts for payment is
+        {% if C.GROUP_SIZE == 4%}
+    {% if player.belief_that_counts_1 == 0 %}
+        estimate 1 you made for {{ player.p2_nickname }}. <br> You estimated that {{player.p2_nickname}}
+        contributed {{player.pre_belief_co0}} to the group project.
+    {% elif player.belief_that_counts_1 == 1 %}
+        estimate 1 you made for {{ player.p3_nickname }}. <br> You estimated that {{player.p3_nickname}}
+        contributed {{player.pre_belief_co1}} to the group project.
+    {% elif player.belief_that_counts_1 == 2 %}
+        estimate 1 you made for {{ player.p4_nickname }}. <br> You estimated that {{player.p4_nickname}}
+        contributed {{player.pre_belief_co2}} to the group project.
+    {% elif player.belief_that_counts_1 == 3 %}
+        estimate 2 you made for {{ player.p2_nickname }}. <br> You estimated that {{player.p2_nickname}}
+        contributed {{player.post_belief_co0}} to the group project.
+    {% elif player.belief_that_counts_1 == 4 %}
+        estimate 2 you made for {{ player.p3_nickname }}. <br> You estimated that {{player.p3_nickname}}
+        contributed {{player.post_belief_co1}} to the group project.
+    {% elif player.belief_that_counts_1 == 5 %}
+        estimate 2 you made for {{ player.p4_nickname }}. <br> You estimated that {{player.p4_nickname}}
+        contributed {{player.post_belief_co2}} to the group project.
+    {% elif player.belief_that_counts_1 == 6 %}
+         estimate 3 you made for {{ player.p2_nickname }}. <br> You estimated that {{player.p2_nickname}}
+        assigned {{player.pun_belief_co0}} Deduction Point to you.
+    {% elif player.belief_that_counts_1 == 7 %}
+        estimate 3 you made for {{ player.p3_nickname }}. <br> You estimated that {{player.p3_nickname}}
+        assigned {{player.pun_belief_co1}} Deduction Point to you.
+    {% elif player.belief_that_counts_1 == 8 %}
+       estimate 3 you made for {{ player.p4_nickname }}. <br> You estimated that {{player.p4_nickname}}
+        assigned {{player.pun_belief_co2}} Deduction Point to you.
+    {% endif %} {% endif %}
+
+        {% if C.GROUP_SIZE == 3%}
+    {% if player.belief_that_counts_1 == 0 %}
+       estimate 1 you made for {{ player.p2_nickname }}. <br> You estimated that {{player.p2_nickname}}
+        contributed {{player.pre_belief_co0}} to the group project.
+    {% elif player.belief_that_counts_1 == 1 %}
+        estimate 1 you made for {{ player.p3_nickname }}. <br> You estimated that {{player.p3_nickname}}
+        contributed {{player.pre_belief_co1}} to the group project.
+    {% elif player.belief_that_counts_1 == 2 %}
+      estimate 2 you made for {{ player.p2_nickname }}. <br> You estimated that {{player.p2_nickname}}
+        contributed {{player.post_belief_co0}} to the group project.
+    {% elif player.belief_that_counts_1 == 3 %}
+       estimate 2 you made for {{ player.p3_nickname }}. <br> You estimated that {{player.p3_nickname}}
+        contributed {{player.post_belief_co1}} to the group project.
+    {% elif player.belief_that_counts_1 == 4 %}
+        estimate 3 you made for {{ player.p2_nickname }}. <br> You estimated that {{player.p2_nickname}}
+        assigned {{player.pun_belief_co0}} Deduction Point to you.
+    {% elif player.belief_that_counts_1 == 5 %}
+        estimate 3 you made for {{ player.p3_nickname }}. <br> You estimated that {{player.p3_nickname}}
+        assigned {{player.pun_belief_co1}} Deduction Point to you.
+    {% endif %}
+        {% endif %} <br>
+        This is {% if player.correct_prediction == 1%} correct{%endif%}
+{% if player.correct_prediction == 0%} incorrect{% endif %}. <br>
+
+        You stated {{player.prob_stated}} as the probability that you are correct . <br>
 The randomly drawn probability is {{player.prob_of_winning}}. <br>
 Therefore, we look at
 {% if player.prob_of_winning > player.prob_stated%} the outcome of the lottery
