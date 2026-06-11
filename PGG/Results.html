@@ -265,7 +265,10 @@ You gain
 
 <button type="button" onclick="toggleDetail('detail_bonus', this, 'id_info_bonus_clicked')">More info ▼</button>
     <div id="detail_bonus" style="display: none;">
-
+        Reminder: one question is randomly selected for payment. <br>
+        Whether you earn the bonus depends on the certainty you indicated before (P). <br>
+        If your stated certainty (P) exceeds a randomly-generated number (N), you earn the bonus if you were correct. <br>
+        If your stated certainty (P) does not exceed the randomly-generated number (N), you have a N percent chance of getting the bonus. <br> <br>
 
         The randomly selected question that counts for payment is
         {% if C.GROUP_SIZE == 4%}
@@ -319,22 +322,22 @@ You gain
         assigned {{player.pun_belief_co1}} Deduction Point to you.
     {% endif %}
         {% endif %} <br>
-        This is {% if player.correct_prediction == 1%} correct{%endif%}
-{% if player.correct_prediction == 0%} incorrect{% endif %}. <br>
 
-        You stated {{player.prob_stated}} as the probability that you are correct . <br>
+          You stated {{player.prob_stated}} as the probability that you are correct. <br>
 The randomly drawn probability is {{player.prob_of_winning}}. <br>
 Therefore, we look at
 {% if player.prob_of_winning > player.prob_stated%} the outcome of the lottery
         <br>
-The lottery gives you a probability of {{player.prob_of_winning}}% to win. <br>
-You did {% if player.won_lottery == 0 %} not {% endif %} win the lottery.
+The lottery gives you a chance of {{player.prob_of_winning}}% to win. <br>
+You did {% if player.won_lottery == 0 %} not {% endif %} win the lottery. <br>
+        (Sidenote: it does not matter for payment, but your prediction was {% if player.correct_prediction == 1%} correct {%endif%}
+{% if player.correct_prediction == 0%} incorrect{% endif %})
         {% endif %}
 {% if player.prob_of_winning <= player.prob_stated%} the truthfulness of your prediction
         <br>
-In the randomly selected prediction that counts, you were
-{% if player.correct_prediction == 1%} correct{%endif%}
-{% if player.correct_prediction == 0%} incorrect{% endif %}.
+Your prediction is
+{% if player.correct_prediction == 1%} correct {%endif%}
+{% if player.correct_prediction == 0%} incorrect {% endif %}.
 <br>
         {% endif %}
 <br>
