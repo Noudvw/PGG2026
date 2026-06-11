@@ -198,9 +198,12 @@ class QuestionsBonus(Page):
             )
         return "<br><br>".join(messages)
 
+class Match(Page):
+    pass
 
 page_sequence = [
     QuestionsPGG,
     QuestionsDP,
     QuestionsBonus,
+    Match,
 ]

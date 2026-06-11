@@ -6,11 +6,12 @@
 
 {{ block content }}
 
-You are matched to these other group members for the rest of the experiment. Each of you has been given a nickname.
+You are matched to these other group members for the rest of the experiment. <br> Each of you has been given a nickname. <br>
 
 {% if player.info_treatment == True %}
 The table below will be completed as you progress through the experiment. <br>
-Your contribution and Deduction Points decisions will thus be visible for others <br>
+The contribution and Deduction Points decisions made by others will thus be visible to you. <br>
+Your decisions will also be visible for others <br>
 You cannot assign Deduction Points to yourself, so that cell will always be zero. <br> <br>
 <table>
     <tr>
@@ -64,5 +65,30 @@ You ({{player.nickname}})
 
 
 {{next_button}}
+{{ endblock }}
+
+{{ block scripts }}
+<script>
+function playBell() {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 1);
+
+    gainNode.gain.setValueAtTime(0.7, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 2);
+}
+
+document.addEventListener('DOMContentLoaded', playBell);
+</script>
 {{ endblock }}
 

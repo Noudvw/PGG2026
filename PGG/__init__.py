@@ -29,7 +29,7 @@ class C(BaseConstants):
     PUN_MULTIPLIER = 3
     BONUS_MULTIPLIER = 4
     MINIMUM_PLAYERS_PER_GROUP = 3
-    TIMEOUTTIME = 3600
+    TIMEOUTTIME = 300
 
 class Subsession(BaseSubsession):
     def group_by_arrival_time_method(self, waiting_players):
@@ -486,7 +486,9 @@ class Player(BasePlayer):
 
 class MatchingWaitPage(WaitPage):
     group_by_arrival_time = True
-    body_text = "Please wait while we match you with other participants..."
+    body_text = ("Please wait while we match you with other participants... <br>"
+                 "An audio reminder will play once you are matched. <br>"
+                 "This can take a few minutes.")
 
 class DemographicsWait(WaitPage):
     @staticmethod

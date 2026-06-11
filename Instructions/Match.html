@@ -1,0 +1,28 @@
+{{ extends "global/Page.html" }}
+
+{% load static %}
+
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'global/theme.css' %}">
+{% endblock %}
+
+{{ block title }}
+Comprehension Questions: Completed
+{{ endblock }}
+
+{{ block content }}
+
+You passed all comprehension questions. <br>
+You can take place in the lobby by clicking the next button. <br>
+Please wait until we have found three other players. <br>
+A 2-second audio ping will play once a group has been found. <br>
+Please make sure your sound is on and set to a comfortable level if you want to hear the audio reminder. <br>
+
+<div class="row mt-3 mb-3">
+    <div class="col text-center">
+        {{ next_button }}
+    </div>
+</div>
+
+{{ endblock }}
