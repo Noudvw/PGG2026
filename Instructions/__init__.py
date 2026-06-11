@@ -44,7 +44,7 @@ class Player(BasePlayer):
     question9 = models.IntegerField(label="Q9: By how many Points will your income be reduced by receiving Deduction Points?")
     question10 = models.IntegerField(label="Q10: You can earn bonus Points by making correct estimates. "
                                            "What is the maximum bonus you can receive by making estimates?")
-    question11 = models.IntegerField(label = "Which statement is correct?",
+    question11 = models.IntegerField(label = "Q11: Which statement is correct?",
                                      choices = (
                                         [1, "The number of bonus Points I get is fully randomly determined, it does not matter what estimates I make"],
                                         [2, "To maximize expected earnings, I should not necessarily make estimates I believe in. "
